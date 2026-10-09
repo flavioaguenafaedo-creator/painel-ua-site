@@ -54,8 +54,8 @@ a{color:var(--info)}
 .app{display:grid;grid-template-columns:272px minmax(0,1fr);min-height:100vh}
 .side{position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;gap:16px;padding:20px 14px 16px;background:linear-gradient(180deg,#0f3d2b 0%,#0b2e20 100%);color:#e9f1ec;scrollbar-width:thin}
 .marca{display:flex;gap:11px;align-items:center;padding:0 4px}
-.logo{width:48px;height:48px;flex:0 0 auto;display:flex;align-items:center;justify-content:center}
-.logo img{max-width:48px;max-height:48px;border-radius:10px;background:#fff;padding:3px;object-fit:contain}
+.logo{min-width:48px;height:52px;flex:0 0 auto;display:flex;align-items:center;justify-content:center}
+.logo img{display:block;max-width:64px;max-height:52px;width:auto;height:auto;background:none;padding:0;border-radius:0;object-fit:contain;filter:drop-shadow(0 1px 2px rgba(0,0,0,.25))}
 .logo svg{width:48px;height:48px}
 .inst .cia{font-weight:700;font-size:13.5px;line-height:1.25;color:#fff;letter-spacing:.005em}
 .inst .sureg{font-size:11.5px;line-height:1.3;opacity:.78;margin-top:3px}
@@ -326,7 +326,7 @@ footer{border-top:1px solid var(--border);padding:14px 0 26px}
 .folha.rel .galeria{grid-template-columns:repeat(4,1fr)}
 .folha.rel .heat td.c{width:46px;height:30px;font-size:11.5px}
 .rel-cab{display:flex;gap:14px;align-items:center;border-bottom:2px solid #0f3d2b;padding-bottom:10px;margin-bottom:12px}
-.rel-logo{width:56px;height:56px;object-fit:contain}
+.rel-logo{width:70px;height:70px;object-fit:contain}
 .rel-inst{flex:1;font-size:12px;color:#333}
 .rel-cia{font-size:15px;font-weight:700;color:#0f3d2b}
 .rel-ua{color:#555}
@@ -853,7 +853,7 @@ const FOTO_PASTAS = [["actellic", /actellic/], ["kobiol", /kobiol/], ["protecpho
 function classificarFoto(path) {
   const segs = path.split("/").slice(0, -1);
   const ns = segs.map(norm);
-  if (ns.some(s => /croqui|mapa|planta|logo|identidade/.test(s)) || /logo/i.test(path.split("/").pop())) return null;
+  if (ns.some(s => /croqui|mapa|planta|logo|identidade|marca/.test(s)) || /logo/i.test(path.split("/").pop())) return null;
   const sub = i => segs.slice(i + 1).map(s => s.replace(/[_-]+/g, " ").trim()).join(" · ");
   for (const [tipo, re] of FOTO_PASTAS) { const i = ns.findIndex(s => re.test(s)); if (i >= 0) return {tipo, sub: sub(i)}; }
   return {tipo: "outro", sub: segs.slice(1).join(" · ")};
@@ -1041,6 +1041,9 @@ function buildModel() {
     prazoRep: cfg("prazodereparoesperadodias", 15),
     nr33Meses: cfg("validadedanr33meses", 12), nr35Meses: cfg("validadedanr35meses", 24), asoMeses: cfg("validadedoasomeses", 12),
     avisoInset: cfg("avisodevalidadedeinseticidadias", 120), umidMax: cfg("umidademaximarecomendada", 14),
+    /* capacidade dos silos: nominal (cilindro cheio e nivelado) corrigida pelo cone formado pelos grãos no topo */
+    capNominal: cfg(norm("Capacidade nominal do silo (t)"), 2000), diamSilo: cfg(norm("Diâmetro interno do silo (m)"), null),
+    densGrao: cfg(norm("Massa específica do grão (t/m³)"), 0.75), angRepouso: cfg(norm("Ângulo de repouso do grão (°)"), 35),
   };
 
   /* ---------- estoque (SAAGRA) ---------- */
@@ -1089,19 +1092,28 @@ function buildModel() {
   if (mapa && mapa.silos) mapa.silos.forEach(s => { if (s.capacidade_t) capDe["Silo " + s.n] = s.capacidade_t; });
   const silos = [...nums].sort((a, b) => a - b).map(n => ({code: "Silo " + n, n, ocup: ocAtual && ocAtual.silos[n] != null ? ocAtual.silos[n] : null, ocupData: ocAtual ? ocAtual.d : null, cap: capDe["Silo " + n] || null, prod: null, t: null, tFonte: null, T: null, fito: {}}));
   const siloDe = {}; silos.forEach(s => siloDe[s.code] = s);
-  /* toneladas por silo: capacidade × ocupação, ou rateio do saldo do SAAGRA pela ocupação */
+  /* toneladas por silo: capacidade efetiva × ocupação.
+     A capacidade nominal corresponde ao cilindro cheio e nivelado. Enchido pelo centro, o grão forma no topo um cone com o
+     ângulo de repouso; com o pico na altura do topo do cilindro, fica vazio o volume entre o cone e o topo: 2/3 × área × altura do cone. */
+  const capSilo = n => {
+    const nominal = capDe["Silo " + n] || C.capNominal, ms = mapa && mapa.silos ? mapa.silos.find(s => +s.n === n) : null;
+    const d = C.diamSilo || (ms && ms.d) || 14.8, r = d / 2, A = Math.PI * r * r, rho = C.densGrao, H = nominal / rho / A;
+    const hc = Math.min(H, r * Math.tan(C.angRepouso * Math.PI / 180)), vazio = 2 / 3 * A * hc, ef = nominal - rho * vazio;
+    return {nominal, ef, d, A, H, hc, vazio, rho, fator: ef / nominal};
+  };
   const somaOc = silos.reduce((s, x) => s + (x.ocup || 0), 0);
   const prodGranel = armGranel ? armGranel.itens.filter(i => i.t > 0.0005).map(i => titulo(i.produto)).join(", ") : null;
   silos.forEach(S => {
+    S.capI = capSilo(S.n); S.cap = S.capI.nominal; S.capEf = S.capI.ef;
     if (S.ocup == null) return;
     if (S.ocup > 0) S.prod = prodGranel;
-    if (S.cap) { S.t = S.cap * S.ocup; S.tFonte = "capacidade × ocupação"; }
-    else if (armGranel && somaOc > 0) { S.t = armGranel.saldoT * S.ocup / somaOc; S.tFonte = "rateio do saldo do SAAGRA pela ocupação"; }
+    S.t = S.capEf * S.ocup; S.tFonte = "capacidade efetiva × ocupação";
   });
-  if (armGranel && ocLin.length) {
-    if (armGranel.saldoT > 1 && somaOc === 0) addA("warn", "Estoque", `${armGranel.code}: SAAGRA indica ${fmtT(armGranel.saldoT, 0)} e a planilha de ocupação indica todos os silos vazios`, "Atualizar a planilha de ocupação dos silos ou conferir o saldo.", "estoque");
-    const comCap = silos.filter(s => s.cap && s.ocup != null);
-    if (comCap.length === silos.length && silos.length) { const tCap = comCap.reduce((s, x) => s + x.t, 0); if (armGranel.saldoT > 1 && Math.abs(tCap - armGranel.saldoT) / armGranel.saldoT > 0.15) addA("info", "Estoque", `Ocupação × capacidade (${fmtT(tCap, 0)}) difere do saldo do SAAGRA (${fmtT(armGranel.saldoT, 0)}) em mais de 15%`, "Conferir a planilha de ocupação e as capacidades cadastradas.", "estoque"); }
+  const capTot = silos.reduce((s, x) => s + (x.capEf || 0), 0);
+  if (armGranel && ocLin.length && silos.length) {
+    const tCap = silos.reduce((s, x) => s + (x.t || 0), 0), dif = armGranel.saldoT - tCap;
+    if (armGranel.saldoT > capTot * 1.02) addA("warn", "Estoque", `${armGranel.code}: o SAAGRA registra ${fmtT(armGranel.saldoT, 0)}, acima da capacidade efetiva dos ${silos.length} silos (${fmtT(capTot, 0)})`, `A capacidade efetiva considera ${fmtT(silos[0].capI.nominal, 0)} nominais por silo, massa específica de ${fmtN(C.densGrao, 2)} t/m³ e cone de grãos com ângulo de repouso de ${fmtN(C.angRepouso, 0)}°. Conferir os parâmetros na aba Config e fazer a cubagem dos silos para confrontar o estoque físico com o SAAGRA.`, "estoque");
+    if (armGranel.saldoT > 1 && Math.abs(dif) / armGranel.saldoT > 0.15) addA("warn", "Estoque", `Silos: pela planilha de ocupação haveria ≈ ${fmtT(tCap, 0)}; o SAAGRA registra ${fmtT(armGranel.saldoT, 0)} (diferença de ${fmtT(Math.abs(dif), 0)}, ≈ ${fmtN(Math.abs(dif) / (capTot / silos.length), 1)} silo(s) cheio(s))`, "Atualizar a planilha de ocupação dos silos. Se a diferença continuar, fazer a cubagem (medição do nível de grãos em cada silo) para confrontar o estoque físico com o saldo do SAAGRA.", "estoque");
   }
 
   /* ---------- termometria ---------- */
@@ -1498,7 +1510,7 @@ function buildModel() {
   pends.sort((a, b) => (a.aberta === b.aberta ? 0 : a.aberta ? -1 : 1) || (rOrd[norm(a.risco)] ?? 3) - (rOrd[norm(b.risco)] ?? 3) || ((a.prazo || 0) - (b.prazo || 0)));
 
   alerts.sort((a, b) => SEV[b.sev] - SEV[a.sev]);
-  return {C, mapa, silos, siloDe, armazens, armGranel, est, quadras, thermo, termRel, verif, ocorr, aer, fito, expurgos, trats, prodsPlan, certs, equipe, epis, docs, treins, aptos, mans, pends, alerts, dq, nSens, ocLin};
+  return {C, mapa, silos, siloDe, capTot, armazens, armGranel, est, quadras, thermo, termRel, verif, ocorr, aer, fito, expurgos, trats, prodsPlan, certs, equipe, epis, docs, treins, aptos, mans, pends, alerts, dq, nSens, ocLin};
 }
 
 /* ============================================================ renderização */
@@ -1581,7 +1593,7 @@ function siloCard(S) {
     <div class="hd"><span class="nm">${esc(S.code)}</span>${badge(S.status.sev, S.status.txt)}</div>
     <div class="tank" title="Ocupação estimada, informada na planilha de ocupação. Não altera a leitura da termometria."><div class="fill" style="height:${((pct || 0) * 100).toFixed(1)}%"></div><div class="pct"><span>${pct != null ? "≈ " + fmtN(pct * 100, 0) + "%" : "?"}</span></div></div>
     <div class="pr">${esc(S.prod || (S.vazio ? "0% pela planilha de ocupação" : pct == null ? "ocupação não informada" : "—"))}</div>
-    <div class="tt">${S.t != null && !S.vazio ? "≈ " + fmtT(S.t, 0) : "&nbsp;"}</div>
+    <div class="tt">${S.t != null && !S.vazio ? `≈ ${fmtT(S.t, 0)} de ${fmtN(S.capEf, 0)} t` : "&nbsp;"}</div>
     <div class="tt">${com ? `Máx. ${fmtTp(T.max.t)} °C · méd. ${fmtN(T.avg)} °C` : T && T.nRaw ? `Ar interno: máx. ${fmtTp(T.maxRaw)} °C` : "&nbsp;"}</div>
     ${com && T.maxRaw > T.max.t ? `<div class="tt">Relatório inteiro: máx. ${fmtTp(T.maxRaw)} °C</div>` : ""}
     ${T && T.parcial ? `<div class="tt" style="color:var(--warn);font-weight:600">⚠ cabo ${T.semLeitura.join(", ")} sem leitura</div>` : ""}
@@ -1638,7 +1650,7 @@ function renderGeral() {
     ["DEPQ", DATA.depq.length, M.fito.mesDepq ? "mês " + mesLabel(M.fito.mesDepq) : null, "pessoal"],
     ["Certificados de classificação", DATA.certs.length, DATA.certs.length ? DATA.certs.length + " laudo(s)" : null, "qualidade"],
     ["Fotos", FOTOS.length, FOTOS.length ? Object.entries(fr.porTipo).map(([k, n]) => `${n} de ${FOTO_TIPOS[k].curto.toLowerCase()}`).join(", ") : null, "fotos"],
-    ["Logo (imagem com \"logo\" no nome)", DATA.logo ? 1 : 0, DATA.logo ? "carregada" : null, "geral"],
+    ["Logo (pasta Identidade_Visual)", DATA.logo ? 1 : 0, DATA.logo ? "carregada" : null, "geral"],
     ["Ocupação dos armazéns (planilha)", (DATA.ocupArm || []).length, Object.keys(M.quadras || {}).length ? Object.entries(M.quadras).map(([k, o]) => `${k} em ${fmtD(toDate(o.data))}`).join(" · ") : null, "estoque"],
     ["Croqui da UA (mapa_ua.json)", DATA.mapa ? 1 : 0, DATA.mapa ? "planta carregada" : null, "mapa"],
     ["Cadastros manuais (planilha do painel)", DATA.plan ? 1 : 0, DATA.plan ? (DATA.plan._file || "carregada") : null, "manut"],
@@ -1742,6 +1754,7 @@ function renderSilos() {
           <dt>Ocupação estimada</dt><dd>${S.ocup != null ? "≈ " + fmtN(S.ocup * 100, 0) + "% (planilha de " + fmtD(S.ocupData) + ")" : "não informada"}</dd>
           <dt>Produto</dt><dd>${esc(S.prod || "—")}</dd>
           <dt>Quantidade estimada</dt><dd>${S.t != null && !S.vazio ? `≈ ${fmtT(S.t, 0)} <span class="note" style="font-weight:400">(${S.tFonte})</span>` : "—"}</dd>
+          <dt>Capacidade efetiva</dt><dd>≈ ${fmtT(S.capEf, 0)} <span class="note" style="font-weight:400">(${fmtN(S.capI.fator * 100, 0)}% dos ${fmtT(S.cap, 0)} nominais)</span></dd>
           <dt>Temperatura média</dt><dd>${com ? fmtN(T.avg) + " °C" : "—"}</dd>
           <dt>Temperatura máxima</dt><dd>${com ? `${fmtTp(T.max.t)} °C (cabo ${T.max.c}, sensor ${T.max.s})` : "—"}</dd>
           ${T && T.nFora ? `<dt>Relatório inteiro</dt><dd>${`máx. ${fmtTp(T.maxRaw)} °C · méd. ${fmtN(T.avgRaw)} °C <span class="note" style="font-weight:400">(${T.nRaw} sensores${T.nFora ? ", " + T.nFora + " no ar" : ""}${T.susp.length ? "; " + T.susp.length + " implausível(is) à parte" : ""})</span>`}</dd>` : ""}
@@ -1870,6 +1883,21 @@ function confiabHTML(print) {
 function renderConfiab() { $("#v-confiab").innerHTML = confiabHTML(false); }
 
 /* ---------- estoque ---------- */
+/* explicação do cálculo da capacidade efetiva dos silos, com os números usados */
+function capacidadeHTML() {
+  const S = M.silos[0]; if (!S || !S.capI) return "";
+  const c = S.capI, C = M.C, f = (v, d = 1) => fmtN(v, d);
+  return `<div class="card" style="margin-top:12px"><h3>Como a quantidade por silo é estimada</h3>
+    <ol style="margin:4px 0 0;padding-left:20px;font-size:14px;display:flex;flex-direction:column;gap:3px">
+      <li>Capacidade nominal (cilindro cheio e nivelado): <b>${fmtT(c.nominal, 0)}</b>${M.silos.some(s => s.cap !== c.nominal) ? " (há silos com capacidade própria na aba Locais)" : ""}.</li>
+      <li>Com massa específica de ${f(c.rho, 2)} t/m³, isso equivale a ${f(c.nominal / c.rho, 0)} m³; com diâmetro de ${f(c.d)} m (área de ${f(c.A, 0)} m²), a altura útil do cilindro é de ${f(c.H)} m.</li>
+      <li>Enchido pelo centro, o grão forma um cone no topo. Com ângulo de repouso de ${f(C.angRepouso, 0)}°, o cone tem ${f(c.hc)} m de altura (raio × tangente do ângulo).</li>
+      <li>Com o pico na altura do topo do cilindro, fica sem grão o volume entre o cone e o topo: ⅔ × ${f(c.A, 0)} m² × ${f(c.hc)} m = ${f(c.vazio, 0)} m³ ≈ ${fmtT(c.vazio * c.rho, 0)}.</li>
+      <li>Capacidade efetiva por silo: ${fmtT(c.nominal, 0)} − ${fmtT(c.vazio * c.rho, 0)} ≈ <b>${fmtT(c.ef, 0)}</b> (${f(c.fator * 100, 0)}% da nominal). Total dos ${M.silos.length} silos: <b>${fmtT(M.capTot, 0)}</b>.</li>
+      <li>Quantidade estimada = capacidade efetiva × ocupação informada na planilha (100% = silo cheio até onde o cone permite).</li>
+    </ol>
+    <p class="note">Massa específica do milho a granel de 750 kg/m³ e ângulo de repouso de cerca de 35° para milho com 13% de umidade, conforme o material técnico do projeto. O diâmetro de ${f(c.d)} m foi medido no croqui: informe o diâmetro interno real na aba Config ("Diâmetro interno do silo (m)") para maior precisão. Silos com fundo cônico ou cobertura que permita o pico acima do cilindro têm outra capacidade.</p></div>`;
+}
 function renderEstoque() {
   if (!M.est.rep) { $("#v-estoque").innerHTML = `<h2>Estoque</h2><div class="empty">Nenhum Controle de Estoque carregado. Emita no SAAGRA o relatório "Controle Fiscal Diário de Estoque por C.P.E." (todos os armazéns, mês fechado) em PDF e salve na pasta Controle_de_Estoque.</div>`; return; }
   const linha = i => `<tr><td>${esc(titulo(i.produto))}<div class="note" style="margin:0">${esc(i.cod)}</div></td><td class="n">${fmtN(i.ant.kg / 1000, 3)}</td><td class="n">${i.ent.kg ? "+" + fmtN(i.ent.kg / 1000, 3) : "–"}</td><td class="n">${i.sai.kg ? "−" + fmtN(i.sai.kg / 1000, 3) : "–"}</td><td class="n"><b>${fmtN(i.t, 3)}</b></td><td class="n">${i.saldo.vol ? fmtN(i.saldo.vol, 0) : "–"}</td><td class="n">${fmtR(i.saldo.rs)}</td></tr>`;
@@ -1890,9 +1918,10 @@ function renderEstoque() {
       <div class="tbl-wrap"><table><thead><tr><th>Produto</th><th class="n">Anterior</th><th class="n">Entrada</th><th class="n">Saída</th><th class="n">Saldo (t)</th><th class="n">Volumes</th><th class="n">Valor fiscal</th></tr></thead><tbody>
         ${a.itens.slice().sort((x, y) => y.t - x.t).map(linha).join("")}
       </tbody></table></div>
-      ${a.granel && M.silos.length ? `<h3 style="margin-top:14px">Distribuição pelos silos</h3><div class="tbl-wrap"><table><thead><tr><th>Silo</th><th class="n">Ocupação</th><th class="n">Quantidade estimada (t)</th><th>Critério</th><th>Último expurgo</th></tr></thead><tbody>
-        ${M.silos.map(s => `<tr><td><a href="#" data-go="silo:${esc(s.code)}">${esc(s.code)}</a></td><td class="n">${s.ocup != null ? fmtN(s.ocup * 100, 0) + "%" : "–"}</td><td class="n">${s.t != null ? fmtN(s.t, 0) : "–"}</td><td>${esc(s.tFonte || "—")}</td><td>${s.fito.ultExp ? fmtD(s.fito.ultExp) : s.fito.semExp ? "sem expurgo (DOF)" : "—"}</td></tr>`).join("")}
-      </tbody></table></div><p class="note">A quantidade por silo é uma estimativa. O SAAGRA informa o saldo do armazém inteiro; o painel o distribui pela ocupação informada na planilha (${M.ocLin.length ? fmtD(M.ocLin[M.ocLin.length - 1].d) : "não carregada"}). Com a capacidade de cada silo cadastrada, a estimativa passa a ser capacidade × ocupação.</p>` : ""}`).join("")}`;
+      ${a.granel && M.silos.length ? `<h3 style="margin-top:14px">Distribuição pelos silos</h3><div class="tbl-wrap"><table><thead><tr><th>Silo</th><th class="n">Ocupação</th><th class="n">Quantidade estimada (t)</th><th class="n">Capacidade efetiva (t)</th><th>Critério</th><th>Último expurgo</th></tr></thead><tbody>
+        ${M.silos.map(s => `<tr><td><a href="#" data-go="silo:${esc(s.code)}">${esc(s.code)}</a></td><td class="n">${s.ocup != null ? fmtN(s.ocup * 100, 0) + "%" : "–"}</td><td class="n">${s.t != null ? fmtN(s.t, 0) : "–"}</td><td class="n">${fmtN(s.capEf, 0)}</td><td>${esc(s.tFonte || "—")}</td><td>${s.fito.ultExp ? fmtD(s.fito.ultExp) : s.fito.semExp ? "sem expurgo (DOF)" : "—"}</td></tr>`).join("")}
+      <tr><td colspan="2"><b>Total</b></td><td class="n"><b>${fmtN(M.silos.reduce((t, s) => t + (s.t || 0), 0), 0)}</b></td><td class="n"><b>${fmtN(M.capTot, 0)}</b></td><td colspan="2">SAAGRA: ${fmtN(a.saldoT, 0)} t</td></tr></tbody></table></div>
+      ${capacidadeHTML()}` : ""}`).join("")}`;
   if (currentTab === "estoque") drawEstChart();
 }
 function drawEstChart() {
@@ -2883,7 +2912,7 @@ function croquiArmazemSVG(c) {
 function abrirDoc({titulo, html, svg, paisagem, nomeArq}) {
   let v = $("#docv");
   if (!v) { v = document.createElement("div"); v.id = "docv"; v.setAttribute("role", "dialog"); v.setAttribute("aria-modal", "true"); document.body.appendChild(v); }
-  v.innerHTML = `<div class="docbar"><b>${esc(titulo)}</b><span class="sp"></span>${svg ? `<button class="btn" id="docSvg">Baixar SVG</button>` : ""}<button class="btn pri" id="docPrint">🖨️ Imprimir ou salvar em PDF</button><button class="btn" id="docClose">Fechar</button></div>
+  v.innerHTML = `<div class="docbar"><b>${esc(titulo)}</b>${DATA && DATA.logo ? "" : `<span class="note" style="margin:0">Logo da Conab não encontrada: salve a imagem na pasta Identidade_Visual da UA.</span>`}<span class="sp"></span>${svg ? `<button class="btn" id="docSvg">Baixar SVG</button>` : ""}<button class="btn pri" id="docPrint">🖨️ Imprimir ou salvar em PDF</button><button class="btn" id="docClose">Fechar</button></div>
     <div class="docpages${paisagem ? " a3" : ""}">${svg ? `<div class="folha a3">${svg}</div>` : html}</div>`;
   v.classList.add("on"); document.body.classList.add("comdoc");
   $("#docClose").onclick = fecharDoc;
@@ -2923,6 +2952,7 @@ function resumoDe(tab) {
     const T0 = Object.values(M.thermo)[0];
     if (T0) R.push(`Última leitura de termometria: ${T0.repD[T0.lastDk] ? fmtDH(T0.lastD) + " (" + T0.repD[T0.lastDk].file + ")" : fmtD(T0.lastD)}.`);
     M.silos.forEach(s => { const T = s.T; R.push(`${s.code}: ${s.status.txt.toLowerCase()}${T && T.nRaw ? ` · máx. ${fmtTp(T.maxRaw)} °C · méd. ${fmtN(T.avgRaw)} °C` : ""}${s.ocup != null ? ` · ocupação ≈ ${fmtN(s.ocup * 100, 0)}%` : ""}${T && T.semLeitura.length ? ` · cabo(s) ${T.semLeitura.join(", ")} sem leitura` : ""}.`); });
+    if (M.silos[0] && M.silos[0].capI) R.push(`Capacidade efetiva por silo ≈ ${fmtT(M.silos[0].capEf, 0)} (${fmtT(M.silos[0].cap, 0)} nominais menos o espaço do cone de grãos no topo); total ≈ ${fmtT(M.capTot, 0)}; estimado pela ocupação ≈ ${fmtT(M.silos.reduce((t, s) => t + (s.t || 0), 0), 0)}${M.armGranel ? `; SAAGRA ${fmtT(M.armGranel.saldoT, 0)}` : ""}.`);
     R.push(`Limites usados: atenção a partir de ${C.tAtt} °C e crítico a partir de ${C.tCrit} °C (Norma CONAB 30.101, Cap. III-VI, 4.1 c).`);
   } else if (tab === "confiab") {
     const Ts = Object.values(M.thermo), off = Ts.reduce((a, T) => a + T.semLeitura.length, 0), tot = Ts.reduce((a, T) => a + T.cabos.length, 0);
@@ -3036,7 +3066,7 @@ function demoDados() {
   const prods = {
     "Armazém 1": [["1001", "ARROZ BENEFICIADO TIPO 1", 420000, 30000, 85000], ["1002", "FEIJAO CARIOCA TIPO 1", 260000, 0, 40000], ["1003", "LEITE EM PO INTEGRAL", 38000, 12000, 9000], ["1004", "FARINHA DE MANDIOCA", 95000, 20000, 15000], ["1005", "CESTA DE ALIMENTOS", 64000, 48000, 52000], ["1006", "ACUCAR CRISTAL", 22000, 0, 4000]],
     "Armazém 2": [["2001", "MILHO EM GRAOS ENSACADO", 510000, 0, 120000], ["2002", "FARINHA DE TRIGO", 70000, 25000, 30000], ["2003", "FUBA DE MILHO", 44000, 0, 6000], ["2004", "MACARRAO", 31000, 10000, 8000]],
-    "Armazém 3": [["3001", "MILHO EM GRAOS A GRANEL", 9800000, 1450000, 600000]],
+    "Armazém 3": [["3001", "MILHO EM GRAOS A GRANEL", 5000000, 900000, 300000]],
   };
   [1, 0].forEach(k => {
     const m = mesAnt(k + 1), de = new Date(m.y, m.m - 1, 1), ate = new Date(m.y, m.m, 0);
@@ -3128,7 +3158,10 @@ const FS_OK = "showDirectoryPicker" in window;
 const CACHE_V = "2.2";            // mudar quando os leitores de documentos mudarem
 let DIR = null, lastSig = "", syncing = false;
 const docCache = new Map();       // "caminho|tamanho|data" → {tipo, dado}
-const relevante = n => isPdf(n) || isSheet(n) || isJson(n) || isImg(n) || isHeic(n);
+const isSvg = n => /\.svg$/i.test(n);
+const relevante = n => isPdf(n) || isSheet(n) || isJson(n) || isImg(n) || isHeic(n) || isSvg(n);
+/* logo: imagem com "logo" no nome, ou qualquer imagem dentro de uma pasta Identidade_Visual, Logo ou Marca */
+const ehLogo = e => (isImg(e.path) || isSvg(e.path)) && (/logo/i.test(e.file.name) || /(^|\/)[^/]*(logo|identidade|marca)[^/]*\//i.test(e.path)) && e.file.size < 3e6;
 
 function idb() { return new Promise((ok, err) => { const r = indexedDB.open("painelUA", 1); r.onupgradeneeded = () => r.result.createObjectStore("kv"); r.onsuccess = () => ok(r.result); r.onerror = () => err(r.error); }); }
 async function idbGet(k) { try { const db = await idb(); return await new Promise(ok => { const q = db.transaction("kv").objectStore("kv").get(k); q.onsuccess = () => ok(q.result); q.onerror = () => ok(null); }); } catch (e) { return null; } }
@@ -3176,7 +3209,7 @@ async function ingerir(ent, opt) {
   const D = subst ? dataVazia() : DATA;
   D.ignorados = subst ? [] : (D.ignorados || []);
   const hist = (M && !(META && META.demo) ? M.C.histDias : 30) + 2, lim = Date.now() - hist * DAY;
-  const docs = ent.filter(e => !isImg(e.path) && !isHeic(e.path)).filter(e => {
+  const docs = ent.filter(e => !isImg(e.path) && !isHeic(e.path) && !isSvg(e.path)).filter(e => {
     if (!isPdf(e.path) || !/termometria/i.test(e.path)) return true;      // relatórios de termometria antigos não precisam ser relidos
     const m = e.file.name.match(/(\d{4})[_-](\d{2})[_-](\d{2})/); return !m || new Date(+m[1], m[2] - 1, +m[3]).getTime() >= lim;
   });
@@ -3188,7 +3221,7 @@ async function ingerir(ent, opt) {
     juntar(D, r, e); cont[r.tipo] = (cont[r.tipo] || 0) + 1;
   }
   D.term.sort((a, b) => String(a.date).localeCompare(String(b.date)));
-  const lg = ent.filter(e => isImg(e.path) && (/logo/i.test(e.file.name) || /identidade/i.test(e.path)) && e.file.size < 3e6).sort((a, b) => b.file.lastModified - a.file.lastModified)[0];
+  const lg = ent.filter(ehLogo).sort((a, b) => (/logo/i.test(b.file.name) - /logo/i.test(a.file.name)) || (b.file.lastModified - a.file.lastModified))[0];
   if (lg) { try { D.logo = await new Promise((ok, er) => { const r = new FileReader(); r.onload = () => ok(r.result); r.onerror = er; r.readAsDataURL(lg.file); }); } catch (e) { /* sem logo */ } }
   else if (subst) D.logo = null;
   const imgs = ent.filter(e => (isImg(e.path) || isHeic(e.path)) && e !== lg);
