@@ -54,9 +54,6 @@ a{color:var(--info)}
 .app{display:grid;grid-template-columns:272px minmax(0,1fr);min-height:100vh}
 .side{position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;gap:16px;padding:20px 14px 16px;background:linear-gradient(180deg,#0f3d2b 0%,#0b2e20 100%);color:#e9f1ec;scrollbar-width:thin}
 .marca{display:flex;gap:11px;align-items:center;padding:0 4px}
-.logo{min-width:48px;height:52px;flex:0 0 auto;display:flex;align-items:center;justify-content:center}
-.logo img{display:block;max-width:64px;max-height:52px;width:auto;height:auto;background:none;padding:0;border-radius:0;object-fit:contain;filter:drop-shadow(0 1px 2px rgba(0,0,0,.25))}
-.logo svg{width:48px;height:48px}
 .inst .cia{font-weight:700;font-size:13.5px;line-height:1.25;color:#fff;letter-spacing:.005em}
 .inst .sureg{font-size:11.5px;line-height:1.3;opacity:.78;margin-top:3px}
 .ua{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
@@ -326,7 +323,7 @@ footer{border-top:1px solid var(--border);padding:14px 0 26px}
 .folha.rel .galeria{grid-template-columns:repeat(4,1fr)}
 .folha.rel .heat td.c{width:46px;height:30px;font-size:11.5px}
 .rel-cab{display:flex;gap:14px;align-items:center;border-bottom:2px solid #0f3d2b;padding-bottom:10px;margin-bottom:12px}
-.rel-logo{width:70px;height:70px;object-fit:contain}
+.rel-logo{height:84px;width:auto;max-width:90px;object-fit:contain;flex:0 0 auto}
 .rel-inst{flex:1;font-size:12px;color:#333}
 .rel-cia{font-size:15px;font-weight:700;color:#0f3d2b}
 .rel-ua{color:#555}
@@ -341,7 +338,7 @@ footer{border-top:1px solid var(--border);padding:14px 0 26px}
 @media (max-width:1000px){
   .app{display:block}
   .side{position:static;height:auto;padding:12px 16px;gap:10px;overflow:visible}
-  .marca .logo{width:40px;height:40px}.logo svg{width:40px;height:40px}
+
   .ua{display:none}
   nav.tabs #tabs{flex-direction:row;overflow-x:auto;gap:4px;scrollbar-width:none;margin:0 -16px;padding:0 16px}
   nav.tabs button{width:auto;padding:8px 10px;font-size:13.5px}
@@ -359,8 +356,6 @@ footer{border-top:1px solid var(--border);padding:14px 0 26px}
 <div class="app">
   <aside class="side">
     <div class="marca">
-      <div class="logo" aria-hidden="true"><img id="logoImg" alt="" hidden>
-        <svg id="logoPh" viewBox="0 0 40 40"><rect x="1" y="1" width="38" height="38" rx="10" fill="rgba(255,255,255,.12)"/><path d="M11 30V16c0-3.3 2.7-6 6-6s6 2.7 6 6v14M23 30V19c0-2.2 1.8-4 4-4s4 1.8 4 4v11M8 30h26" fill="none" stroke="#e7c35a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <div class="inst"><div class="cia" id="instCia">Companhia Nacional de Abastecimento</div><div class="sureg" id="instSureg">Superintendência Regional do Mato Grosso do Sul</div></div>
     </div>
     <div class="ua"><span>Unidade Armazenadora</span><b id="uaName">Painel da UA</b></div>
@@ -547,6 +542,9 @@ const CDN = {
 const lsGet = (k, def) => { try { const v = localStorage.getItem(k); return v == null ? def : JSON.parse(v); } catch (e) { return def; } };
 const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } };
 const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+/* logo da Conab (arquivo fornecido pelo usuário) usada no cabeçalho de todos os relatórios */
+const LOGO_PADRAO = "data:image/png;base64,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";
 
 /* ============================================================ leitores de documentos */
 const isSheet = n => /\.(xlsx|xls|ods)$/i.test(n) && !/^(~\$|\.~lock)/.test(n);
@@ -1042,7 +1040,7 @@ function buildModel() {
     nr33Meses: cfg("validadedanr33meses", 12), nr35Meses: cfg("validadedanr35meses", 24), asoMeses: cfg("validadedoasomeses", 12),
     avisoInset: cfg("avisodevalidadedeinseticidadias", 120), umidMax: cfg("umidademaximarecomendada", 14),
     /* capacidade dos silos: nominal (cilindro cheio e nivelado) corrigida pelo cone formado pelos grãos no topo */
-    capNominal: cfg(norm("Capacidade nominal do silo (t)"), 2000), diamSilo: cfg(norm("Diâmetro interno do silo (m)"), null),
+    capNominal: cfg(norm("Capacidade nominal do silo (t)"), null), altSilo: cfg(norm("Altura do cilindro do silo (m)"), 19), diamSilo: cfg(norm("Diâmetro interno do silo (m)"), null),
     densGrao: cfg(norm("Massa específica do grão (t/m³)"), 0.75), angRepouso: cfg(norm("Ângulo de repouso do grão (°)"), 35),
   };
 
@@ -1096,10 +1094,13 @@ function buildModel() {
      A capacidade nominal corresponde ao cilindro cheio e nivelado. Enchido pelo centro, o grão forma no topo um cone com o
      ângulo de repouso; com o pico na altura do topo do cilindro, fica vazio o volume entre o cone e o topo: 2/3 × área × altura do cone. */
   const capSilo = n => {
-    const nominal = capDe["Silo " + n] || C.capNominal, ms = mapa && mapa.silos ? mapa.silos.find(s => +s.n === n) : null;
-    const d = C.diamSilo || (ms && ms.d) || 14.8, r = d / 2, A = Math.PI * r * r, rho = C.densGrao, H = nominal / rho / A;
+    /* nominal: informada (aba Locais ou Config) ou calculada pela geometria do cilindro (área × altura × massa específica) */
+    const ms = mapa && mapa.silos ? mapa.silos.find(s => +s.n === n) : null;
+    const d = C.diamSilo || (ms && ms.d) || 14.8, r = d / 2, A = Math.PI * r * r, rho = C.densGrao;
+    const inf = capDe["Silo " + n] || C.capNominal, fonteCap = capDe["Silo " + n] ? "locais" : C.capNominal ? "config" : "geometria";
+    const nominal = inf || rho * A * C.altSilo, H = nominal / rho / A;
     const hc = Math.min(H, r * Math.tan(C.angRepouso * Math.PI / 180)), vazio = 2 / 3 * A * hc, ef = nominal - rho * vazio;
-    return {nominal, ef, d, A, H, hc, vazio, rho, fator: ef / nominal};
+    return {nominal, ef, d, A, H, hc, vazio, rho, fator: ef / nominal, fonteCap};
   };
   const somaOc = silos.reduce((s, x) => s + (x.ocup || 0), 0);
   const prodGranel = armGranel ? armGranel.itens.filter(i => i.t > 0.0005).map(i => titulo(i.produto)).join(", ") : null;
@@ -1539,7 +1540,7 @@ function render() {
   M = buildModel();
   document.title = "Painel – " + M.C.nome;
   $("#uaName").textContent = M.C.nome;
-  const I = instNome(); $("#instCia").textContent = I.cia; $("#instSureg").textContent = I.sureg; aplicarLogo();
+  const I = instNome(); $("#instCia").textContent = I.cia; $("#instSureg").textContent = I.sureg;
   srcInfo();
   const fAl = fotoAlertas();
   const counts = {};
@@ -1559,7 +1560,6 @@ function srcInfo() {
   const el = $("#srcInfo");
   el.textContent = `Dados: ${META.nome} · atualizado em ${fmtDH(new Date(META.loadedAt))}${META.demo ? " · exemplo fictício" : ""}${META.verificado ? " · verificado às " + META.verificado : ""}`;
 }
-function aplicarLogo() { const img = $("#logoImg"), ph = $("#logoPh"), src = DATA && DATA.logo; if (!img) return; if (src) { img.src = src; img.hidden = false; ph.style.display = "none"; } else { img.hidden = true; img.removeAttribute("src"); ph.style.display = ""; } }
 function showTab(k) {
   currentTab = k;
   const nome = (TABS.find(t => t[0] === k) || [k, k])[1];
@@ -1650,7 +1650,7 @@ function renderGeral() {
     ["DEPQ", DATA.depq.length, M.fito.mesDepq ? "mês " + mesLabel(M.fito.mesDepq) : null, "pessoal"],
     ["Certificados de classificação", DATA.certs.length, DATA.certs.length ? DATA.certs.length + " laudo(s)" : null, "qualidade"],
     ["Fotos", FOTOS.length, FOTOS.length ? Object.entries(fr.porTipo).map(([k, n]) => `${n} de ${FOTO_TIPOS[k].curto.toLowerCase()}`).join(", ") : null, "fotos"],
-    ["Logo (pasta Identidade_Visual)", DATA.logo ? 1 : 0, DATA.logo ? "carregada" : null, "geral"],
+    ["Logo dos croquis (pasta Identidade_Visual)", DATA.logo ? 1 : 0, DATA.logo ? "carregada" : null, "geral"],
     ["Ocupação dos armazéns (planilha)", (DATA.ocupArm || []).length, Object.keys(M.quadras || {}).length ? Object.entries(M.quadras).map(([k, o]) => `${k} em ${fmtD(toDate(o.data))}`).join(" · ") : null, "estoque"],
     ["Croqui da UA (mapa_ua.json)", DATA.mapa ? 1 : 0, DATA.mapa ? "planta carregada" : null, "mapa"],
     ["Cadastros manuais (planilha do painel)", DATA.plan ? 1 : 0, DATA.plan ? (DATA.plan._file || "carregada") : null, "manut"],
@@ -1887,16 +1887,19 @@ function renderConfiab() { $("#v-confiab").innerHTML = confiabHTML(false); }
 function capacidadeHTML() {
   const S = M.silos[0]; if (!S || !S.capI) return "";
   const c = S.capI, C = M.C, f = (v, d = 1) => fmtN(v, d);
-  return `<div class="card" style="margin-top:12px"><h3>Como a quantidade por silo é estimada</h3>
+  const geo = c.fonteCap === "geometria";
+  return `<div class="card" style="margin-top:12px"><h3>Como a capacidade e a quantidade por silo são estimadas</h3>
     <ol style="margin:4px 0 0;padding-left:20px;font-size:14px;display:flex;flex-direction:column;gap:3px">
-      <li>Capacidade nominal (cilindro cheio e nivelado): <b>${fmtT(c.nominal, 0)}</b>${M.silos.some(s => s.cap !== c.nominal) ? " (há silos com capacidade própria na aba Locais)" : ""}.</li>
-      <li>Com massa específica de ${f(c.rho, 2)} t/m³, isso equivale a ${f(c.nominal / c.rho, 0)} m³; com diâmetro de ${f(c.d)} m (área de ${f(c.A, 0)} m²), a altura útil do cilindro é de ${f(c.H)} m.</li>
+      <li>Área da base: diâmetro de ${f(c.d)} m → π × ${f(c.d / 2, 2)}² = <b>${f(c.A, 1)} m²</b>.</li>
+      ${geo ? `<li>Volume do cilindro: ${f(c.A, 1)} m² × ${f(c.H)} m de altura = ${f(c.A * c.H, 0)} m³.</li>
+      <li>Capacidade nominal (cilindro cheio e nivelado): ${f(c.A * c.H, 0)} m³ × ${f(c.rho, 2)} t/m³ = <b>${fmtT(c.nominal, 0)}</b>.</li>`
+      : `<li>Capacidade nominal (cilindro cheio e nivelado) informada ${c.fonteCap === "locais" ? "na aba Locais" : "na aba Config"}: <b>${fmtT(c.nominal, 0)}</b>${M.silos.some(s => s.cap !== c.nominal) ? " (há silos com capacidade própria)" : ""}; com ${f(c.rho, 2)} t/m³ equivale a ${f(c.nominal / c.rho, 0)} m³, ou ${f(c.H)} m de altura de cilindro.</li>`}
       <li>Enchido pelo centro, o grão forma um cone no topo. Com ângulo de repouso de ${f(C.angRepouso, 0)}°, o cone tem ${f(c.hc)} m de altura (raio × tangente do ângulo).</li>
-      <li>Com o pico na altura do topo do cilindro, fica sem grão o volume entre o cone e o topo: ⅔ × ${f(c.A, 0)} m² × ${f(c.hc)} m = ${f(c.vazio, 0)} m³ ≈ ${fmtT(c.vazio * c.rho, 0)}.</li>
+      <li>Como a cobertura dos silos é plana, o pico do cone fica no nível do teto e sobra sem grão o volume ao redor do cone: ⅔ × ${f(c.A, 0)} m² × ${f(c.hc)} m = ${f(c.vazio, 0)} m³ ≈ ${fmtT(c.vazio * c.rho, 0)}.</li>
       <li>Capacidade efetiva por silo: ${fmtT(c.nominal, 0)} − ${fmtT(c.vazio * c.rho, 0)} ≈ <b>${fmtT(c.ef, 0)}</b> (${f(c.fator * 100, 0)}% da nominal). Total dos ${M.silos.length} silos: <b>${fmtT(M.capTot, 0)}</b>.</li>
       <li>Quantidade estimada = capacidade efetiva × ocupação informada na planilha (100% = silo cheio até onde o cone permite).</li>
     </ol>
-    <p class="note">Massa específica do milho a granel de 750 kg/m³ e ângulo de repouso de cerca de 35° para milho com 13% de umidade, conforme o material técnico do projeto. O diâmetro de ${f(c.d)} m foi medido no croqui: informe o diâmetro interno real na aba Config ("Diâmetro interno do silo (m)") para maior precisão. Silos com fundo cônico ou cobertura que permita o pico acima do cilindro têm outra capacidade.</p></div>`;
+    <p class="note">Diâmetro tirado da área de 171,87 m² anotada no croqui da UA${geo ? `; altura do cilindro de ${f(c.H)} m <b>estimada</b> pela proporção altura/diâmetro dos silos nas fotos (faixa provável de 17,5 a 21 m, o que dá ±10% na capacidade)` : ""}. Massa específica de 750 kg/m³ e ângulo de repouso de cerca de 35° para milho com 13% de umidade, conforme o material técnico do projeto; soja e trigo têm outros valores. Para confirmar, informe na aba Config a altura e o diâmetro internos reais (projeto dos silos ou medição) ou a capacidade de projeto.</p></div>`;
 }
 function renderEstoque() {
   if (!M.est.rep) { $("#v-estoque").innerHTML = `<h2>Estoque</h2><div class="empty">Nenhum Controle de Estoque carregado. Emita no SAAGRA o relatório "Controle Fiscal Diário de Estoque por C.P.E." (todos os armazéns, mês fechado) em PDF e salve na pasta Controle_de_Estoque.</div>`; return; }
@@ -2734,6 +2737,7 @@ const corTexto = hex => { const n = parseInt(hex.slice(1), 16), r = n >> 16, g =
 
 /* cabeçalho institucional comum a croquis */
 function cabecalhoSVG(W, titulo, sub) {
+  /* croquis: mantém a logo da pasta Identidade_Visual (símbolo) no quadro 20×20, como aprovado pelo usuário */
   const I = instNome(), lx = DATA && DATA.logo ? 34 : 10;
   return `${DATA && DATA.logo ? `<image href="${DATA.logo}" x="10" y="8" width="20" height="20" preserveAspectRatio="xMidYMid meet"/>` : ""}
     ${sT(lx, 15, I.cia, 4.6, {bold: true, cor: "#123f2b"})}${sT(lx, 21, I.sureg, 3.3, {cor: "#333"})}${sT(lx, 26.5, M.C.nome, 3, {cor: "#555"})}
@@ -2912,7 +2916,7 @@ function croquiArmazemSVG(c) {
 function abrirDoc({titulo, html, svg, paisagem, nomeArq}) {
   let v = $("#docv");
   if (!v) { v = document.createElement("div"); v.id = "docv"; v.setAttribute("role", "dialog"); v.setAttribute("aria-modal", "true"); document.body.appendChild(v); }
-  v.innerHTML = `<div class="docbar"><b>${esc(titulo)}</b>${DATA && DATA.logo ? "" : `<span class="note" style="margin:0">Logo da Conab não encontrada: salve a imagem na pasta Identidade_Visual da UA.</span>`}<span class="sp"></span>${svg ? `<button class="btn" id="docSvg">Baixar SVG</button>` : ""}<button class="btn pri" id="docPrint">🖨️ Imprimir ou salvar em PDF</button><button class="btn" id="docClose">Fechar</button></div>
+  v.innerHTML = `<div class="docbar"><b>${esc(titulo)}</b><span class="sp"></span>${svg ? `<button class="btn" id="docSvg">Baixar SVG</button>` : ""}<button class="btn pri" id="docPrint">🖨️ Imprimir ou salvar em PDF</button><button class="btn" id="docClose">Fechar</button></div>
     <div class="docpages${paisagem ? " a3" : ""}">${svg ? `<div class="folha a3">${svg}</div>` : html}</div>`;
   v.classList.add("on"); document.body.classList.add("comdoc");
   $("#docClose").onclick = fecharDoc;
@@ -3019,7 +3023,7 @@ function relatorio(tab) {
   if (!M) { toast("Carregue os dados primeiro."); return; }
   const nome = ABA_NOME()[tab] || tab, I = instNome(), al = alertasDaAba(tab).filter(a => a.sev === "crit" || a.sev === "warn");
   const html = `<div class="folha rel">
-    <header class="rel-cab">${DATA.logo ? `<img src="${DATA.logo}" alt="Logo" class="rel-logo">` : ""}
+    <header class="rel-cab"><img src="${LOGO_PADRAO}" alt="Logo da Conab" class="rel-logo">
       <div class="rel-inst"><div class="rel-cia">${esc(I.cia)}</div><div>${esc(I.sureg)}</div><div class="rel-ua">${esc(M.C.nome)}</div></div>
       <div class="rel-tit"><div class="rel-h">Relatório — ${esc(nome)}</div><div>Emitido em ${fmtDH(new Date())}</div><div class="rel-fonte">Dados: ${esc(META ? META.nome : "")}${META && META.demo ? " (exemplo fictício)" : ""}</div></div></header>
     <section class="rel-resumo"><h2>Resumo</h2><ul>${resumoDe(tab).map(t => `<li>${esc(t)}</li>`).join("")}</ul>
