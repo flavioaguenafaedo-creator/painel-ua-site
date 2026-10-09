@@ -5,81 +5,93 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Painel da Unidade Armazenadora</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
 :root{
   color-scheme:light;
-  --bg:#f4f5f2; --surface:#ffffff; --surface-2:#f0f2ee; --border:#dde2da;
-  --text:#18201a; --text-2:#4f5a51; --muted:#7b857c;
-  --brand:#1f5130; --brand-2:#2f6f44; --brand-ink:#ffffff;
-  --ok:#2e7d4f; --ok-bg:#e5f3ea;
-  --warn:#9a6700; --warn-bg:#fff4d6;
-  --crit:#b42318; --crit-bg:#fde8e6;
+  --bg:#f3f5f2; --surface:#ffffff; --surface-2:#f1f4f0; --border:#e1e7e0;
+  --text:#16211b; --text-2:#48544c; --muted:#7a857d;
+  --brand:#0f3d2b; --brand-2:#1f6b48; --brand-ink:#ffffff; --gold:#d4a62a;
+  --ok:#2e7d4f; --ok-bg:#e4f3ea;
+  --warn:#9a6700; --warn-bg:#fff3d1;
+  --crit:#b42318; --crit-bg:#fde7e4;
   --info:#1f5fa8; --info-bg:#e6f0fb;
   --s1:#2a78d6; --s2:#eb6834; --s3:#3f9b63;
-  --shadow:0 1px 2px rgba(20,30,20,.06),0 2px 8px rgba(20,30,20,.05);
-  --radius:10px;
+  --shadow:0 1px 2px rgba(16,40,28,.05),0 6px 22px rgba(16,40,28,.06);
+  --radius:14px;
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
     color-scheme:dark;
-    --bg:#121512; --surface:#1b1f1b; --surface-2:#232823; --border:#323a32;
-    --text:#eef1ec; --text-2:#b9c2b8; --muted:#8a948a;
-    --brand:#3f8a57; --brand-2:#57a56f; --brand-ink:#ffffff;
-    --ok:#5cc186; --ok-bg:#16301f;
-    --warn:#e0a52a; --warn-bg:#352a0f;
-    --crit:#f07a6e; --crit-bg:#3c1a17;
-    --info:#6fa8ec; --info-bg:#172a40;
-    --s1:#3987e5; --s2:#d95926; --s3:#4fb277;
-    --shadow:none;
+    --bg:#0e1311; --surface:#161d19; --surface-2:#1d2621; --border:#2a352e;
+    --text:#eaf0ec; --text-2:#b8c3bb; --muted:#87938a;
+    --brand:#0b2c20; --brand-2:#3fa06f; --brand-ink:#ffffff; --gold:#e2bb4f;
+    --ok:#5cc186; --ok-bg:#15301f; --warn:#e0a52a; --warn-bg:#342a10; --crit:#f07a6e; --crit-bg:#3a1a17; --info:#6fa8ec; --info-bg:#172a40;
+    --s1:#3987e5; --s2:#d95926; --s3:#4fb277; --shadow:0 1px 2px rgba(0,0,0,.3);
   }
 }
 :root[data-theme="dark"]{
   color-scheme:dark;
-  --bg:#121512; --surface:#1b1f1b; --surface-2:#232823; --border:#323a32;
-  --text:#eef1ec; --text-2:#b9c2b8; --muted:#8a948a;
-  --brand:#3f8a57; --brand-2:#57a56f; --brand-ink:#ffffff;
-  --ok:#5cc186; --ok-bg:#16301f;
-  --warn:#e0a52a; --warn-bg:#352a0f;
-  --crit:#f07a6e; --crit-bg:#3c1a17;
-  --info:#6fa8ec; --info-bg:#172a40;
-  --s1:#3987e5; --s2:#d95926; --s3:#4fb277;
-  --shadow:none;
+  --bg:#0e1311; --surface:#161d19; --surface-2:#1d2621; --border:#2a352e;
+  --text:#eaf0ec; --text-2:#b8c3bb; --muted:#87938a;
+  --brand:#0b2c20; --brand-2:#3fa06f; --brand-ink:#ffffff; --gold:#e2bb4f;
+  --ok:#5cc186; --ok-bg:#15301f; --warn:#e0a52a; --warn-bg:#342a10; --crit:#f07a6e; --crit-bg:#3a1a17; --info:#6fa8ec; --info-bg:#172a40;
+  --s1:#3987e5; --s2:#d95926; --s3:#4fb277; --shadow:0 1px 2px rgba(0,0,0,.3);
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html,body{margin:0}
-body{background:var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;font-variant-numeric:tabular-nums}
+body{background:var(--bg);color:var(--text);font:15px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
 button,input,select{font:inherit;color:inherit}
 a{color:var(--info)}
-.wrap{max-width:1280px;margin:0 auto;padding:0 16px}
+.wrap{max-width:1320px;margin:0 auto;padding:0 28px}
 
-/* header */
-header.top{background:var(--brand);color:var(--brand-ink)}
-header.top .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;padding-top:12px;padding-bottom:12px}
-.title{flex:1 1 260px;min-width:0}
-.title h1{margin:0;font-size:19px;font-weight:650;letter-spacing:.1px}
-.title .src{font-size:12.5px;opacity:.85;margin-top:2px;overflow-wrap:anywhere}
+/* estrutura: menu lateral + conteúdo */
+.app{display:grid;grid-template-columns:272px minmax(0,1fr);min-height:100vh}
+.side{position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;gap:16px;padding:20px 14px 16px;background:linear-gradient(180deg,#0f3d2b 0%,#0b2e20 100%);color:#e9f1ec;scrollbar-width:thin}
+.marca{display:flex;gap:11px;align-items:center;padding:0 4px}
+.logo{width:48px;height:48px;flex:0 0 auto;display:flex;align-items:center;justify-content:center}
+.logo img{max-width:48px;max-height:48px;border-radius:10px;background:#fff;padding:3px;object-fit:contain}
+.logo svg{width:48px;height:48px}
+.inst .cia{font-weight:700;font-size:13.5px;line-height:1.25;color:#fff;letter-spacing:.005em}
+.inst .sureg{font-size:11.5px;line-height:1.3;opacity:.78;margin-top:3px}
+.ua{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.ua span{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;opacity:.65}
+.ua b{font-size:14.5px;font-weight:650;color:#fff}
+nav.tabs #tabs{display:flex;flex-direction:column;gap:2px}
+nav.tabs button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:transparent;border:0;border-radius:10px;padding:9px 10px;color:rgba(233,241,236,.8);font-size:14px;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s}
+nav.tabs button svg{width:18px;height:18px;flex:0 0 auto;opacity:.85}
+nav.tabs button .lb{flex:1;min-width:0;white-space:normal;line-height:1.25}
+nav.tabs button:hover{background:rgba(255,255,255,.07);color:#fff}
+nav.tabs button[aria-selected="true"]{background:rgba(255,255,255,.13);color:#fff;font-weight:600;box-shadow:inset 3px 0 0 var(--gold)}
+nav.tabs button:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+nav.tabs .count{margin-left:auto;min-width:20px;padding:0 6px;border-radius:10px;font-size:11.5px;line-height:19px;text-align:center;background:#e5484d;color:#fff;font-weight:700}
+nav.tabs .count.w{background:var(--gold);color:#1d1606}
+.side-foot{margin-top:auto;display:flex;flex-direction:column;gap:10px;padding:0 2px}
+.side-btns{display:flex;flex-wrap:wrap;gap:6px}
+.side .btn{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16);color:#fff;font-size:13px;padding:6px 10px}
+.side .btn:hover{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.3)}
+.side .btn.primary{background:var(--gold);border-color:var(--gold);color:#1d1606;font-weight:650}
+.side .src{font-size:11.5px;opacity:.68;line-height:1.4;overflow-wrap:anywhere}
+.content{min-width:0;display:flex;flex-direction:column}
+.pagehead{position:sticky;top:0;z-index:6;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px 16px;padding:14px 28px;flex-wrap:wrap}
+.pagehead .pt{flex:1 1 240px;min-width:0}
+.crumb{font-size:12px;color:var(--muted);letter-spacing:.02em}
+.pagehead h1{margin:2px 0 0;font-size:23px;font-weight:700;letter-spacing:-.015em}
 .actions{display:flex;flex-wrap:wrap;gap:8px}
-.btn{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:8px;padding:7px 12px;cursor:pointer;font-size:14px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:10px;padding:7px 13px;cursor:pointer;font-size:14px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;transition:border-color .15s,background .15s}
 .btn:hover{border-color:var(--brand-2)}
-header .btn{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.28);color:#fff}
-header .btn:hover{background:rgba(255,255,255,.22)}
-header .btn.primary{background:#fff;color:#1f5130;border-color:#fff;font-weight:600}
-
-nav.tabs{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:5}
-nav.tabs .wrap{display:flex;gap:2px;overflow-x:auto;scrollbar-width:thin}
-nav.tabs button{background:none;border:0;border-bottom:3px solid transparent;padding:11px 12px 9px;cursor:pointer;color:var(--text-2);white-space:nowrap;font-size:14px}
-nav.tabs button[aria-selected="true"]{color:var(--text);border-bottom-color:var(--brand-2);font-weight:600}
-nav.tabs .count{display:inline-block;min-width:18px;padding:0 5px;margin-left:5px;border-radius:9px;font-size:11.5px;line-height:18px;text-align:center;background:var(--crit-bg);color:var(--crit);font-weight:700}
-nav.tabs .count.w{background:var(--warn-bg);color:var(--warn)}
-
-main{padding:18px 0 40px}
+.btn.ico{padding:6px 10px}
+main{padding:22px 0 40px;flex:1}
 section.view{display:none}
-section.view.on{display:block}
-h2{font-size:17px;margin:22px 0 10px;font-weight:650}
+section.view.on{display:block;animation:surge .18s ease-out}
+@keyframes surge{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}
+h2{font-size:16.5px;margin:28px 0 12px;font-weight:700;letter-spacing:-.005em;display:flex;align-items:center;gap:9px}
+h2::before{content:"";width:4px;height:17px;border-radius:2px;background:var(--gold);flex:0 0 auto}
 h2:first-child{margin-top:4px}
 h3{font-size:15px;margin:0 0 8px;font-weight:650}
 .sub{color:var(--text-2);font-size:13.5px;margin:-4px 0 12px}
@@ -90,9 +102,10 @@ h3{font-size:15px;margin:0 0 8px;font-weight:650}
 .g-silos{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
 
 /* KPI */
-.kpi{padding:12px 14px;cursor:pointer;text-align:left;width:100%}
-.kpi .lbl{font-size:12.5px;color:var(--text-2)}
-.kpi .val{font-size:26px;font-weight:700;line-height:1.15;margin-top:4px}
+.kpi{padding:14px 16px;cursor:pointer;text-align:left;width:100%;transition:transform .12s,box-shadow .12s}
+.kpi:hover{transform:translateY(-1px)}
+.kpi .lbl{font-size:11.5px;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.kpi .val{font-size:28px;font-weight:750;line-height:1.15;margin-top:6px;letter-spacing:-.02em}
 .kpi .det{font-size:12.5px;color:var(--muted);margin-top:2px}
 .kpi.crit{border-left:4px solid var(--crit)} .kpi.warn{border-left:4px solid var(--warn)} .kpi.ok{border-left:4px solid var(--ok)}
 
@@ -142,7 +155,7 @@ tr:last-child td{border-bottom:0}
 .heat{border-collapse:separate;border-spacing:3px;width:auto}
 .heat td,.heat th{border:0;padding:0;text-align:center}
 .heat th{background:none;font-size:12px;color:var(--muted);padding:2px 6px;position:static}
-.heat td.c{width:64px;height:40px;border-radius:6px;font-weight:650;font-size:13px;color:#1b1b1b;line-height:1.1}
+.heat td.c{vertical-align:middle;width:64px;height:40px;border-radius:6px;font-weight:650;font-size:13px;color:#1b1b1b;line-height:1.1}
 .heat td.c small{display:block;font-weight:500;font-size:10.5px;opacity:.8}
 .heat td.c.hot{outline:3px solid var(--crit);outline-offset:-3px}
 .legend{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:var(--text-2);margin-top:8px;align-items:center}
@@ -162,7 +175,8 @@ tr:last-child td{border-bottom:0}
 .note{font-size:12.5px;color:var(--muted);margin-top:8px}
 
 /* welcome / drop */
-.welcome{max-width:720px;margin:30px auto;text-align:center}
+.welcome{max-width:760px;margin:40px auto;text-align:center}
+.wel-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);padding:30px 28px}
 .welcome h2{font-size:22px}
 .welcome p{color:var(--text-2)}
 .welcome .actions{justify-content:center;margin-top:16px}
@@ -175,7 +189,7 @@ details.dq summary{cursor:pointer;color:var(--text-2);font-size:14px}
 footer{color:var(--muted);font-size:12.5px;padding:10px 0 30px;border-top:1px solid var(--border)}
 
 /* mural */
-body.mural header.top,body.mural nav.tabs,body.mural main,body.mural footer{display:none}
+body.mural .app{display:none}
 #mural{display:none;min-height:100vh;background:#0e120f;color:#f2f5f1;padding:24px}
 body.mural #mural{display:block}
 #mural .mh{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;border-bottom:2px solid #2d3a2f;padding-bottom:10px;margin-bottom:18px}
@@ -196,7 +210,7 @@ body.mural #mural{display:block}
 #boletim{display:none}
 @media print{
   body{background:#fff;color:#000;font-size:11pt}
-  header.top,nav.tabs,main,footer,#mural,#toast,#lightbox,#drop{display:none!important}
+  .app,#mural,#toast,#lightbox,#drop{display:none!important}
   #boletim{display:block!important;padding:0}
   #boletim h1{font-size:16pt;margin:0 0 2pt}
   #boletim h2{font-size:12.5pt;margin:12pt 0 4pt}
@@ -214,7 +228,7 @@ body.mural #mural{display:block}
 .btn.pri{background:var(--brand);color:#fff;border-color:var(--brand);font-weight:600}
 .btn.sm{padding:4px 9px;font-size:13px}
 .btn[aria-pressed="true"]{border-color:var(--brand-2);box-shadow:inset 0 0 0 1px var(--brand-2)}
-.heat td.c.ar{background:var(--surface-2);color:var(--muted);border:1px dashed var(--border);font-weight:500}
+.heat td.c.ar{background:var(--surface-2);color:var(--text);outline:1.5px dashed var(--muted);outline-offset:-2px;font-weight:500}
 .legend i.ar{background:var(--surface-2);border:1px dashed var(--muted)}
 .chip{display:inline-block;padding:3px 10px;border-radius:999px;background:var(--surface-2);border:1px solid var(--border);font-size:13px;margin:2px 2px 2px 0}
 ul.obs{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:14px}
@@ -273,52 +287,125 @@ ul.obs{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;fon
 .prog>i{display:block;height:100%;background:var(--brand-2)}
 @media (max-width:600px){#mapaBox{height:62vh}#mapaInfo{max-height:48%}}
 
+/* visualizador de documentos (croquis e relatórios) */
+#docv{position:fixed;inset:0;z-index:90;background:rgba(15,20,17,.72);display:none;flex-direction:column}
+#docv.on{display:flex}
+#docv .docbar{display:flex;gap:8px;align-items:center;padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--border);flex-wrap:wrap}
+#docv .docbar .sp{flex:1}
+#docv .docpages{flex:1;overflow:auto;padding:20px;display:flex;flex-direction:column;align-items:center;gap:20px}
+#docv .folha{background:#fff;color:#1b1b1b;box-shadow:0 6px 30px rgba(0,0,0,.35);width:min(100%,210mm);padding:12mm 12mm 14mm}
+#docv .folha.a3{width:min(100%,1400px);padding:0}
+#docv .folha.a3 svg{display:block;width:100%;height:auto}
+body.comdoc{overflow:hidden}
+@media print{
+  body.imprimindo > *:not(#docv){display:none!important}
+  body.imprimindo #docv{position:static;display:block!important;background:#fff}
+  body.imprimindo #docv .docbar{display:none!important}
+  body.imprimindo #docv .docpages{display:block;padding:0;overflow:visible}
+  body.imprimindo #docv .folha{box-shadow:none;width:auto;padding:0}
+  body.imprimindo #docv .folha.a3 svg{width:420mm;height:297mm}
+}
+
+.btn.pri{background:var(--brand-2);color:#fff;border-color:var(--brand-2);font-weight:600}
+.btn.pri:hover{filter:brightness(1.07)}
+footer{border-top:1px solid var(--border);padding:14px 0 26px}
+/* relatórios (folha A4, sempre clara) */
+.folha.rel{--bg:#fff;--surface:#fff;--surface-2:#f3f5f2;--border:#d9dfd8;--text:#1b1b1b;--text-2:#444;--muted:#666;--ok:#2e7d4f;--ok-bg:#e4f3ea;--warn:#8a5a00;--warn-bg:#fff3d1;--crit:#b42318;--crit-bg:#fde7e4;--info:#1f5fa8;--info-bg:#e6f0fb;--shadow:none;color:#1b1b1b;font-size:12.5px;line-height:1.45}
+.folha.rel h2{font-size:14.5px;margin:18px 0 8px;break-after:avoid}
+.folha.rel h2::before{background:#0f3d2b}
+.folha.rel h3{font-size:13px;margin:12px 0 6px;break-after:avoid}
+.folha.rel table{font-size:11.5px}
+.folha.rel th{position:static;white-space:normal}
+.folha.rel .tbl-wrap{overflow:visible;border-radius:6px}
+.folha.rel th,.folha.rel td{padding:4px 6px}
+.folha.rel table{width:100%;table-layout:auto}
+.folha.rel td b{white-space:nowrap}
+.folha.rel tr,.folha.rel .al,.folha.rel .card{break-inside:avoid}
+.folha.rel .grid{gap:8px}
+.folha.rel .kpi .val{font-size:20px}
+.folha.rel .galeria{grid-template-columns:repeat(4,1fr)}
+.folha.rel .heat td.c{width:46px;height:30px;font-size:11.5px}
+.rel-cab{display:flex;gap:14px;align-items:center;border-bottom:2px solid #0f3d2b;padding-bottom:10px;margin-bottom:12px}
+.rel-logo{width:56px;height:56px;object-fit:contain}
+.rel-inst{flex:1;font-size:12px;color:#333}
+.rel-cia{font-size:15px;font-weight:700;color:#0f3d2b}
+.rel-ua{color:#555}
+.rel-tit{text-align:right;font-size:11.5px;color:#444}
+.rel-h{font-size:16px;font-weight:700;color:#0f3d2b}
+.rel-fonte{color:#666;max-width:280px;overflow-wrap:anywhere}
+.rel-resumo{background:#f3f7f4;border:1px solid #d6e3da;border-radius:10px;padding:4px 14px 10px;margin-bottom:6px}
+.rel-resumo h2{margin-top:10px}
+.rel-resumo ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:3px}
+.rel-bloco{break-inside:avoid;margin-bottom:12px}
+.rel-ass{display:flex;justify-content:space-around;gap:20px;margin:40px 0 10px;text-align:center;font-size:12px;break-inside:avoid}
+@media (max-width:1000px){
+  .app{display:block}
+  .side{position:static;height:auto;padding:12px 16px;gap:10px;overflow:visible}
+  .marca .logo{width:40px;height:40px}.logo svg{width:40px;height:40px}
+  .ua{display:none}
+  nav.tabs #tabs{flex-direction:row;overflow-x:auto;gap:4px;scrollbar-width:none;margin:0 -16px;padding:0 16px}
+  nav.tabs button{width:auto;padding:8px 10px;font-size:13.5px}
+  nav.tabs button .lb{white-space:nowrap}
+  nav.tabs button[aria-selected="true"]{box-shadow:inset 0 -3px 0 var(--gold)}
+  .side-foot{margin-top:0}
+  .pagehead{position:static;padding:12px 16px}
+  .pagehead h1{font-size:20px}
+  .wrap{padding:0 16px}
+}
+
 </style>
 </head>
 <body>
-<header class="top">
-  <div class="wrap">
-    <div class="title">
-      <h1 id="uaName">Painel da Unidade Armazenadora</h1>
+<div class="app">
+  <aside class="side">
+    <div class="marca">
+      <div class="logo" aria-hidden="true"><img id="logoImg" alt="" hidden>
+        <svg id="logoPh" viewBox="0 0 40 40"><rect x="1" y="1" width="38" height="38" rx="10" fill="rgba(255,255,255,.12)"/><path d="M11 30V16c0-3.3 2.7-6 6-6s6 2.7 6 6v14M23 30V19c0-2.2 1.8-4 4-4s4 1.8 4 4v11M8 30h26" fill="none" stroke="#e7c35a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="inst"><div class="cia" id="instCia">Companhia Nacional de Abastecimento</div><div class="sureg" id="instSureg">Superintendência Regional do Mato Grosso do Sul</div></div>
+    </div>
+    <div class="ua"><span>Unidade Armazenadora</span><b id="uaName">Painel da UA</b></div>
+    <nav class="tabs" aria-label="Seções do painel"><div id="tabs" role="tablist"></div></nav>
+    <div class="side-foot">
+      <div class="side-btns">
+        <button class="btn primary" id="btnFolder" title="Ligar o painel à pasta da UA: lê documentos, planilhas e fotos e se atualiza sozinho" hidden>🔗 Vincular pasta</button>
+        <button class="btn" id="btnDirIn" title="Escolher a pasta da UA (lê todas as subpastas)" hidden>📁 Abrir pasta</button>
+        <button class="btn" id="btnLoad" title="Abrir documentos soltos: PDFs, planilhas e fotos">📂 Abrir arquivos</button>
+        <button class="btn" id="btnMural" title="Tela cheia para TV ou mural">📺 Mural</button>
+        <button class="btn ico" id="btnTheme" title="Alternar tema claro/escuro" aria-label="Alternar tema claro/escuro">◐</button>
+      </div>
       <div class="src" id="srcInfo">Nenhum dado carregado</div>
     </div>
-    <div class="actions">
-      <button class="btn primary" id="btnFolder" title="Ligar o painel à pasta da UA: lê os documentos, a planilha e as fotos, e se atualiza sozinho" hidden>🔗 Vincular pasta</button>
-      <button class="btn" id="btnDirIn" title="Escolher a pasta da UA (lê todas as subpastas)" hidden>📁 Abrir pasta</button>
-      <button class="btn" id="btnLoad" title="Abrir documentos soltos: PDFs, planilhas e fotos">📂 Abrir arquivos</button>
-      <button class="btn" id="btnBoletim" title="Gerar boletim para imprimir ou salvar em PDF">🖨️ Boletim</button>
-      <button class="btn" id="btnMural" title="Tela cheia para TV ou mural">📺 Mural</button>
-      <button class="btn" id="btnTheme" title="Alternar tema claro/escuro" aria-label="Alternar tema claro/escuro">◐</button>
-    </div>
+  </aside>
+  <div class="content">
+    <header class="pagehead">
+      <div class="pt"><div class="crumb" id="pgCrumb">Painel da Unidade Armazenadora</div><h1 id="pgTitle">Bem-vindo</h1></div>
+      <div class="actions" id="pgActions"></div>
+    </header>
+    <main>
+      <div class="wrap" id="views">
+        <div class="welcome" id="welcome">
+          <div class="wel-card">
+            <h2>Painel da Unidade Armazenadora</h2>
+            <p>Vincule a pasta da UA — a pasta que contém as subpastas de termometria, estoque, DOF, DEPQ, classificação, ocupação dos silos e dos armazéns, croqui e fotos — e o painel passa a se atualizar sozinho (Chrome ou Edge).</p>
+            <p class="note">Os documentos são lidos apenas neste navegador: nada é enviado para a internet.</p>
+            <div class="actions">
+              <button class="btn pri" id="btnFolder2" hidden>🔗 Vincular pasta da UA</button>
+              <button class="btn" id="btnDirIn2" hidden>📁 Abrir pasta da UA</button>
+              <button class="btn" id="btnLoad2">📂 Abrir arquivos</button>
+              <button class="btn" id="btnDemo">Ver com dados de exemplo</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer><div class="wrap">
+      Painel gerencial de apoio à decisão. Não substitui os registros oficiais nos sistemas da CONAB, as bulas dos produtos, o receituário agronômico nem as normas internas (30.101, 30.102, 30.103).
+      Os dados ficam somente neste navegador. <a href="#" id="trocarPasta" hidden>Vincular outra pasta</a> · <a href="#" id="clearData">Apagar dados deste computador</a>
+    </div></footer>
   </div>
-</header>
+</div>
 <input type="file" id="file" accept=".xlsx,.xls,.ods,.pdf,.json,.jpg,.jpeg,.png,.webp" multiple hidden>
 <input type="file" id="dirIn" webkitdirectory multiple hidden>
-
-<nav class="tabs" aria-label="Seções">
-  <div class="wrap" id="tabs" role="tablist"></div>
-</nav>
-
-<main>
-  <div class="wrap" id="views">
-    <div class="welcome" id="welcome">
-      <h2>Painel da Unidade Armazenadora</h2>
-      <p>Vincule a pasta da UA — a pasta que contém as subpastas de termometria, estoque, DOF, DEPQ, classificação, ocupação dos silos, croqui e fotos — e o painel passa a se atualizar sozinho (Chrome ou Edge).</p>
-      <p>Os documentos são lidos apenas neste navegador: nada é enviado para a internet.</p>
-      <div class="actions">
-        <button class="btn primary" id="btnFolder2" hidden>🔗 Vincular pasta da UA</button>
-        <button class="btn" id="btnDirIn2" hidden>📁 Abrir pasta da UA</button>
-        <button class="btn" id="btnLoad2">📂 Abrir arquivos</button>
-        <button class="btn" id="btnDemo">Ver com dados de exemplo</button>
-      </div>
-    </div>
-  </div>
-</main>
-
-<footer><div class="wrap">
-  Painel gerencial de apoio à decisão. Não substitui os registros oficiais nos sistemas da CONAB, as bulas dos produtos, o receituário agronômico nem as normas internas (30.101, 30.102, 30.103).
-  Os dados ficam somente neste navegador. <a href="#" id="trocarPasta" hidden>Vincular outra pasta</a> <a href="#" id="clearData">Apagar dados deste computador</a>.
-</div></footer>
 
 <div id="mural"></div>
 <div id="boletim"></div>
@@ -347,6 +434,8 @@ const norm = s => String(s ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLow
 const DAY = 864e5;
 const fmtN = (v, d = 1) => (v == null || isNaN(v)) ? "–" : Number(v).toLocaleString("pt-BR", {minimumFractionDigits: d, maximumFractionDigits: d});
 const fmtT = (v, d = 1) => fmtN(v, d) + " t";
+/* temperatura exatamente como no relatório: inteiro sem casas, decimal com uma casa */
+const fmtTp = t => t == null || isNaN(t) ? "–" : Number.isInteger(t) ? String(t) : fmtN(t, 1);
 const fmtR = v => v == null || isNaN(v) ? "–" : "R$ " + Number(v).toLocaleString("pt-BR", {maximumFractionDigits: 0});
 const fmtD = d => d ? d.toLocaleDateString("pt-BR") : "–";
 const fmtDH = d => d ? d.toLocaleDateString("pt-BR") + " " + d.toLocaleTimeString("pt-BR", {hour: "2-digit", minute: "2-digit"}) : "–";
@@ -476,7 +565,7 @@ async function pdfRead(buf) {
     flat += tc.items.map(i => i.str + (i.hasEOL ? " " : "")).join("") + " ";
     const toks = tc.items.filter(i => i.str && i.str.trim()).map(i => {
       const [a, b, , , e, f] = i.transform, n = Math.hypot(a, b) || 1;
-      return {s: i.str.trim(), x: (a * e + b * f) / n, y: -(b * e - a * f) / n};
+      return {s: i.str.trim(), x: (a * e + b * f) / n, y: -(b * e - a * f) / n, w: i.width || 0};
     }).sort((a, b) => b.y - a.y || a.x - b.x);
     const lines = [];
     toks.forEach(t => { const l = lines[lines.length - 1]; if (l && Math.abs(l.y - t.y) < 2.5) l.t.push(t); else lines.push({y: t.y, t: [t]}); });
@@ -499,26 +588,47 @@ const between = (t, a, b) => { const m = t.match(a); if (!m) return ""; const r 
 
 /* ---- Relatório de Termometria (Unidade / Cabo / S1..Sn) ---- */
 function parseTerm(pd, name) {
-  const res = {file: name, date: null, amb: null, readings: [], unidades: new Set(), cabos: {}};
-  let unid = null, cols = null;
-  for (const lines of pd.pages) for (const L of lines) {
+  /* Cada valor do relatório fica alinhado à esquerda, na mesma posição horizontal do título da sua coluna (S1, S2…).
+     A leitura associa cada número à coluna de mesma posição e confere, linha por linha, se nenhum número ficou
+     sem coluna, se duas leituras não caíram na mesma célula e se sobrou texto não numérico. */
+  const res = {file: name, date: null, amb: null, readings: [], unidades: new Set(), cabos: {}, nCols: 0, check: {tokens: 0, lidos: 0, prob: []}};
+  let unid = null, cols = null, passo = 44;
+  const visto = new Set(), prob = m => { if (res.check.prob.length < 30) res.check.prob.push(m); };
+  pd.pages.forEach((lines, pi) => lines.forEach(L => {
     const txt = L.text; let m;
     if ((m = txt.match(/Data:\s*(\d{1,2}\/\d{1,2}\/\d{4})(?:\s+(\d{1,2}:\d{2}))?/i))) res.date = toDate(m[1] + (m[2] ? " " + m[2] : ""));
     if ((m = txt.match(/Ambiente:\s*(-?\d+(?:[.,]\d+)?)/i))) res.amb = num(m[1]);
-    if ((m = txt.match(/Unidade\s*:?\s*(\d+)/i))) { unid = +m[1]; cols = null; res.unidades.add(unid); continue; }
-    if (/^cabo$/i.test(L.t[0].s)) { cols = L.t.filter(t => /^S\d+$/i.test(t.s)).map(t => ({s: +t.s.slice(1), x: t.x})); continue; }
-    if (cols && cols.length && unid != null && /^\d+$/.test(L.t[0].s) && L.t[0].x < cols[0].x - 8) {
-      const cabo = +L.t[0].s;
-      (res.cabos[unid] || (res.cabos[unid] = [])).includes(cabo) || res.cabos[unid].push(cabo);
-      L.t.slice(1).forEach(t => {
-        const v = num(t.s); if (v == null) return;
-        let best = null; cols.forEach(c => { const d = Math.abs(c.x - t.x); if (d < 22 && (!best || d < best.d)) best = {d, s: c.s}; });
-        if (best) res.readings.push({u: unid, c: cabo, s: best.s, t: v});
-      });
+    if ((m = txt.match(/Unidade\s*:?\s*(\d+)/i))) { unid = +m[1]; cols = null; res.unidades.add(unid); return; }
+    if (/^cabo$/i.test(L.t[0].s)) {
+      cols = L.t.filter(t => /^S\d+$/i.test(t.s)).map(t => ({s: +t.s.slice(1), x: t.x, w: t.w || 0})).sort((a, b) => a.x - b.x);
+      if (cols.length > 1) passo = Math.min(...cols.slice(1).map((c, i) => c.x - cols[i].x));
+      res.nCols = Math.max(res.nCols, ...cols.map(c => c.s));
+      return;
     }
-  }
+    if (!cols || !cols.length || unid == null) return;
+    if (!/^\d+$/.test(L.t[0].s) || L.t[0].x > cols[0].x - passo * 0.25) {
+      if (L.t.some(t => /^-?\d+(?:[.,]\d+)?$/.test(t.s)) && !/p[áa]gina|pag\.|\//i.test(txt)) prob(`página ${pi + 1}, unidade ${unid}: linha com números fora do formato esperado ("${txt.slice(0, 60)}")`);
+      return;
+    }
+    const cabo = +L.t[0].s;
+    (res.cabos[unid] || (res.cabos[unid] = [])).includes(cabo) || res.cabos[unid].push(cabo);
+    L.t.slice(1).forEach(t => {
+      /* uma célula pode vir com mais de um número se o leitor de PDF juntar textos vizinhos: isso é sinalizado, não adivinhado */
+      if (!/^-?\d+(?:[.,]\d+)?$/.test(t.s)) { prob(`unidade ${unid}, cabo ${cabo}: conteúdo não numérico "${t.s.slice(0, 20)}"`); return; }
+      res.check.tokens++;
+      /* compara pela borda esquerda, pelo centro e pela borda direita: vale para tabela alinhada de qualquer um dos três modos */
+      let best = null; const tw = t.w || 0; cols.forEach(c => { const d = Math.min(Math.abs(c.x - t.x), Math.abs(c.x + c.w / 2 - t.x - tw / 2), Math.abs(c.x + c.w - t.x - tw)); if (!best || d < best.d) best = {d, s: c.s}; });
+      if (!best || best.d > passo * 0.3) { prob(`unidade ${unid}, cabo ${cabo}: valor ${t.s} sem coluna correspondente`); return; }
+      const k = unid + "-" + cabo + "-" + best.s;
+      if (visto.has(k)) { prob(`unidade ${unid}, cabo ${cabo}, sensor ${best.s}: dois valores na mesma célula`); return; }
+      visto.add(k);
+      res.readings.push({u: unid, c: cabo, s: best.s, t: num(t.s)});
+    });
+  }));
   if (!res.date) { const m = name.match(/(\d{4})[_-](\d{2})[_-](\d{2})(?:[_-](\d{2})[_-](\d{2}))?/); if (m) res.date = new Date(+m[1], m[2] - 1, +m[3], +(m[4] || 9), +(m[5] || 0)); }
-  if (!res.readings.length) return null;
+  if (!res.readings.length && !Object.keys(res.cabos).length) return null;
+  res.check.lidos = res.readings.length;
+  if (res.check.lidos !== res.check.tokens && !res.check.prob.length) prob(`${res.check.tokens} valores no relatório e ${res.check.lidos} lidos`);
   res.unidades = [...res.unidades];
   res.date = res.date ? res.date.toISOString() : null;
   return res;
@@ -672,6 +782,23 @@ function lerPlanilha(buf, name) {
   const ods = /\.ods$/i.test(name);
   const wb = XLSX.read(new Uint8Array(buf), {type: "array", cellDates: ods});
   const fx = v => v instanceof Date ? new Date(v.getUTCFullYear(), v.getUTCMonth(), v.getUTCDate(), v.getUTCHours(), v.getUTCMinutes()) : v;
+  /* planilha de ocupação dos armazéns: uma aba por armazém, cabeçalho com "Data" e colunas Q1, Q2…; vale a linha de data mais recente */
+  const arm = {};
+  for (const sn of wb.SheetNames) {
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets[sn], {header: 1, defval: "", raw: true}).map(r => r.map(fx));
+    const hi = rows.findIndex(r => r.filter(c => /^q\s*0*\d+$/i.test(String(c).trim())).length >= 1 && r.some(c => /^data/i.test(String(c).trim())));
+    if (hi < 0) continue;
+    const H = rows[hi].map(c => String(c).trim()), cd = H.findIndex(h => /^data/i.test(h));
+    const cols = H.map((h, i) => { const m = h.match(/^q\s*0*(\d+)$/i); return m ? {q: "Q" + (+m[1]), i} : null; }).filter(Boolean);
+    const tit = rows.slice(0, hi).flat().map(String).join(" ");
+    const mt = (sn + " " + tit).match(/armaz[ée]m\s*(\d+)/i), nome = mt ? "Armazém " + (+mt[1]) : nomeLocal(sn);
+    let melhor = null;
+    rows.slice(hi + 1).forEach(r => { const d = toDate(r[cd]); if (!d) return; if (!melhor || d >= melhor.d) melhor = {d, r}; });
+    const quadras = {};
+    cols.forEach(c => { quadras[c.q] = melhor ? String(melhor.r[c.i] ?? "").trim() : ""; });
+    arm[nome] = {data: melhor ? isoDia(melhor.d) : null, quadras};
+  }
+  if (Object.keys(arm).length) return {tipo: "ocuparm", dado: {file: name, armazens: arm}};
   /* planilha de ocupação dos silos: cabeçalho com "Data" e colunas "Silo N" */
   for (const sn of wb.SheetNames) {
     const rows = XLSX.utils.sheet_to_json(wb.Sheets[sn], {header: 1, defval: "", raw: true}).map(r => r.map(fx));
@@ -704,10 +831,14 @@ const planVazia = () => { const o = {}; ABAS.forEach(a => o[a] = []); return o; 
 
 /* ============================================================ fotos: tipo pela pasta, data e coordenadas pelo EXIF ou pelo carimbo */
 const FOTO_TIPOS = {
-  produto: {nome: "Produtos e instalações", curto: "Produto", cor: "#2a78d6", letra: "P", forma: "circulo"},
-  praga: {nome: "Pragas", curto: "Praga", cor: "#d64545", letra: "!", forma: "triangulo"},
-  isca: {nome: "Iscas e armadilhas (MIP)", curto: "Isca", cor: "#e08a00", letra: "I", forma: "losango"},
-  outro: {nome: "Outras fotos", curto: "Outra", cor: "#6b7280", letra: "F", forma: "quadrado"},
+  produto: {nome: "Produtos e instalações", plural: "Produtos", curto: "Produto", cor: "#2a78d6", letra: "P", forma: "circulo"},
+  praga: {nome: "Pragas", plural: "Pragas", curto: "Praga", cor: "#d64545", letra: "!", forma: "triangulo"},
+  isca: {nome: "Iscas e armadilhas (MIP)", plural: "Iscas", curto: "Isca", cor: "#e08a00", letra: "I", forma: "losango"},
+  outro: {nome: "Outras fotos", plural: "Outras", curto: "Outra", cor: "#6b7280", letra: "F", forma: "quadrado"},
+  actellic: {nome: "Aplicação de Actellic", curto: "Actellic", cor: "#7b4fc9", letra: "Ac", forma: "hexagono", trat: true},
+  kobiol: {nome: "Aplicação de K-Obiol", curto: "K-Obiol", cor: "#0f8b8d", letra: "K", forma: "hexagono", trat: true},
+  protecphos: {nome: "Expurgo com Protecphos", curto: "Protecphos", cor: "#b5179e", letra: "Ph", forma: "hexagono", trat: true},
+  fumitoxin: {nome: "Expurgo com Fumitoxin", curto: "Fumitoxin", cor: "#7a5230", letra: "Fu", forma: "hexagono", trat: true},
 };
 let FOTOS = [];            // {key, name, path, tipo, sub, file|url, lat, lon, data, src, pos}
 let FOTOS_HEIC = 0;
@@ -715,14 +846,16 @@ const FOTO_CACHE = "painelUA.v2.fotos";
 const FOTO_POS = "painelUA.v2.fotopos";
 let fotoProg = {total: 0, feitas: 0, ativo: false};
 
+/* tipo pela pasta: Fotos_Produtos, Fotos_Pragas/<praga>, Fotos_Iscas, Fotos_Outros, Fotos_Actellic, Fotos_K-obiol, Fotos_Protecphos, Fotos_Fumitoxin
+   (os nomes antigos Foto_UA, MIP_UA_Fotos e Pragas_Fotos continuam valendo) */
+const FOTO_PASTAS = [["actellic", /actellic/], ["kobiol", /kobiol/], ["protecphos", /pro?s?tecphos|fosfeto/], ["fumitoxin", /fumitoxin/],
+  ["praga", /praga/], ["isca", /mip|isca|armadilha|monitor|ratic|roedor/], ["outro", /outro/], ["produto", /produto|foto|imagem|instalac/]];
 function classificarFoto(path) {
   const segs = path.split("/").slice(0, -1);
   const ns = segs.map(norm);
-  if (ns.some(s => /croqui|mapa|planta/.test(s))) return null;
+  if (ns.some(s => /croqui|mapa|planta|logo|identidade/.test(s)) || /logo/i.test(path.split("/").pop())) return null;
   const sub = i => segs.slice(i + 1).map(s => s.replace(/[_-]+/g, " ").trim()).join(" · ");
-  let i = ns.findIndex(s => /praga/.test(s)); if (i >= 0) return {tipo: "praga", sub: sub(i)};
-  i = ns.findIndex(s => /mip|isca|armadilha|monitor|ratic|roedor/.test(s)); if (i >= 0) return {tipo: "isca", sub: sub(i)};
-  i = ns.findIndex(s => /produto|foto|imagem|instalac/.test(s)); if (i >= 0) return {tipo: "produto", sub: sub(i)};
+  for (const [tipo, re] of FOTO_PASTAS) { const i = ns.findIndex(s => re.test(s)); if (i >= 0) return {tipo, sub: sub(i)}; }
   return {tipo: "outro", sub: segs.slice(1).join(" · ")};
 }
 
@@ -851,7 +984,7 @@ let DATA = null;     // documentos lidos: {plan, term, estoque, dof, depq, certs
 let META = null;     // {origem, nome, loadedAt, demo, demoNow}
 let M = null;        // modelo calculado
 let NOW = new Date();
-const dataVazia = () => ({plan: null, term: [], estoque: [], dof: [], depq: [], certs: [], ocup: [], mapa: null, pos: null});
+const dataVazia = () => ({plan: null, term: [], estoque: [], dof: [], depq: [], certs: [], ocup: [], ocupArm: [], mapa: null, pos: null, logo: null});
 
 /* limites da IN MAPA 60/2011 (milho), Tabela 1 — % máximo por tipo */
 const IN60 = [
@@ -865,7 +998,9 @@ const IN60_NOMES = {ardidos: "ardidos", avariados: "total de avariados", quebrad
 const FITO_PADRAO = [
   {re: /k-?\s*[oó]biol/i, nome: "K-Obiol 25 EC", carGraos: 30, carSup: 15, doseGraos: [14, 20], fonte: "bula K-Obiol 25 EC (03/2023)"},
   {re: /actellic/i, nome: "Actellic 500 EC", carGraos: 45, carSup: 45, reent: 24, fonte: "bula Actellic 500 EC (04/2025)"},
-  {re: /fumitoxin/i, nome: "Fumitoxin", carGraos: 4, gas: true, fonte: "bula Fumitoxin (08/2024)"},
+  {re: /fumitoxin/i, nome: "Fumitoxin", carGraos: 4, gas: true, ph3: 0.23, fonte: "bula Fumitoxin (08/2024)"},
+  {re: /pro?s?tec\s*phos/i, nome: "Protecphos 56", carGraos: 4, gas: true, ph3: 0.1, aeracaoDias: [3, 4], doseGm3: 6, expoSacaria: 120, expoGranel: 240,
+    reg: "MAPA 19423", fonte: "bula Protecphos 56 (12/25)"},
   {re: /fosfeto|fosfina|phos|fertox|gastoxin/i, nome: "Fosfeto de alumínio", carGraos: null, gas: true, fonte: "bula do produto em uso (não cadastrada)"},
 ];
 
@@ -900,7 +1035,7 @@ function buildModel() {
     ph3: cfg("limiteph3paraliberacaoppm", 0.23), avisoMan: cfg("avisodemanutencaodias", 7),
     tMaxPl: cfg("tempmaximaplausiveldosensorc", 55), histDias: cfg("diasdehistoricodatermometria", 30),
     s1Base: !/topo/i.test(String(cfg("sensor1ficana", "base"))), caboCentral: cfg("cabocentral", 7),
-    nSens: cfg("numerodesensoresporcabo", null), usarOcup: !/^n/i.test(String(cfg("usarocupacaoparaignorarsensoresacimadonivel", "Sim"))),
+    nSens: cfg("numerodesensoresporcabo", null), ocupTerm: (v => /n[ií]vel/i.test(v) ? "nivel" : /vazio/i.test(v) ? "vazios" : "nao")(String(cfg("ocupacaointerferenatermometria", "Não"))),
     nTrav: cfg("leiturasiguaisseguidassensortravado", 10), dViz: cfg("diferencaparasensoresvizinhosc", 8),
     tolVer: cfg("tolerancianaverificacaocomreferenciac", 2), exclDescal: !/^n/i.test(String(cfg("excluirsensoresdescalibradosdasmedias", "Sim"))),
     prazoRep: cfg("prazodereparoesperadodias", 15),
@@ -928,6 +1063,13 @@ function buildModel() {
     const idade = est.ate ? daysBetween(est.ate, NOW) : null;
     if (idade != null && idade > 45) addA("info", "Estoque", `Controle de Estoque mais recente é de ${fmtD(est.ate)} (${idade} dias)`, "Emitir no SAAGRA o Controle Fiscal Diário de Estoque por C.P.E. do último mês e salvar na pasta Controle_de_Estoque.", "estoque");
   }
+
+  /* ---------- ocupação das quadras dos armazéns (vale a data mais recente de cada armazém) ---------- */
+  const quadras = {};
+  (DATA.ocupArm || []).forEach(o => Object.entries(o.armazens).forEach(([nome, a]) => {
+    const atual = quadras[nome];
+    if (!atual || String(a.data || "") >= String(atual.data || "")) quadras[nome] = {data: a.data, file: o.file, q: Object.fromEntries(Object.entries(a.quadras).map(([k, v]) => [k, String(v || "").split(/\s*\/\s*/).map(x => x.trim()).filter(Boolean)]))};
+  }));
 
   /* ---------- ocupação dos silos ---------- */
   const ocLin = DATA.ocup.flatMap(o => o.linhas).map(l => ({d: toDate(l.data), silos: l.silos})).filter(l => l.d).sort((a, b) => a.d - b.d);
@@ -964,19 +1106,24 @@ function buildModel() {
 
   /* ---------- termometria ---------- */
   const term = {}, ambByDay = {}, leit = [];
-  const S_ = code => term[code] || (term[code] = {silo: code, raw: {}, byDate: {}, fora: {}, suspect: {}, decl: {}, descalV: {}});
+  const S_ = code => term[code] || (term[code] = {silo: code, raw: {}, byDate: {}, fora: {}, suspect: {}, decl: {}, descalV: {}, rep: {}});
   (P.termometria || []).forEach((r, i) => {
     const d = toDate(r.data), silo = nomeLocal(r.silo), c = num(r.cabo), s = num(r.sensor), t = num(r.temperaturac);
     if (!d || !silo || c == null || s == null || t == null) { if (i < 2000) dq.push(`Planilha, aba Termometria, linha ${i + 2}: dado incompleto.`); return; }
     leit.push({d, code: silo, c, s, t, fonte: "planilha"});
   });
-  DATA.term.forEach(r => {
-    const d = r.date ? new Date(r.date) : null; if (!d) { dq.push(`${r.file}: data da leitura não encontrada.`); return; }
-    if (daysBetween(d, NOW) > C.histDias) return;
-    if (r.amb != null) ambByDay[startOfDay(d).getTime()] = r.amb;
-    r.readings.forEach(x => leit.push({d, code: "Silo " + unidSilo(x.u), c: x.c, s: x.s, t: x.t, fonte: "PDF"}));
-    Object.entries(r.cabos || {}).forEach(([u, cs]) => { const S = S_("Silo " + unidSilo(+u)), dk = startOfDay(d).getTime(); S.decl[dk] = [...new Set([...(S.decl[dk] || []), ...cs])]; });
+  /* relatórios em PDF: para cada silo e dia vale um único relatório, o mais recente do dia. Relatórios não são misturados entre si. */
+  const treps = DATA.term.map(r => ({r, d: r.date ? new Date(r.date) : null})).filter(x => { if (!x.d) dq.push(`${x.r.file}: data da leitura não encontrada.`); return x.d && daysBetween(x.d, NOW) <= C.histDias; }).sort((a, b) => a.d - b.d);
+  const repDe = {};
+  treps.forEach(x => { const dk = startOfDay(x.d).getTime(); (x.r.unidades || []).forEach(u => { repDe["Silo " + unidSilo(u) + "|" + dk] = x; }); if (x.r.amb != null) ambByDay[dk] = x.r.amb; });
+  Object.entries(repDe).forEach(([k, x]) => {
+    const [code, dks] = k.split("|"), dk = +dks, S = S_(code);
+    x.usado = true; S.rep[dk] = {file: x.r.file, d: x.d};
+    x.r.readings.forEach(y => { if ("Silo " + unidSilo(y.u) === code) leit.push({d: x.d, code, c: y.c, s: y.s, t: y.t, fonte: "PDF"}); });
+    Object.entries(x.r.cabos || {}).forEach(([u, cs]) => { if ("Silo " + unidSilo(+u) === code) S.decl[dk] = [...new Set([...(S.decl[dk] || []), ...cs])]; });
   });
+  const termRel = treps.map(x => ({file: x.r.file, d: x.d, n: x.r.readings.length, unidades: x.r.unidades || [], check: x.r.check || null, usado: !!x.usado, nCols: x.r.nCols || null})).sort((a, b) => b.d - a.d);
+  termRel.filter(t => t.check && t.check.prob.length).forEach(t => addA("warn", "Confiabilidade", `Relatório de termometria de ${fmtDH(t.d)}: a leitura do PDF não fechou na conferência`, `Arquivo ${t.file}: ${t.check.prob.slice(0, 3).join("; ")}. Os valores deste relatório podem estar incompletos no painel: confira com o PDF e envie o arquivo para ajuste do leitor.`, "confiab"));
   const nSens = C.nSens || leit.reduce((m, x) => Math.max(m, x.s), 0) || 1;
   const altura = s => (C.s1Base ? s - 0.5 : nSens - s + 0.5) / nSens;
   leit.forEach(x => {
@@ -985,7 +1132,7 @@ function buildModel() {
     const o = {c: x.c, s: x.s, t: x.t, fonte: x.fonte};
     (S.raw[dk] || (S.raw[dk] = {}))[key] = o;
     const n = siloNum(x.code), oc = n != null ? ocupEm(n, x.d) : null;
-    if (C.usarOcup && oc != null && altura(x.s) > oc + 1e-9) (S.fora[dk] || (S.fora[dk] = {}))[key] = o;
+    if (C.ocupTerm === "nivel" && oc != null && altura(x.s) > oc + 1e-9) (S.fora[dk] || (S.fora[dk] = {}))[key] = o;
     else (S.byDate[dk] || (S.byDate[dk] = {}))[key] = o;
   });
   /* verificação com termômetro de referência (última por sensor) */
@@ -1021,7 +1168,7 @@ function buildModel() {
     const rawCur = S.raw[last] || {}, cur = S.byDate[last] || {}, vals = Object.values(cur), susp = S.suspect[last] || [];
     const descalCur = S.descalV[last] || [];
     const oc = n != null ? ocupEm(n, new Date(last)) : null;
-    const vazio = oc != null && oc <= 0;
+    const oc0 = oc != null && oc <= 0, vazio = oc0 && C.ocupTerm !== "nao";
     const avg = vals.length ? vals.reduce((a, v) => a + v.t, 0) / vals.length : null;
     const mx = vals.length ? vals.reduce((a, v) => v.t > a.t ? v : a, vals[0]) : null;
     const allC = new Set([...Object.values(S.raw).flatMap(o => Object.values(o).map(v => v.c)), ...Object.values(S.suspect).flatMap(a => a.map(v => v.c)), ...(S.decl[last] || [])]);
@@ -1047,8 +1194,8 @@ function buildModel() {
       cells[key] = {...v, delta, rising, fora: !emMassa && !descalCur.some(x => x.c === v.c && x.s === v.s), flag: emMassa && (v.t >= C.tCrit || (delta != null && delta >= C.dCrit))};
       if (!emMassa) return;
       const lab = sensorLab(v.c, v.s);
-      if (v.t >= C.tCrit) hits.crit.push(`${lab}: ${fmtN(v.t, 0)} °C`);
-      else if (v.t >= C.tAtt) hits.att.push(`${lab}: ${fmtN(v.t, 0)} °C`);
+      if (v.t >= C.tCrit) hits.crit.push(`${lab}: ${fmtTp(v.t)} °C`);
+      else if (v.t >= C.tAtt) hits.att.push(`${lab}: ${fmtTp(v.t)} °C`);
       if (delta != null && delta >= C.dCrit) hits.dcrit.push(`${lab}: +${fmtN(delta)} °C`);
       else if (delta != null && delta >= C.dAtt) hits.datt.push(`${lab}: +${fmtN(delta)} °C`);
       if (avg != null && v.t - avg >= C.dMed) hits.hot.push(`${lab} (${fmtN(v.t - avg)} °C acima da média)`);
@@ -1061,11 +1208,11 @@ function buildModel() {
     const lastD = new Date(last), idade = daysBetween(lastD, NOW);
     /* saúde dos sensores */
     const suspeitos = [], rawVals = Object.values(rawCur);
-    susp.forEach(x => suspeitos.push({c: x.c, s: x.s, tipo: "Leitura implausível", det: `${fmtN(x.t, 0)} °C (acima de ${C.tMaxPl} °C) — excluída das médias`}));
+    susp.forEach(x => suspeitos.push({c: x.c, s: x.s, tipo: "Leitura implausível", det: `${fmtTp(x.t)} °C (acima de ${C.tMaxPl} °C) — excluída das médias`}));
     rawVals.forEach(v => {
       const a = rawCur[v.c + "-" + (v.s - 1)], b = rawCur[v.c + "-" + (v.s + 1)]; if (!a || !b) return;
       const d1 = v.t - a.t, d2 = v.t - b.t;
-      if ((d1 >= C.dViz && d2 >= C.dViz) || (d1 <= -C.dViz && d2 <= -C.dViz)) { suspeitos.push({c: v.c, s: v.s, tipo: "Fora do padrão dos vizinhos", det: `${fmtN(v.t, 0)} °C; vizinhos ${fmtN(a.t, 0)} e ${fmtN(b.t, 0)} °C — mantido nos alertas até conferir`}); cells[v.c + "-" + v.s].viz = true; }
+      if ((d1 >= C.dViz && d2 >= C.dViz) || (d1 <= -C.dViz && d2 <= -C.dViz)) { suspeitos.push({c: v.c, s: v.s, tipo: "Fora do padrão dos vizinhos", det: `${fmtTp(v.t)} °C; vizinhos ${fmtTp(a.t)} e ${fmtTp(b.t)} °C — mantido nos alertas até conferir`}); cells[v.c + "-" + v.s].viz = true; }
     });
     rawVals.forEach(v => {
       const key = v.c + "-" + v.s; let run = 1;
@@ -1073,7 +1220,7 @@ function buildModel() {
       if (run < C.nTrav) return;
       const span = rawDates.slice(rawDates.length - run);
       const outros = rawVals.some(w => { if (w.c !== v.c || Math.abs(w.s - v.s) !== 1) return false; const ts = span.map(dk => (S.raw[dk][w.c + "-" + w.s] || {}).t).filter(t => t != null); return ts.length && Math.max(...ts) - Math.min(...ts) >= 3; });
-      if (outros) { suspeitos.push({c: v.c, s: v.s, tipo: "Possível sensor travado", det: `${run} leituras seguidas em ${fmtN(v.t, 0)} °C enquanto os vizinhos variaram`}); cells[key].trav = true; }
+      if (outros) { suspeitos.push({c: v.c, s: v.s, tipo: "Possível sensor travado", det: `${run} leituras seguidas em ${fmtTp(v.t)} °C enquanto os vizinhos variaram`}); cells[key].trav = true; }
     });
     new Set(Object.values(S.raw).flatMap(o => Object.keys(o))).forEach(key => {
       const [c, s] = key.split("-").map(Number);
@@ -1083,7 +1230,9 @@ function buildModel() {
     });
     Object.values(V).forEach(v => { if (v.descal) suspeitos.push({c: v.c, s: v.s, tipo: "Descalibrado (verificação)", det: `sistema ${fmtN(v.sis)} °C × referência ${fmtN(v.ref)} °C em ${fmtD(v.d)} (desvio ${v.desvio > 0 ? "+" : ""}${fmtN(v.desvio)} °C)${C.exclDescal ? " — fora das médias" : ""}`, descal: true}); });
     const nFora = Object.values(cells).filter(c => c.fora).length;
-    const T = {silo, n, dates: rawDates, lastD, prevD: prev ? new Date(prev) : null, avg, max: mx, cabos, sensores, semLeitura, saude, suspeitos, descalCur, verif: V, parcial: semLeitura.length > 0,
+    const rawT = rawVals.map(v => v.t);
+    const T = {silo, n, dates: rawDates, lastDk: last, lastD: S.rep[last] ? S.rep[last].d : lastD, prevD: prev ? new Date(prev) : null, avg, max: mx,
+      raw: S.raw, foraD: S.fora, suspD: S.suspect, declD: S.decl, repD: S.rep, maxRaw: rawT.length ? Math.max(...rawT) : null, avgRaw: rawT.length ? rawT.reduce((a, b) => a + b, 0) / rawT.length : null, nRaw: rawT.length, cabos, sensores, semLeitura, saude, suspeitos, descalCur, verif: V, parcial: semLeitura.length > 0,
       cells, series, hits, topoDiff, idade, sev: "ok", sevEq: "ok", notes: [], susp, amb: ambByDay[last] != null ? ambByDay[last] : null, fonte: rawVals[0] ? rawVals[0].fonte : "PDF", oc, vazio, nFora, nMassa: vals.length};
     const list = a => a.slice(0, 5).join("; ") + (a.length > 5 ? ` e mais ${a.length - 5}` : "");
     const nsp = "Entrada no silo é espaço confinado (NR-33): somente com Permissão de Entrada e Trabalho, vigia e trabalhadores capacitados.";
@@ -1094,6 +1243,8 @@ function buildModel() {
       const g = tAgg[rule] || (tAgg[rule] = {sev, rec, itens: [], rotulo: curto, eq});
       g.itens.push({silo, det: title});
     };
+    if (vazio) { Object.keys(hits).forEach(k => { hits[k] = []; }); Object.values(cells).forEach(c => { c.flag = false; }); }
+    if (oc0 && !vazio) T.notes.push({sev: "info", title: `a planilha de ocupação indica 0% neste silo (${fmtD(ocupLinha(new Date(last)).d)})`, rec: "A ocupação é uma estimativa e não altera a leitura da termometria. Se o silo estiver de fato vazio, as temperaturas são do ar interno e os alertas térmicos podem ser desconsiderados."});
     if (vazio) push("info", `silo vazio pela planilha de ocupação (${fmtD(ocupLinha(new Date(last)).d)}): as leituras são do ar interno e não geram alerta térmico`, "Se o silo recebeu produto, atualizar a planilha de ocupação para reativar os alertas.", null);
     else if (oc != null && nFora) push("info", `ocupação de ${fmtN(oc * 100, 0)}%: ${nFora} sensor(es) acima do nível estimado do grão ficam fora das médias e dos alertas`, `Nível estimado com ${nSens} sensores igualmente espaçados por cabo. Se a superfície do grão estiver acima disso, atualizar a planilha de ocupação.`, null);
     if (hits.crit.length) push("crit", `ponto(s) ≥ ${C.tCrit} °C — ${list(hits.crit)}`, `Aeração corretiva (Norma 30.101, Cap. III-VI, 4.1 c): acionar quando o ar ambiente estiver mais frio que a temperatura máxima da massa e com UR entre 40% e 95%. Verificar umidade e infestação no ponto (amostragem com calador/sonda). Se não houver resposta, avaliar transilagem. ${nsp}`, "crit", `ponto(s) de aquecimento ≥ ${C.tCrit} °C`);
@@ -1102,7 +1253,7 @@ function buildModel() {
     if (hits.datt.length) push("warn", `elevação entre leituras — ${list(hits.datt)}`, "Acompanhar a evolução na próxima leitura; conferir se não houve aeração com ar quente/úmido.", "datt", "elevação entre leituras");
     if (hits.hot.length) push("warn", `ponto quente localizado — ${list(hits.hot)}`, "Indício de foco (umidade, impurezas concentradas ou insetos). Amostrar o ponto, avaliar aeração corretiva e, se persistir, movimentação/transilagem.", "hot", "ponto quente localizado");
     if (hits.seq.length) push("warn", `aquecimento contínuo — ${list(hits.seq)}`, "Tendência de alta em leituras consecutivas: não aguardar o limite crítico para agir.", "seq", "aquecimento contínuo");
-    if (topoDiff >= 3) push("info", `camada superior ${fmtN(topoDiff)} °C mais quente que o restante`, "Verificar ventilação do espaço superior (exaustores/respiros), infiltração e condensação na cobertura.", "topo", "camada superior mais quente");
+    if (topoDiff >= 3 && !vazio) push("info", `camada superior ${fmtN(topoDiff)} °C mais quente que o restante`, "Verificar ventilação do espaço superior (exaustores/respiros), infiltração e condensação na cobertura.", "topo", "camada superior mais quente");
     if (semLeitura.length) {
       const cen = semLeitura.includes(C.caboCentral), semOc = semLeitura.filter(c => !temOcorr(silo, c));
       push("warn", `cabo(s) sem leitura: ${semLeitura.map(c => { const h = saude.find(x => x.c === c); return "cabo " + c + (c === C.caboCentral ? " (central)" : "") + (h && h.nunca ? " — sem leitura em todo o período" : h && h.desde ? " desde " + fmtD(h.desde) : ""); }).join("; ")}`,
@@ -1110,7 +1261,7 @@ function buildModel() {
     }
     const outros = suspeitos.filter(x => x.tipo !== "Leitura implausível" && x.tipo !== "Sensor parou de ler");
     if (outros.length) push(outros.some(x => x.descal || x.tipo.startsWith("Fora")) ? "warn" : "info", `sensor(es) com leitura suspeita — ${outros.slice(0, 4).map(x => `${sensorLab(x.c, x.s)}: ${x.tipo.toLowerCase()}`).join("; ")}${outros.length > 4 ? ` e mais ${outros.length - 4}` : ""}`, "Conferir com termômetro de referência ou sonda e registrar na aba Termometria_Verificação. Sensor reprovado sai das médias automaticamente.", "suspsens", "sensor com leitura suspeita", true);
-    if (susp.length) push("warn", `leitura implausível em ${susp.map(x => `${sensorLab(x.c, x.s)} (${fmtN(x.t, 0)} °C)`).join("; ")} — excluída das médias`, "Provável falha de sensor ou cabo. Antes de descartar, confirmar a temperatura no ponto com sonda termométrica; se confirmada a falha, registrar pendência de manutenção da termometria.", "susp", "leitura implausível de sensor", true);
+    if (susp.length) push("warn", `leitura implausível em ${susp.map(x => `${sensorLab(x.c, x.s)} (${fmtTp(x.t)} °C)`).join("; ")} — excluída das médias`, "Provável falha de sensor ou cabo. Antes de descartar, confirmar a temperatura no ponto com sonda termométrica; se confirmada a falha, registrar pendência de manutenção da termometria.", "susp", "leitura implausível de sensor", true);
     if (idade > C.diasLeit && !vazio) push("warn", `sem leitura há ${idade} dia(s)`, "A Norma 30.101 (Cap. III-VI, 1.3) prevê leitura diária da termometria, por volta das 9 h. Salvar o relatório do dia na pasta de termometria.", "stale", "sem leitura recente", true);
     thermo[silo] = T; if (siloDe[silo]) siloDe[silo].T = T;
   }
@@ -1133,17 +1284,20 @@ function buildModel() {
     if (!itens.length) return;
     const nm = itens.map(x => x.silo), rot = g.rotulo.charAt(0).toUpperCase() + g.rotulo.slice(1);
     const tit = itens.length === 1 ? `${nm[0]}: ${itens[0].det}` : `${rot} em ${itens.length} silos: ${nm.map(x => x.replace("Silo ", "")).join(", ")}`;
-    addA(g.sev, g.eq ? "Confiabilidade" : "Termometria", tit, g.rec + (itens.length > 1 ? " Detalhe por sensor na aba Silos e termometria." : ""), itens.length === 1 ? "silo:" + nm[0] : (g.eq ? "confiab" : "silos"));
+    const z = g.eq ? [] : nm.filter(x => siloDe[x] && siloDe[x].ocup != null && siloDe[x].ocup <= 0).map(x => x.replace("Silo ", ""));
+    addA(g.sev, g.eq ? "Confiabilidade" : "Termometria", tit, g.rec + (itens.length > 1 ? " Detalhe por sensor na aba Silos e termometria." : "") + (z.length ? ` Atenção: a planilha de ocupação indica 0% no(s) silo(s) ${z.join(", ")}; se estiver(em) de fato vazio(s), a leitura é do ar interno.` : ""), itens.length === 1 ? "silo:" + nm[0] : (g.eq ? "confiab" : "silos"));
   });
   ocorr.filter(o => o.aberta && o.dias != null && o.dias > C.prazoRep).forEach(o => addA("warn", "Confiabilidade", `${o.silo}${o.c != null ? ", cabo " + o.c : ""}${o.s != null ? ", sensor " + o.s : ""}: ${String(o.prob || "ocorrência").toLowerCase()} há ${o.dias} dias sem reparo`, `Chamado/OS: ${o.os || "não informado"}. Prazo esperado: ${C.prazoRep} dias. Cobrar a assistência e registrar no Relatório de Supervisão Técnica (Norma 30.102, Cap. VII, 1 b).`, "confiab"));
   silos.forEach(S => {
     const vazio = S.ocup != null && S.ocup <= 0;
     S.vazio = vazio;
-    S.ativo = S.ocup != null ? S.ocup > 0 : !!S.T;
-    if (vazio) S.status = {sev: "mut", txt: "Vazio"};
+    S.semTerm = vazio && C.ocupTerm !== "nao";                 // só quando a Config manda a ocupação interferir
+    S.monit = !!(S.T && S.T.nMassa) && !S.semTerm;             // silo com temperatura acompanhada
+    S.ativo = S.monit || S.ocup > 0;
+    if (S.semTerm) S.status = {sev: "mut", txt: "Vazio"};
     else if (S.T && S.T.nMassa) { const sv = S.T.sev === "info" ? "ok" : S.T.sev; S.status = {sev: sv, txt: SEV_LBL[sv]}; }
     else if (S.ocup > 0) { S.status = {sev: "warn", txt: "Sem leitura"}; addA("warn", "Termometria", `${S.code}: com produto (${fmtN(S.ocup * 100, 0)}%) e sem leitura de termometria no período`, "Salvar os relatórios diários de termometria na pasta.", "silo:" + S.code); }
-    else S.status = {sev: "mut", txt: "Sem dados"};
+    else S.status = vazio ? {sev: "mut", txt: "Vazio"} : {sev: "mut", txt: "Sem dados"};
   });
 
   /* ---------- aeração (planilha) ---------- */
@@ -1173,7 +1327,15 @@ function buildModel() {
   if (dof) {
     dof.secoes.forEach(sec => {
       if (sec.tipo === "Convencional") { fito.estoqueConv = sec.estoque.filter(e => e.ant || e.atual || e.exp || e.nexp); fito.totalConv = sec.total; } else fito.textoGranel = sec.textoEstoque;
-      sec.solidos.forEach(r => fito.aplic.push({forma: "Sólido (expurgo)", secao: sec.tipo, nome: r.nome, quant: r.g != null ? fmtN(r.g, 0) + " g" : "—", alvo: [r.kg != null ? fmtT(r.kg / 1000) : null, r.m3 != null ? fmtN(r.m3, 0) + " m³" : null].filter(Boolean).join(" · "), dose: r.dose || (r.g && r.m3 ? fmtN(r.g / r.m3, 1) + " g/m³" : "—"), ini: toDate(r.ini), fim: toDate(r.fim), info: fitoInfo(r.nome), avisos: []}));
+      sec.solidos.forEach(r => {
+        const info = fitoInfo(r.nome), av = [], gm3 = r.g && r.m3 ? r.g / r.m3 : null;
+        if (info && info.doseGm3 && gm3 != null && Math.abs(gm3 - info.doseGm3) / info.doseGm3 > 0.05) {
+          av.push(`dose de ${fmtN(gm3, 1)} g/m³; a ${info.fonte} indica ${fmtN(info.doseGm3, 0)} g/m³ de fosfeto para grãos e derivados`);
+          addA("warn", "Tratamentos", `${info.nome} (DOF ${mesLabel(dof.mes)}): ${fmtN(r.g, 0)} g para ${fmtN(r.m3, 0)} m³ = ${fmtN(gm3, 1)} g/m³`, `A ${info.fonte} indica ${fmtN(info.doseGm3, 0)} g/m³ (2 pastilhas de 3 g ou 10 de 0,6 g por m³). Conferir com o receituário agronômico.`, "fito");
+        }
+        const fim = toDate(r.fim), carAte = info && info.carGraos != null && fim ? new Date(fim.getTime() + info.carGraos * DAY) : null;
+        fito.aplic.push({forma: "Sólido (expurgo)", secao: sec.tipo, nome: r.nome, quant: r.g != null ? fmtN(r.g, 0) + " g" : "—", alvo: [r.kg != null ? fmtT(r.kg / 1000) : null, r.m3 != null ? fmtN(r.m3, 0) + " m³" : null].filter(Boolean).join(" · "), dose: r.dose || (gm3 != null ? fmtN(gm3, 1) + " g/m³" : "—"), ini: toDate(r.ini), fim, info, carAte, avisos: av});
+      });
       sec.liquidos.forEach(r => {
         const info = fitoInfo(r.nome), neb = /nebuliza/i.test(r.desc), graos = r.kg != null && !neb, av = [];
         const mlT = graos && r.kg > 0 ? r.ml / (r.kg / 1000) : null;
@@ -1202,7 +1364,7 @@ function buildModel() {
     }
     const citados = new Set([...(dof.correia ? dof.correia.silos : []), ...dof.semExpurgo]);
     const vaziosCitados = [...citados].filter(n => siloDe["Silo " + n] && siloDe["Silo " + n].vazio);
-    if (vaziosCitados.length) addA("info", "Estoque", `DOF ${mesLabel(dof.mes)} cita produto no(s) silo(s) ${vaziosCitados.join(", ")}, mas a planilha de ocupação indica 0%`, "Conferir se houve transilagem ou saída depois do DOF, ou atualizar a planilha de ocupação.", "silos");
+    if (vaziosCitados.length) addA("warn", "Estoque", `DOF ${mesLabel(dof.mes)} cita produto no(s) silo(s) ${vaziosCitados.join(", ")}, mas a planilha de ocupação indica 0%`, "Conferir se houve transilagem ou saída depois do DOF, ou atualizar a planilha de ocupação.", "silos");
   }
   /* expurgos: último (data exata do DOF, ou mês do DEPQ) e próximo previsto (DEPQ) */
   const alvoMap = {};
@@ -1221,8 +1383,10 @@ function buildModel() {
     if (sev === "crit" || sev === "warn") addA(sev, "Tratamentos", `Expurgo de ${a.alvo}: ${st.toLowerCase()}`, `Último expurgo: ${a.ult ? fmtD(a.ult) : (a.ultTxt || "sem registro")}. Programar com receituário agronômico, comunicação prévia ao depositante (Norma 30.103) e equipe com NR-33 e NR-35 válidas.`, "fito");
     return {...a, sev, st};
   });
+  const fosf = fito.aplic.map(a => a.info).find(i => i && i.gas && i.ph3) || fito.inset.map(i => fitoInfo(i.nome)).find(i => i && i.gas && i.ph3) || null;
+  fito.ph3 = fosf ? fosf.ph3 : C.ph3; fito.ph3Fonte = fosf ? fosf.fonte : "Config";
   if (fito.detector && (fito.detector.nao || /aquisi|n[ãa]o possui|sem aparelho|indispon/i.test(fito.detector.obs)))
-    addA("crit", "Tratamentos", "Detector de fosfina: o DEPQ informa aparelho em processo de aquisição", `A reentrada após expurgo só é permitida com a concentração de PH3 abaixo de ${fmtN(C.ph3, 2)} ppm, medida com aparelho (bula do fosfeto de alumínio). Sem detector disponível, não liberar a área: obter aparelho emprestado ou contratado para cada expurgo, até concluir a aquisição.${fito.detector.obs ? " Observação do DEPQ: " + fito.detector.obs : ""}`, "fito");
+    addA("crit", "Tratamentos", "Detector de fosfina: o DEPQ informa aparelho em processo de aquisição", `A reentrada após expurgo só é permitida com a concentração de PH3 abaixo de ${fmtN(fito.ph3, 2)} ppm, medida com detector de fosfina (${fito.ph3Fonte}). Sem detector disponível, não liberar a área: obter aparelho emprestado ou contratado para cada expurgo, até concluir a aquisição.${fito.detector.obs ? " Observação do DEPQ: " + fito.detector.obs : ""}`, "fito");
   silos.forEach(S => { if (S.fito.carAte && NOW < S.fito.carAte && !S.vazio) addA("warn", "Tratamentos", `${S.code}: em carência até ${fmtD(S.fito.carAte)} (${S.fito.carTxt})`, "Intervalo de segurança contado do fim do período informado no DOF. Não programar expedição para consumo antes dessa data; se a data real da aplicação for conhecida, registrar na aba Tratamentos da planilha.", "fito"); });
 
   /* tratamentos registrados manualmente na planilha (datas exatas) */
@@ -1334,7 +1498,7 @@ function buildModel() {
   pends.sort((a, b) => (a.aberta === b.aberta ? 0 : a.aberta ? -1 : 1) || (rOrd[norm(a.risco)] ?? 3) - (rOrd[norm(b.risco)] ?? 3) || ((a.prazo || 0) - (b.prazo || 0)));
 
   alerts.sort((a, b) => SEV[b.sev] - SEV[a.sev]);
-  return {C, mapa, silos, siloDe, armazens, armGranel, est, thermo, verif, ocorr, aer, fito, expurgos, trats, prodsPlan, certs, equipe, epis, docs, treins, aptos, mans, pends, alerts, dq, nSens, ocLin};
+  return {C, mapa, silos, siloDe, armazens, armGranel, est, quadras, thermo, termRel, verif, ocorr, aer, fito, expurgos, trats, prodsPlan, certs, equipe, epis, docs, treins, aptos, mans, pends, alerts, dq, nSens, ocLin};
 }
 
 /* ============================================================ renderização */
@@ -1342,6 +1506,19 @@ let currentTab = "geral", selSilo = null;
 const charts = {};
 const TABS = [["geral", "Visão geral"], ["mapa", "Mapa da UA"], ["silos", "Silos e termometria"], ["confiab", "Termometria: confiabilidade"], ["estoque", "Estoque"],
   ["fito", "Tratamentos"], ["qualidade", "Qualidade"], ["fotos", "Fotos e MIP"], ["pessoal", "Pessoal e documentos"], ["manut", "Manutenção e pendências"]];
+const ICO = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const ICONES = {
+  geral: ICO('<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>'),
+  mapa: ICO('<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/>'),
+  silos: ICO('<path d="M6 21V8a4 4 0 0 1 8 0v13M14 21v-9a3 3 0 0 1 6 0v9M3 21h18"/>'),
+  confiab: ICO('<path d="M12 3v11"/><circle cx="12" cy="17" r="3"/><path d="M8 8h2M8 11h2"/>'),
+  estoque: ICO('<path d="M3 8 12 3l9 5v13H3z"/><path d="M7 21v-7h10v7M7 17h10"/>'),
+  fito: ICO('<path d="M9 3h6M10 3v5l-5 9a3 3 0 0 0 2.6 4.5h8.8A3 3 0 0 0 19 17l-5-9V3"/><path d="M7.5 15h9"/>'),
+  qualidade: ICO('<circle cx="12" cy="9" r="6"/><path d="m9.5 9 1.8 1.8L15 7.2M8.5 14 7 21l5-2.5 5 2.5-1.5-7"/>'),
+  fotos: ICO('<path d="M4 7h3l2-3h6l2 3h3v13H4z"/><circle cx="12" cy="13" r="3.5"/>'),
+  pessoal: ICO('<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M21.5 20a6 6 0 0 0-4-5.7"/>'),
+  manut: ICO('<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/>'),
+};
 const modTab = {Estoque: "estoque", Termometria: "silos", Confiabilidade: "confiab", Aeração: "silos", Tratamentos: "fito", Qualidade: "qualidade", Pessoal: "pessoal", Documentos: "pessoal", Manutenção: "manut", Pendências: "manut", MIP: "fotos"};
 const kpi = (cls, lbl, val, det, tab) => `<${tab ? "button" : "div"} class="card kpi ${cls}"${tab ? ` data-go="${tab}"` : ' style="cursor:default"'}><div class="lbl">${lbl}</div><div class="val">${val}</div><div class="det">${det}</div></${tab ? "button" : "div"}>`;
 const vazioTxt = (cols, txt) => `<tr><td colspan="${cols}" class="empty">${txt}</td></tr>`;
@@ -1350,6 +1527,7 @@ function render() {
   M = buildModel();
   document.title = "Painel – " + M.C.nome;
   $("#uaName").textContent = M.C.nome;
+  const I = instNome(); $("#instCia").textContent = I.cia; $("#instSureg").textContent = I.sureg; aplicarLogo();
   srcInfo();
   const fAl = fotoAlertas();
   const counts = {};
@@ -1357,7 +1535,7 @@ function render() {
   $("#tabs").innerHTML = TABS.map(([k, l]) => {
     const c = counts[k]; let b = "";
     if (c && c.crit) b = `<span class="count" title="críticos">${c.crit}</span>`; else if (c && c.warn) b = `<span class="count w" title="atenção">${c.warn}</span>`;
-    return `<button role="tab" data-tab="${k}" aria-selected="${k === currentTab}">${l}${b}</button>`;
+    return `<button role="tab" data-tab="${k}" aria-selected="${k === currentTab}">${ICONES[k] || ""}<span class="lb">${l}</span>${b}</button>`;
   }).join("");
   if (!$("#v-geral")) $("#views").innerHTML = TABS.map(([k]) => `<section class="view" id="v-${k}"></section>`).join("");
   renderGeral(); renderSilos(); renderConfiab(); renderEstoque(); renderFito(); renderQualidade(); renderFotos(); renderPessoal(); renderManut(); renderMapa();
@@ -1369,8 +1547,12 @@ function srcInfo() {
   const el = $("#srcInfo");
   el.textContent = `Dados: ${META.nome} · atualizado em ${fmtDH(new Date(META.loadedAt))}${META.demo ? " · exemplo fictício" : ""}${META.verificado ? " · verificado às " + META.verificado : ""}`;
 }
+function aplicarLogo() { const img = $("#logoImg"), ph = $("#logoPh"), src = DATA && DATA.logo; if (!img) return; if (src) { img.src = src; img.hidden = false; ph.style.display = "none"; } else { img.hidden = true; img.removeAttribute("src"); ph.style.display = ""; } }
 function showTab(k) {
   currentTab = k;
+  const nome = (TABS.find(t => t[0] === k) || [k, k])[1];
+  $("#pgTitle").textContent = nome; $("#pgCrumb").textContent = M ? M.C.nome : "Painel da Unidade Armazenadora";
+  $("#pgActions").innerHTML = k === "mapa" ? `<button class="btn pri" data-croqui="geral">🗺️ Croqui geral da UA</button>` : `<button class="btn pri" data-rel="${k}" title="Relatório desta aba com resumo, para imprimir ou salvar em PDF">📄 Relatório</button>`;
   $$("#tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === k));
   $$("section.view").forEach(s => s.classList.toggle("on", s.id === "v-" + k));
   if (k === "silos") drawSiloChart();
@@ -1394,13 +1576,14 @@ function alertList(list, max) {
 }
 function siloCard(S) {
   const T = S.T, pct = S.ocup != null ? S.ocup : null;
-  const com = T && T.nMassa && !S.vazio;
+  const com = S.monit;
   return `<button class="card silo" data-silo="${esc(S.code)}" aria-label="Abrir ${esc(S.code)}">
     <div class="hd"><span class="nm">${esc(S.code)}</span>${badge(S.status.sev, S.status.txt)}</div>
-    <div class="tank"><div class="fill" style="height:${((pct || 0) * 100).toFixed(1)}%"></div><div class="pct"><span>${pct != null ? fmtN(pct * 100, 0) + "%" : "?"}</span></div></div>
-    <div class="pr">${esc(S.prod || (S.vazio ? "—" : pct == null ? "ocupação não informada" : "—"))}</div>
+    <div class="tank" title="Ocupação estimada, informada na planilha de ocupação. Não altera a leitura da termometria."><div class="fill" style="height:${((pct || 0) * 100).toFixed(1)}%"></div><div class="pct"><span>${pct != null ? "≈ " + fmtN(pct * 100, 0) + "%" : "?"}</span></div></div>
+    <div class="pr">${esc(S.prod || (S.vazio ? "0% pela planilha de ocupação" : pct == null ? "ocupação não informada" : "—"))}</div>
     <div class="tt">${S.t != null && !S.vazio ? "≈ " + fmtT(S.t, 0) : "&nbsp;"}</div>
-    <div class="tt">${com ? `Máx ${fmtN(T.max.t, 0)} °C · méd ${fmtN(T.avg)} °C` : "&nbsp;"}</div>
+    <div class="tt">${com ? `Máx. ${fmtTp(T.max.t)} °C · méd. ${fmtN(T.avg)} °C` : T && T.nRaw ? `Ar interno: máx. ${fmtTp(T.maxRaw)} °C` : "&nbsp;"}</div>
+    ${com && T.maxRaw > T.max.t ? `<div class="tt">Relatório inteiro: máx. ${fmtTp(T.maxRaw)} °C</div>` : ""}
     ${T && T.parcial ? `<div class="tt" style="color:var(--warn);font-weight:600">⚠ cabo ${T.semLeitura.join(", ")} sem leitura</div>` : ""}
     ${S.fito.carAte && NOW < S.fito.carAte && !S.vazio ? `<div class="tt" style="color:var(--warn);font-weight:600">Carência até ${fmtD(S.fito.carAte)}</div>` : ""}
   </button>`;
@@ -1425,8 +1608,19 @@ function fotoAlertas() {
 }
 
 /* ---------- visão geral ---------- */
+/* armazéns convencionais: saldo do SAAGRA e produtos por quadra (planilha de ocupação dos armazéns) */
+const faixaQ = ids => { const ns = ids.map(i => +String(i).slice(1)).sort((a, b) => a - b), out = []; let a = ns[0], b = ns[0]; for (let i = 1; i <= ns.length; i++) { if (ns[i] === b + 1) b = ns[i]; else { out.push(a === b ? "Q" + a : b === a + 1 ? `Q${a}, Q${b}` : `Q${a} a Q${b}`); a = b = ns[i]; } } return out.join(", "); };
+function armazensResumo() {
+  const md = mapaDados(), nomes = [...new Set([...M.armazens.filter(a => !a.granel).map(a => a.code), ...Object.keys(M.quadras || {}), ...md.construcoes.filter(c => (c.quadras || []).length).map(c => c.estoque || c.nome)])];
+  return nomes.sort((a, b) => (+(a.match(/\d+/) || [0])[0]) - (+(b.match(/\d+/) || [0])[0])).map(nome => {
+    const a = M.armazens.find(x => norm(x.code) === norm(nome)) || null, c = md.construcoes.find(c => norm(c.estoque || "") === norm(nome)), oc = (M.quadras || {})[Object.keys(M.quadras || {}).find(k => norm(k) === norm(nome))];
+    let qs = null;
+    if (oc) { const por = {}; Object.entries(oc.q).forEach(([q, ps]) => { const t = ps.join(" / ") || "sem produto informado"; (por[t] = por[t] || []).push(q); }); qs = {n: Object.keys(oc.q).length, txt: Object.entries(por).sort((x, y) => y[1].length - x[1].length).map(([t, l]) => `${t} (${l.length})`).join(" · "), por, oc}; }
+    return {nome: c ? c.nome : nome, a, top: a ? a.itens.filter(i => i.t > 0.0005).sort((x, y) => y.t - x.t) : [], qs, c};
+  });
+}
 function renderGeral() {
-  const S = M.silos, ativos = S.filter(s => s.ativo && s.T && s.T.nMassa);
+  const S = M.silos, ativos = S.filter(s => s.monit);
   const tAl = ativos.filter(s => s.T.sev === "crit" || s.T.sev === "warn"), tCrit = tAl.filter(s => s.T.sev === "crit").length;
   const Ts = Object.values(M.thermo), totC = Ts.reduce((a, T) => a + T.cabos.length, 0), offC = Ts.reduce((a, T) => a + T.semLeitura.length, 0);
   const expA = M.fito.alvos.filter(a => a.sev === "crit").length, expP = M.fito.alvos.filter(a => a.sev === "warn").length;
@@ -1437,13 +1631,15 @@ function renderGeral() {
   const pAb = M.pends.filter(p => p.aberta), fr = fotoResumo();
   const al = [...M.alerts, ...fotoAlertas()].sort((a, b) => SEV[b.sev] - SEV[a.sev]);
   const fontes = [
-    ["Termometria (PDF diário)", DATA.term.length, DATA.term.length ? "última leitura em " + fmtD(new Date(Math.max(...DATA.term.map(t => +new Date(t.date))))) : null, "silos"],
+    ["Termometria (PDF diário)", DATA.term.length, DATA.term.length ? "última leitura em " + fmtDH(new Date(Math.max(...DATA.term.map(t => +new Date(t.date))))) + (M.termRel.length ? (M.termRel.some(t => t.check && t.check.prob.length) ? " · conferência com divergência" : M.termRel.every(t => t.check) ? ` · ${M.termRel.reduce((a, t) => a + t.n, 0)} valores conferidos` : "") : "") : null, "confiab"],
     ["Ocupação dos silos (planilha)", DATA.ocup.length, M.ocLin.length ? "atualizada em " + fmtD(M.ocLin[M.ocLin.length - 1].d) : null, "silos"],
     ["Controle de Estoque (SAAGRA)", DATA.estoque.length, M.est.ate ? "posição de " + fmtD(M.est.ate) : null, "estoque"],
     ["DOF", DATA.dof.length, M.fito.mesDof ? "mês " + mesLabel(M.fito.mesDof) : null, "fito"],
     ["DEPQ", DATA.depq.length, M.fito.mesDepq ? "mês " + mesLabel(M.fito.mesDepq) : null, "pessoal"],
     ["Certificados de classificação", DATA.certs.length, DATA.certs.length ? DATA.certs.length + " laudo(s)" : null, "qualidade"],
-    ["Fotos", FOTOS.length, FOTOS.length ? `${fr.porTipo.produto || 0} de produtos, ${fr.porTipo.praga || 0} de pragas, ${fr.porTipo.isca || 0} de iscas` : null, "fotos"],
+    ["Fotos", FOTOS.length, FOTOS.length ? Object.entries(fr.porTipo).map(([k, n]) => `${n} de ${FOTO_TIPOS[k].curto.toLowerCase()}`).join(", ") : null, "fotos"],
+    ["Logo (imagem com \"logo\" no nome)", DATA.logo ? 1 : 0, DATA.logo ? "carregada" : null, "geral"],
+    ["Ocupação dos armazéns (planilha)", (DATA.ocupArm || []).length, Object.keys(M.quadras || {}).length ? Object.entries(M.quadras).map(([k, o]) => `${k} em ${fmtD(toDate(o.data))}`).join(" · ") : null, "estoque"],
     ["Croqui da UA (mapa_ua.json)", DATA.mapa ? 1 : 0, DATA.mapa ? "planta carregada" : null, "mapa"],
     ["Cadastros manuais (planilha do painel)", DATA.plan ? 1 : 0, DATA.plan ? (DATA.plan._file || "carregada") : null, "manut"],
   ];
@@ -1451,7 +1647,7 @@ function renderGeral() {
     <h2>Situação em ${fmtD(NOW)}</h2>
     <div class="grid g-kpi">
       ${kpi("ok", "Estoque total", M.est.rep ? fmtN(M.est.totalT, 0) + " t" : "–", M.est.rep ? `${fmtR(M.est.valor)} · posição de ${fmtD(M.est.ate)}` : "sem Controle de Estoque", "estoque")}
-      ${kpi(tCrit ? "crit" : tAl.length ? "warn" : "ok", "Silos com alerta térmico", tAl.length, `${tCrit ? tCrit + " crítico(s) · " : ""}${ativos.length} silo(s) com produto monitorados`, "silos")}
+      ${kpi(tCrit ? "crit" : tAl.length ? "warn" : "ok", "Silos com alerta térmico", tAl.length, `${tCrit ? tCrit + " crítico(s) · " : ""}${ativos.length} silo(s) com leitura de termometria`, "silos")}
       ${kpi(offC ? "warn" : "ok", "Cabos de termometria sem leitura", totC ? `${offC} de ${totC}` : "–", "ver confiabilidade", "confiab")}
       ${kpi(expA ? "crit" : expP ? "warn" : "ok", "Expurgos atrasados", expA, `${expP} previsto(s) para este mês`, "fito")}
       ${kpi(insV ? "crit" : insA ? "warn" : "ok", "Inseticidas vencidos", insV, `${insA} a vencer em ${M.C.avisoInset} dias`, "fito")}
@@ -1464,12 +1660,9 @@ function renderGeral() {
     <p class="sub">${M.armGranel ? `${esc(M.armGranel.code)}: ${fmtT(M.armGranel.saldoT, 0)} a granel (SAAGRA, ${fmtD(M.est.ate)}).` : ""} ${M.ocLin.length ? `Ocupação informada em ${fmtD(M.ocLin[M.ocLin.length - 1].d)}.` : "Ocupação dos silos ainda não informada: salve a planilha de ocupação na pasta."} Toque no silo para ver a termometria.</p>
     <div class="grid g-silos">${S.map(siloCard).join("") || '<div class="empty">Nenhum silo identificado. Carregue os relatórios de termometria ou a planilha de ocupação.</div>'}</div>
     <h2>Armazéns</h2>
-    <div class="grid g-2">${M.armazens.filter(a => !a.granel).map(a => {
-      const top = a.itens.filter(i => i.t > 0.0005).sort((x, y) => y.t - x.t);
-      return `<button class="card silo" data-go="estoque"><div class="hd"><span class="nm">${esc(a.code)}</span>${badge("ok", fmtN(a.saldoT, 0) + " t")}</div>
-        <div class="tt">${top.length} produto(s) com saldo · ${fmtR(a.valor)}</div>
-        <div class="pr">${esc(top.slice(0, 4).map(i => `${titulo(i.produto)} (${fmtN(i.t, 0)} t)`).join(" · ") || "—")}${top.length > 4 ? ` · + ${top.length - 4}` : ""}</div></button>`;
-    }).join("") || '<div class="empty">Sem Controle de Estoque carregado.</div>'}</div>
+    <div class="grid g-2">${armazensResumo().map(r => `<button class="card silo" data-go="estoque"><div class="hd"><span class="nm">${esc(r.nome)}</span>${r.a ? badge("ok", fmtN(r.a.saldoT, 0) + " t") : badge("mut", "sem saldo no SAAGRA")}</div>
+      ${r.a ? `<div class="tt">${r.top.length} produto(s) com saldo · ${fmtR(r.a.valor)}</div><div class="pr">${esc(r.top.slice(0, 4).map(i => `${titulo(i.produto)} (${fmtN(i.t, 0)} t)`).join(" · ") || "—")}${r.top.length > 4 ? ` · + ${r.top.length - 4}` : ""}</div>` : ""}
+      ${r.qs ? `<div class="tt"><b>${r.qs.n} quadra(s):</b> ${esc(r.qs.txt)}</div>` : ""}</button>`).join("") || '<div class="empty">Sem Controle de Estoque carregado.</div>'}</div>
     <h2>Pontos de atenção</h2>
     <p class="sub">Ordenados por gravidade. Cada item traz a providência recomendada.</p>
     ${alertList(al, 16)}
@@ -1490,56 +1683,80 @@ function tempColor(t) {
   for (let i = 1; i < stops.length; i++) if (t <= stops[i][0]) { const [a, ca] = stops[i - 1], [b, cb] = stops[i], f = (t - a) / (b - a || 1); return `rgb(${ca.map((v, j) => Math.round(v + (cb[j] - v) * f)).join(",")})`; }
   return "rgb(215,60,50)";
 }
+let selLeit = null, heatModo = lsGet("painelUA.v2.heat", "corte");
+/* Mapa de temperaturas de um silo em uma leitura. modo "pdf": mesma disposição do relatório (linhas = cabos, colunas = sensores);
+   modo "corte": linhas = sensores, do topo para a base. Os números são sempre os do relatório. */
+function heatHTML(T, dk) {
+  const C = M.C, ult = dk === T.lastDk, raw = T.raw[dk] || {}, susp = T.suspD[dk] || [], fora = T.foraD[dk] || {}, rp = T.repD[dk];
+  const semL = c => !Object.values(raw).some(v => v.c === c) && !susp.some(x => x.c === c);
+  const nS = Math.max(M.nSens || 1, ...T.sensores), base = C.s1Base ? 1 : nS, topo = C.s1Base ? nS : 1;
+  const cel = (c, s) => {
+    const key = c + "-" + s, v0 = raw[key], sp = susp.find(x => x.c === c && x.s === s), onde = `Cabo ${c}, sensor ${s}`;
+    if (sp) return `<td class="c" style="background:var(--surface-2);outline:2px dashed var(--warn);outline-offset:-2px;color:var(--text)" title="${onde}: ${fmtTp(sp.t)} °C no relatório. Leitura implausível (acima de ${C.tMaxPl} °C): provável falha de sensor, fora das médias">${fmtTp(sp.t)}<small>sensor?</small></td>`;
+    if (!v0) { const pr = ult && T.suspeitos.find(x => x.parou && x.c === c && x.s === s); return pr ? `<td class="c" style="background:var(--surface-2);color:var(--warn)" title="${onde}: sem valor no relatório. ${esc(pr.det)}">–<small>parou</small></td>` : `<td class="c" style="background:var(--surface-2);color:var(--muted)" title="${onde}: sem valor no relatório">–</td>`; }
+    const v = ult ? T.cells[key] : null, dc = ult && T.descalCur.find(x => x.c === c && x.s === s);
+    if (dc) return `<td class="c" style="background:var(--surface-2);outline:2px dashed var(--info);outline-offset:-2px;color:var(--text)" title="${onde}: ${fmtTp(v0.t)} °C. Sensor reprovado na verificação com referência: fora das médias">${fmtTp(v0.t)}<small>descalibr.</small></td>`;
+    if (fora[key]) return `<td class="c ar" style="background:${tempColor(v0.t)};color:#1b1b1b" title="${onde}: ${fmtTp(v0.t)} °C no relatório. Acima do nível estimado do grão (ar): fora das médias e dos alertas">${fmtTp(v0.t)}<small>ar</small></td>`;
+    const dl = !v || v.delta == null ? "" : (v.delta >= 0 ? "+" : "") + fmtN(v.delta, 0);
+    const mk = v && v.viz ? ";outline:2px dotted var(--text);outline-offset:-3px" : v && v.trav ? ";outline:2px dotted var(--muted);outline-offset:-3px" : "";
+    const quente = v ? v.flag : v0.t >= C.tCrit;
+    return `<td class="c${quente ? " hot" : ""}" style="background:${tempColor(v0.t)}${mk}" title="${onde}: ${fmtTp(v0.t)} °C${dl ? " (" + dl + " °C desde a leitura anterior)" : ""}${v && v.viz ? ". Fora do padrão dos vizinhos: conferir" : ""}${v && v.trav ? ". Possível sensor travado" : ""}">${fmtTp(v0.t)}<small>${v && v.viz ? "conferir" : v && v.trav ? "travado?" : dl}</small></td>`;
+  };
+  const nomeCabo = c => `Cabo ${c}${c === C.caboCentral ? " (central)" : ""}`, avisoCabo = c => semL(c) ? '<span style="color:var(--warn);font-weight:600">sem leitura</span>' : "";
+  const nomeSens = s => `Sensor ${s}${s === topo ? " (topo)" : s === base ? " (base)" : ""}`;
+  let tab;
+  if (heatModo === "pdf") {
+    const cabos = T.cabos.slice().sort((a, b) => a - b), sens = Array.from({length: nS}, (_, i) => i + 1);
+    tab = `<table class="heat" aria-label="Temperaturas do ${esc(T.silo)}, na disposição do relatório"><thead><tr><th></th>${sens.map(s => `<th>${nomeSens(s).replace(" (", "<br>(")}</th>`).join("")}</tr></thead><tbody>
+      ${cabos.map(c => `<tr><th style="text-align:left;white-space:nowrap${c === C.caboCentral ? ";color:var(--text);font-weight:700" : ""}">${nomeCabo(c)} ${avisoCabo(c)}</th>${sens.map(s => cel(c, s)).join("")}</tr>`).join("")}</tbody></table>`;
+  } else {
+    tab = `<table class="heat" aria-label="Temperaturas do ${esc(T.silo)}, em corte do silo"><thead><tr><th></th>${T.cabos.map(c => `<th${c === C.caboCentral ? ' style="color:var(--text);font-weight:700"' : ""}>Cabo ${c}${c === C.caboCentral ? "<br>central" : ""}${semL(c) ? "<br>" + avisoCabo(c) : ""}</th>`).join("")}</tr></thead><tbody>
+      ${T.sensores.map(s => `<tr><th>${nomeSens(s)}</th>${T.cabos.map(c => cel(c, s)).join("")}</tr>`).join("")}</tbody></table>`;
+  }
+  const nVal = Object.keys(raw).length + susp.length;
+  return `<p class="sub" style="margin:0 0 10px">${rp ? `Relatório de <b>${fmtDH(rp.d)}</b> · arquivo ${esc(rp.file)}` : `Leitura de ${fmtD(new Date(dk))} (planilha)`} · ${nVal} valor(es) neste silo${ult ? "" : " · <b>leitura anterior, não é a mais recente</b>"}.</p>
+    <div style="overflow-x:auto">${tab}</div>
+    <div class="legend"><span><i style="background:${tempColor(16)}"></i>&lt; 18 °C</span><span><i style="background:${tempColor(21)}"></i>18–${C.tAtt - 2} °C</span><span><i style="background:${tempColor(C.tAtt)}"></i>≥ ${C.tAtt} °C atenção</span><span><i style="background:${tempColor(C.tCrit)}"></i>≥ ${C.tCrit} °C crítico</span>${Object.keys(fora).length ? '<span><i class="ar"></i>ar (acima do nível informado)</span>' : ""}
+    <span>${heatModo === "pdf" ? "Mesma disposição do relatório: cada linha é um cabo e cada coluna um sensor, da base para o topo." : "Corte do silo: linhas de cima para baixo = do topo para a base."} Os números são os do relatório; as cores seguem os limites do painel (${C.tAtt} e ${C.tCrit} °C), não as cores do PDF.${ult ? " Número menor = variação desde a leitura anterior." : ""} Contorno vermelho = crítico. "–" = sem valor no relatório. Tracejado laranja = leitura implausível; tracejado azul = descalibrado; pontilhado = leitura suspeita.</span></div>`;
+}
 function renderSilos() {
   const silos = M.silos, codes = silos.map(s => s.code);
   if (!selSilo || !codes.includes(selSilo)) {
-    const w = silos.filter(s => s.ativo && s.T && s.T.nMassa).sort((a, b) => SEV[b.T.sev] - SEV[a.T.sev]);
+    const w = silos.filter(s => s.monit).sort((a, b) => SEV[b.T.sev] - SEV[a.T.sev]);
     selSilo = (w[0] || silos.find(s => s.T) || silos[0] || {}).code || null;
   }
   const S = M.siloDe[selSilo];
   if (!S) { $("#v-silos").innerHTML = '<div class="empty">Nenhum silo identificado. Salve os relatórios de termometria e a planilha de ocupação na pasta da UA.</div>'; return; }
-  const T = S.T, aer = M.aer[selSilo] || [], com = T && T.nMassa && !S.vazio;
-  let heat = '<div class="empty">Sem leituras de termometria para este silo no período.</div>';
-  if (T) {
-    heat = `<table class="heat" aria-label="Mapa de temperaturas do ${esc(selSilo)}"><thead><tr><th></th>${T.cabos.map(c => `<th${c === M.C.caboCentral ? ' style="color:var(--text);font-weight:700"' : ""}>Cabo ${c}${c === M.C.caboCentral ? "<br>central" : ""}${T.semLeitura.includes(c) ? '<br><span style="color:var(--warn)">sem leitura</span>' : ""}</th>`).join("")}</tr></thead><tbody>
-      ${T.sensores.map(s => `<tr><th>Sensor ${s}${s === T.sensores[0] ? " (topo)" : s === T.sensores[T.sensores.length - 1] ? " (base)" : ""}</th>${T.cabos.map(c => {
-        const v = T.cells[c + "-" + s], sp = T.susp.find(x => x.c === c && x.s === s), dc = T.descalCur.find(x => x.c === c && x.s === s);
-        if (dc) return `<td class="c" style="background:var(--surface-2);outline:2px dashed var(--info);outline-offset:-2px;color:var(--text)" title="Sensor reprovado na verificação com referência: fora das médias">${fmtN(dc.t, 0)}<small>descalibr.</small></td>`;
-        const pr = T.suspeitos.find(x => x.parou && x.c === c && x.s === s);
-        if (!v && pr) return `<td class="c" style="background:var(--surface-2);color:var(--warn)" title="Sensor parou de ler: ${esc(pr.det)}">–<small>parou</small></td>`;
-        if (sp) return `<td class="c" style="background:var(--surface-2);outline:2px dashed var(--warn);outline-offset:-2px;color:var(--text)" title="Leitura implausível (${fmtN(sp.t, 0)} °C): provável falha de sensor">${fmtN(sp.t, 0)}?<small>sensor?</small></td>`;
-        if (!v) return `<td class="c" style="background:var(--surface-2);color:var(--muted)">–</td>`;
-        if (v.fora) return `<td class="c ar" title="Cabo ${c}, sensor ${s}: ${fmtN(v.t, 0)} °C — acima do nível estimado do grão (ar): fora das médias e dos alertas">${fmtN(v.t, 0)}<small>ar</small></td>`;
-        const dl = v.delta == null ? "" : (v.delta >= 0 ? "+" : "") + fmtN(v.delta, 0);
-        const mk = v.viz ? ";outline:2px dotted var(--text);outline-offset:-3px" : v.trav ? ";outline:2px dotted var(--muted);outline-offset:-3px" : "";
-        return `<td class="c${v.flag ? " hot" : ""}" style="background:${tempColor(v.t)}${mk}" title="Cabo ${c}, sensor ${s}: ${fmtN(v.t, 0)} °C${dl ? " (" + dl + " °C desde a leitura anterior)" : ""}${v.viz ? " — fora do padrão dos vizinhos: conferir" : ""}${v.trav ? " — possível sensor travado" : ""}">${fmtN(v.t, 0)}<small>${v.viz ? "conferir" : v.trav ? "travado?" : dl}</small></td>`;
-      }).join("")}</tr>`).join("")}</tbody></table>
-      <div class="legend"><span><i style="background:${tempColor(16)}"></i>&lt; 18 °C</span><span><i style="background:${tempColor(21)}"></i>18–${M.C.tAtt - 2} °C</span><span><i style="background:${tempColor(M.C.tAtt)}"></i>≥ ${M.C.tAtt} °C atenção</span><span><i style="background:${tempColor(M.C.tCrit)}"></i>≥ ${M.C.tCrit} °C crítico</span><span><i class="ar"></i>ar (acima do grão)</span>
-      <span>Linhas de cima para baixo = do topo para a base do silo. Número menor = variação desde a leitura anterior. Contorno vermelho = crítico. "–" = sem leitura. Tracejado laranja = leitura implausível; tracejado azul = descalibrado; pontilhado = leitura suspeita.</span></div>`;
-  }
-  const opts = silos.map(s => `<option value="${esc(s.code)}"${s.code === selSilo ? " selected" : ""}>${esc(s.code)}${s.vazio ? " – vazio" : s.prod ? " – " + esc(s.prod) : ""}${s.T && s.T.nMassa && !s.vazio && s.T.sev !== "ok" ? " (" + SEV_LBL[s.T.sev] + ")" : ""}</option>`).join("");
+  const T = S.T, aer = M.aer[selSilo] || [], com = S.monit;
+  if (T && selLeit != null && !T.raw[selLeit] && !(T.suspD[selLeit] || []).length) selLeit = null;
+  const dkSel = T ? (selLeit != null ? selLeit : T.lastDk) : null;
+  const heat = T ? heatHTML(T, dkSel) : '<div class="empty">Sem leituras de termometria para este silo no período.</div>';
+  const opts = silos.map(s => `<option value="${esc(s.code)}"${s.code === selSilo ? " selected" : ""}>${esc(s.code)}${s.vazio ? " – 0% (estimado)" : s.prod ? " – " + esc(s.prod) : ""}${s.monit && s.T.sev !== "ok" ? " (" + SEV_LBL[s.T.sev] + ")" : ""}</option>`).join("");
   $("#v-silos").innerHTML = `
     <div class="toolbar"><label>Silo <select id="selSilo">${opts}</select></label>
-      ${T ? `<span class="sub" style="margin:0">Última leitura: ${fmtD(T.lastD)}${T.prevD ? ` · anterior: ${fmtD(T.prevD)}` : " · primeira leitura (sem comparação)"}${T.amb != null ? ` · ambiente ${fmtN(T.amb, 0)} °C` : ""}</span>` : ""}</div>
+      ${T ? `<span class="sub" style="margin:0">Última leitura: ${T.repD[T.lastDk] ? fmtDH(T.lastD) : fmtD(T.lastD)}${T.prevD ? ` · anterior: ${fmtD(T.prevD)}` : " · primeira leitura (sem comparação)"}${T.amb != null ? ` · ambiente ${fmtN(T.amb, 0)} °C` : ""}</span>` : ""}</div>
     <div class="grid g-silos" style="margin-bottom:12px">${silos.map(siloCard).join("")}</div>
     <div class="two">
       <div class="card"><h3>${esc(selSilo)} — resumo</h3>
         <dl class="kv">
-          <dt>Ocupação</dt><dd>${S.ocup != null ? fmtN(S.ocup * 100, 0) + "% (informada em " + fmtD(S.ocupData) + ")" : "não informada"}</dd>
+          <dt>Ocupação estimada</dt><dd>${S.ocup != null ? "≈ " + fmtN(S.ocup * 100, 0) + "% (planilha de " + fmtD(S.ocupData) + ")" : "não informada"}</dd>
           <dt>Produto</dt><dd>${esc(S.prod || "—")}</dd>
           <dt>Quantidade estimada</dt><dd>${S.t != null && !S.vazio ? `≈ ${fmtT(S.t, 0)} <span class="note" style="font-weight:400">(${S.tFonte})</span>` : "—"}</dd>
           <dt>Temperatura média</dt><dd>${com ? fmtN(T.avg) + " °C" : "—"}</dd>
-          <dt>Temperatura máxima</dt><dd>${com ? `${fmtN(T.max.t, 0)} °C (cabo ${T.max.c}, sensor ${T.max.s})` : "—"}</dd>
+          <dt>Temperatura máxima</dt><dd>${com ? `${fmtTp(T.max.t)} °C (cabo ${T.max.c}, sensor ${T.max.s})` : "—"}</dd>
+          ${T && T.nFora ? `<dt>Relatório inteiro</dt><dd>${`máx. ${fmtTp(T.maxRaw)} °C · méd. ${fmtN(T.avgRaw)} °C <span class="note" style="font-weight:400">(${T.nRaw} sensores${T.nFora ? ", " + T.nFora + " no ar" : ""}${T.susp.length ? "; " + T.susp.length + " implausível(is) à parte" : ""})</span>`}</dd>` : ""}
           <dt>Situação térmica</dt><dd>${badge(S.status.sev, S.status.txt)}</dd>
           <dt>Último expurgo</dt><dd>${S.fito.ultExp ? `${fmtD(S.fito.ultExp)} (há ${S.fito.diasExp} dias)` : S.fito.semExp ? "sem expurgo (DOF)" : "sem registro"}</dd>
           <dt>Carência</dt><dd>${S.fito.carAte && NOW < S.fito.carAte ? badge("warn", "até " + fmtD(S.fito.carAte)) + ` <span class="note" style="font-weight:400">${esc(S.fito.carTxt)}</span>` : "sem carência ativa"}</dd>
           <dt>Última aeração</dt><dd>${aer[0] ? `${fmtD(aer[0].d)} · ${esc(aer[0].tipo || "")}${aer[0].h != null ? " · " + fmtN(aer[0].h) + " h" : ""}` : "sem registro"}</dd>
         </dl>
       </div>
-      <div class="card"><h3>Evolução da temperatura (sensores no grão)</h3><div class="chartbox"><canvas id="chSilo" aria-label="Temperatura média e máxima por leitura"></canvas></div></div>
+      <div class="card"><h3>Evolução da temperatura</h3><div class="chartbox"><canvas id="chSilo" aria-label="Temperatura média e máxima por leitura"></canvas></div></div>
     </div>
     <h2>Mapa de temperaturas — ${esc(selSilo)}</h2>
-    <div class="card" style="overflow-x:auto">${heat}</div>
+    ${T ? `<div class="toolbar"><label>Leitura <select id="selLeit">${T.dates.slice().reverse().map(dk => `<option value="${dk}"${dk === dkSel ? " selected" : ""}>${T.repD[dk] ? fmtDH(T.repD[dk].d) : fmtD(new Date(dk))}${dk === T.lastDk ? " (mais recente)" : ""}</option>`).join("")}</select></label>
+      <button class="btn sm" id="btnHeat" title="Alternar a disposição da tabela">${heatModo === "pdf" ? "Ver em corte do silo (topo em cima)" : "Ver como no relatório (PDF)"}</button></div>` : ""}
+    <div class="card">${heat}</div>
     <h2>Diagnóstico e recomendações</h2>
     ${alertList(T ? T.notes.map(n => ({...n, mod: "Termometria"})) : [])}
     <h2>Assistente de aeração</h2>
@@ -1556,7 +1773,9 @@ function renderSilos() {
     </div>
     ${aer.length ? `<h2>Registros de aeração — ${esc(selSilo)}</h2><div class="tbl-wrap"><table><thead><tr><th>Data</th><th>Início</th><th>Fim</th><th class="n">Horas</th><th>Tipo</th><th class="n">T ar (°C)</th><th class="n">UR (%)</th><th>Operador</th><th>Obs.</th></tr></thead><tbody>
       ${aer.map(a => `<tr><td>${fmtD(a.d)}</td><td>${esc(fmtHora(a.ini))}</td><td>${esc(fmtHora(a.fim))}</td><td class="n">${fmtN(a.h)}</td><td>${esc(a.tipo)}</td><td class="n">${fmtN(a.tamb)}</td><td class="n">${fmtN(a.ur, 0)}</td><td>${esc(a.op)}</td><td>${esc(a.obs)}</td></tr>`).join("")}</tbody></table></div>` : ""}`;
-  $("#selSilo").onchange = e => { selSilo = e.target.value; renderSilos(); };
+  $("#selSilo").onchange = e => { selSilo = e.target.value; selLeit = null; renderSilos(); };
+  if ($("#selLeit")) $("#selLeit").onchange = e => { selLeit = +e.target.value; if (selLeit === T.lastDk) selLeit = null; renderSilos(); };
+  if ($("#btnHeat")) $("#btnHeat").onclick = () => { heatModo = heatModo === "pdf" ? "corte" : "pdf"; lsSet("painelUA.v2.heat", heatModo); renderSilos(); };
   $("#aGo").onclick = aeracao;
   if (currentTab === "silos") drawSiloChart();
 }
@@ -1633,6 +1852,11 @@ function confiabHTML(print) {
       ${susp.map(x => `<tr><td>${esc(x.silo)}</td><td>Cabo ${x.c}${x.c === M.C.caboCentral ? " (central)" : ""}</td><td>Sensor ${x.s}</td><td>${badge(x.descal || x.tipo.startsWith("Leitura") ? "crit" : x.tipo.startsWith("Possível") ? "info" : "warn", x.tipo)}</td><td>${esc(x.det)}</td></tr>`).join("") || vazioTxt(5, "Nenhum sensor suspeito.")}
     </tbody></table></div>
     <p class="note">"Fora do padrão dos vizinhos" e "possível travado" são indícios, não diagnóstico: um foco real também pode destoar dos vizinhos. Por isso essas leituras continuam nos alertas até a conferência com referência (aba Termometria_Verificação da planilha de cadastros).</p>
+    <h2>Relatórios de termometria lidos</h2>
+    <p class="sub">Cada número do PDF é associado à coluna do sensor pela posição e a leitura é conferida linha por linha. Quando há mais de um relatório no mesmo dia, vale o mais recente.</p>
+    <div class="tbl-wrap"><table><thead><tr><th>Data e hora</th><th>Arquivo</th><th class="n">Valores no PDF</th><th class="n">Valores lidos</th><th>Silos</th><th>Conferência</th></tr></thead><tbody>
+      ${M.termRel.map(t => `<tr><td>${fmtDH(t.d)}</td><td style="overflow-wrap:anywhere">${esc(t.file)}</td><td class="n">${t.check ? t.check.tokens : "–"}</td><td class="n">${t.n}</td><td>${t.unidades.join(", ")}</td><td>${!t.check ? badge("info", "Sem conferência") : t.check.prob.length ? badge("crit", "Divergência") + `<div class="note" style="margin:2px 0 0">${esc(t.check.prob.slice(0, 3).join("; "))}</div>` : badge("ok", "Confere")}${t.usado ? "" : `<div class="note" style="margin:2px 0 0">não usado: há leitura mais recente no mesmo dia</div>`}</td></tr>`).join("") || vazioTxt(6, "Nenhum relatório de termometria no período.")}
+    </tbody></table></div>
     <h2>Ocorrências de manutenção</h2>
     <div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Abertura</th><th>Silo</th><th>Cabo</th><th>Sensor</th><th>Problema</th><th>Chamado/OS</th><th class="n">Dias</th><th>Situação</th></tr></thead><tbody>
       ${M.ocorr.map(o => `<tr><td>${esc(o.id)}</td><td>${fmtD(o.ab)}</td><td>${esc(o.silo)}</td><td>${o.c ?? ""}</td><td>${o.s ?? ""}</td><td>${esc(o.prob)}</td><td>${esc(o.os)}</td><td class="n">${o.dias ?? ""}</td><td>${o.aberta ? badge(o.dias > M.C.prazoRep ? "crit" : "warn", o.dias > M.C.prazoRep ? "Atrasada" : o.st) : badge("ok", o.st + (o.rp ? " em " + fmtD(o.rp) : ""))}</td></tr>`).join("") || vazioTxt(9, "Nenhuma ocorrência registrada. Registre as falhas na aba Termometria_Ocorrências da planilha de cadastros.")}
@@ -1643,11 +1867,7 @@ function confiabHTML(print) {
     </tbody></table></div>
     <p class="note">Tolerância usada: ±${fmtN(M.C.tolVer, 1)} °C. A verificação periódica da termometria é boa prática; nas normas CONAB consultadas, a calibração obrigatória com cronograma se refere a balanças e medidores de umidade.</p>`;
 }
-function imprimir(html) { $("#boletim").innerHTML = html + `<p class="note">Responsável Técnico: ________________________________</p>`; window.print(); }
-function renderConfiab() {
-  $("#v-confiab").innerHTML = `<div class="toolbar" style="justify-content:flex-end"><button class="btn" id="btnFalhas">🖨️ Relatório de falhas</button></div>` + confiabHTML(false);
-  $("#btnFalhas").onclick = () => imprimir(confiabHTML(true));
-}
+function renderConfiab() { $("#v-confiab").innerHTML = confiabHTML(false); }
 
 /* ---------- estoque ---------- */
 function renderEstoque() {
@@ -1663,6 +1883,7 @@ function renderEstoque() {
       ${M.armazens.map(a => kpi("ok", a.code, fmtN(a.saldoT, 0) + " t", `${a.itens.filter(i => i.t > 0.0005).length} produto(s) · ${fmtR(a.valor)}`)).join("")}
     </div>
     ${M.est.hist.length > 1 ? `<h2>Evolução do saldo por armazém</h2><div class="card"><div class="chartbox"><canvas id="chEst" aria-label="Saldo por armazém em cada relatório"></canvas></div></div>` : ""}
+    ${armazensResumo().filter(r => r.qs).length ? `<h2>Quadras dos armazéns</h2><p class="sub">Conforme a planilha de ocupação dos armazéns (linha de data mais recente de cada armazém).</p><div class="grid g-2">${armazensResumo().filter(r => r.qs).map(r => `<div class="card"><h3>${esc(r.nome)}</h3><p class="note" style="margin:0 0 6px">Planilha de ${fmtD(toDate(r.qs.oc.data))}${r.c ? ` · <a href="#" data-croqui="${esc(r.c.id)}">croqui com as medidas</a>` : ""}</p><div class="tbl-wrap"><table><thead><tr><th>Quadra</th><th>Produto(s)</th></tr></thead><tbody>${(Object.keys(r.qs.oc.q).length > 14 ? Object.entries(r.qs.por).map(([t, qs]) => [faixaQ(qs), t === "sem produto informado" ? [] : t.split(" / ")]) : Object.entries(r.qs.oc.q).sort((x, y) => +x[0].slice(1) - +y[0].slice(1))).map(([q, ps]) => `<tr><td><b>${esc(q)}</b></td><td>${ps.length ? ps.map(p => `<span class="chip" style="border-left:6px solid ${corProduto(p)}">${esc(p)}</span>`).join(" ") : '<span class="note">sem produto informado</span>'}</td></tr>`).join("")}</tbody></table></div></div>`).join("")}</div>` : ""}
     ${M.armazens.map(a => `
       <h2>${esc(a.code)}${a.granel ? " — silos (granel)" : ""}</h2>
       <p class="sub">C.D.A. ${esc(a.cda)} · saldo de ${fmtT(a.saldoT, 3)} · entradas ${fmtT(a.entT)} · saídas ${fmtT(a.saiT)}.</p>
@@ -1696,11 +1917,11 @@ function renderFito() {
     <div class="tbl-wrap"><table><thead><tr><th>Produto / local</th><th>Último expurgo</th><th>Próximo previsto</th><th>Situação</th></tr></thead><tbody>
       ${F.alvos.map(a => `<tr><td><b>${esc(a.alvo)}</b>${a.silos && a.silos.length ? `<div class="note" style="margin:0">silos ${a.silos.join(", ")}</div>` : ""}</td><td>${a.ult ? `${fmtD(a.ult)} <span class="note">(há ${daysBetween(a.ult, NOW)} dias)</span>` : esc(a.ultTxt || "—")}</td><td>${esc(a.prox ? mesLabel(a.prox) : (a.proxTxt || "—"))}</td><td>${badge(a.sev, a.st)}</td></tr>`).join("") || vazioTxt(4, "Sem informação de expurgo nos documentos carregados.")}
     </tbody></table></div>
-    ${det ? `<div class="al ${det.nao || /aquisi|n[ãa]o possui/i.test(det.obs) ? "crit" : "info"}" style="margin-top:10px"><div>${det.nao || /aquisi|n[ãa]o possui/i.test(det.obs) ? "⛔" : "ℹ️"}</div><div><div class="t">Detector de gases (DEPQ, item 32): marcado "${det.sim ? "Sim" : "Não"}"${det.obs ? " — " + esc(det.obs) : ""}</div></div><div class="r">A reentrada após expurgo com fosfina exige medição de PH3 abaixo de ${fmtN(M.C.ph3, 2)} ppm com aparelho.</div></div>` : ""}
+    ${det ? `<div class="al ${det.nao || /aquisi|n[ãa]o possui/i.test(det.obs) ? "crit" : "info"}" style="margin-top:10px"><div>${det.nao || /aquisi|n[ãa]o possui/i.test(det.obs) ? "⛔" : "ℹ️"}</div><div><div class="t">Detector de gases (DEPQ, item 32): marcado "${det.sim ? "Sim" : "Não"}"${det.obs ? " — " + esc(det.obs) : ""}</div></div><div class="r">A reentrada após expurgo com fosfina exige medição de PH3 abaixo de ${fmtN(F.ph3, 2)} ppm com detector de fosfina (${esc(F.ph3Fonte)}).</div></div>` : ""}
     <h2>Aplicações do mês — DOF ${mesLabel(F.mesDof)}</h2>
     <div class="tbl-wrap"><table><thead><tr><th>Forma</th><th>Produto</th><th>Quantidade</th><th>Tratado</th><th>Dose</th><th>Período informado</th><th>Carência</th><th>Conferência</th></tr></thead><tbody>
       ${F.aplic.map(a => `<tr><td>${esc(a.forma)}<div class="note" style="margin:0">${esc(a.secao)}</div></td><td><b>${esc(a.nome)}</b></td><td>${esc(a.quant)}</td><td>${esc(a.alvo || "—")}</td><td>${esc(a.dose)}</td><td>${fmtD(a.ini)} a ${fmtD(a.fim)}</td>
-        <td>${a.carAte ? (NOW < a.carAte ? badge("warn", "até " + fmtD(a.carAte)) : "encerrada em " + fmtD(a.carAte)) : a.info && a.info.gas ? "conforme bula, após a liberação" : "—"}</td>
+        <td>${a.carAte ? (NOW < a.carAte ? badge("warn", "até " + fmtD(a.carAte)) : "encerrada em " + fmtD(a.carAte)) : a.info && a.info.gas ? "após a liberação, conforme bula" : "—"}</td>
         <td>${a.avisos.map(x => `<div>⚠️ ${esc(x)}</div>`).join("") || (a.info ? `<span class="note">${esc(a.info.fonte)}</span>` : "—")}</td></tr>`).join("") || vazioTxt(8, "Nenhuma aplicação informada no DOF.")}
     </tbody></table></div>
     <p class="note">O DOF informa o período do mês, não o dia de cada aplicação. Por segurança, a carência é contada do fim do período. Para controlar reentrada e carência pela data real, registre a aplicação na aba Tratamentos da planilha de cadastros.</p>
@@ -1719,10 +1940,10 @@ function renderFito() {
       ${M.trats.map(t => `<tr><td>${fmtDH(t.start)}</td><td>${esc(t.tipo)}</td><td>${esc(t.local)} ${esc(t.lote)}</td><td>${esc(t.pkey)}</td><td>${esc(t.reentTxt)}</td><td>${fmtD(t.fimCar)}</td><td>${badge(t.sev, t.sev === "ok" ? "Liberado" : t.sev === "crit" ? "Interditado" : "Em carência")}</td><td>${t.issues.map(([s, m]) => `<div>${SEV_ICON[s]} ${esc(m)}</div>`).join("") || "—"}</td></tr>`).join("")}
     </tbody></table></div>` : ""}
     <h2>Referência de bulas usada nas conferências</h2>
-    <div class="tbl-wrap"><table><thead><tr><th>Produto</th><th class="n">Carência em grãos (d)</th><th class="n">Carência em superfícies (d)</th><th>Dose em grãos</th><th>Exige medição de gás</th><th>Fonte</th></tr></thead><tbody>
-      ${FITO_PADRAO.map(f => `<tr><td><b>${esc(f.nome)}</b></td><td class="n">${f.carGraos ?? "conforme bula"}</td><td class="n">${f.carSup ?? "–"}</td><td>${f.doseGraos ? f.doseGraos.join(" a ") + " mL/t" : "–"}</td><td>${f.gas ? "Sim" : "Não"}</td><td>${esc(f.fonte)}</td></tr>`).join("")}
+    <div class="tbl-wrap"><table><thead><tr><th>Produto</th><th class="n">Carência em grãos (d)</th><th class="n">Carência em superfícies (d)</th><th>Dose</th><th>Exposição mínima</th><th>Liberação da área</th><th>Fonte</th></tr></thead><tbody>
+      ${FITO_PADRAO.filter(f => f.nome !== "Fosfeto de alumínio").map(f => `<tr><td><b>${esc(f.nome)}</b>${f.reg ? `<div class="note" style="margin:0">${esc(f.reg)}</div>` : ""}</td><td class="n">${f.carGraos ?? "–"}</td><td class="n">${f.carSup ?? "–"}</td><td>${f.doseGraos ? f.doseGraos.join(" a ") + " mL/t de grãos" : f.doseGm3 ? fmtN(f.doseGm3, 0) + " g/m³ de fosfeto" : "–"}</td><td>${f.expoSacaria ? `${f.expoSacaria} h em sacaria; ${f.expoGranel} h em silos e graneleiros (acima de 25 °C)` : "–"}</td><td>${f.gas ? `PH3 abaixo de ${fmtN(f.ph3, 2)} ppm medido com detector${f.aeracaoDias ? `; aeração mínima de ${f.aeracaoDias.join(" a ")} dias` : ""}` : f.reent ? `${f.reent} h` : "após secagem da calda"}</td><td>${esc(f.fonte)}</td></tr>`).join("")}
     </tbody></table></div>
-    <p class="note">Confira sempre a bula da embalagem em uso e o receituário agronômico. O fosfeto de alumínio em uso segundo o DOF é de marca cuja bula não está cadastrada no painel: envie a bula para incluir carência, tempo de exposição e dose.</p>`;
+    <p class="note">Confira sempre a bula da embalagem em uso e o receituário agronômico. Protecphos 56: o quadro de dosagem da bula indica 96 h de exposição, mas o item "Tempo de exposição" exige no mínimo 120 h em sacaria e 240 h em silos e graneleiros acima de 25 °C (entre 15 e 25 °C, prolongar 20%; abaixo de 15 °C, não fumigar). O painel usa o valor mais restritivo.</p>`;
 }
 
 /* ---------- qualidade ---------- */
@@ -1864,7 +2085,7 @@ function renderMural() {
   if (!M) return;
   const interd = M.trats.filter(t => t.sev === "crit");
   const car = [...M.silos.filter(s => s.fito.carAte && NOW < s.fito.carAte && !s.vazio).map(s => ({l: s.code, d: s.fito.carAte, p: s.fito.carTxt})), ...M.trats.filter(t => t.sev === "warn" && t.fimCar && NOW < t.fimCar).map(t => ({l: `${t.local} ${t.lote}`, d: t.fimCar, p: t.pkey}))];
-  const term = M.silos.filter(s => s.ativo && s.T && s.T.nMassa && (s.T.sev === "crit" || s.T.sev === "warn"));
+  const term = M.silos.filter(s => s.monit && (s.T.sev === "crit" || s.T.sev === "warn"));
   const exp = M.fito.alvos.filter(a => a.sev === "crit" || a.sev === "warn");
   const box = (cls, t, items) => `<div class="mb ${items.length ? cls : "ok"}"><h2>${t}</h2>${items.length ? `<ul>${items.join("")}</ul>` : `<div class="none">Nenhum</div>`}</div>`;
   const now = new Date();
@@ -1873,7 +2094,7 @@ function renderMural() {
     <div class="mg">
       ${box("crit", "⛔ ÁREAS INTERDITADAS — NÃO ENTRAR", interd.map(t => `<li><b>${esc(t.local)} ${esc(t.lote)}</b> — ${esc(t.tipo)}<small>${esc(t.st)}</small></li>`))}
       ${box("warn", "🚫 NÃO EXPEDIR — em carência", car.map(c => `<li><b>${esc(c.l)}</b><small>até ${fmtD(c.d)} · ${esc(c.p)}</small></li>`))}
-      ${box(term.some(s => s.T.sev === "crit") ? "crit" : "warn", "🌡️ Silos com alerta de temperatura", term.map(s => `<li><b>${esc(s.code)}</b> — máx. ${fmtN(s.T.max.t, 0)} °C<small>${esc((s.T.notes.find(n => n.sev !== "info") || {}).title || "")}</small></li>`))}
+      ${box(term.some(s => s.T.sev === "crit") ? "crit" : "warn", "🌡️ Silos com alerta de temperatura", term.map(s => `<li><b>${esc(s.code)}</b> — máx. ${fmtTp(s.T.max.t)} °C<small>${esc((s.T.notes.find(n => n.sev !== "info") || {}).title || "")}</small></li>`))}
       ${box(exp.some(a => a.sev === "crit") ? "crit" : "warn", "🧪 Expurgos previstos ou atrasados", exp.map(a => `<li><b>${esc(a.alvo)}</b><small>${esc(a.st)}</small></li>`))}
       <div class="mb ok"><h2>🦺 Aptos hoje</h2><ul>
         <li><b>NR-33 + NR-35</b><small>${esc(M.aptos.ambos.join(", ") || "ninguém")}</small></li>
@@ -1889,31 +2110,13 @@ function toggleMural() {
   else { clearInterval(toggleMural._t); if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen(); }
 }
 
-/* ---------- boletim ---------- */
-function boletim() {
-  if (!M) { toast("Carregue os dados primeiro."); return; }
-  const al = [...M.alerts, ...fotoAlertas()].sort((a, b) => SEV[b.sev] - SEV[a.sev]);
-  imprimir(`<h1>Boletim da Unidade Armazenadora — ${esc(M.C.nome)}</h1>
-    <div>Emitido em ${fmtDH(new Date())} · dados: ${esc(META.nome)}${META.demo ? " (exemplo fictício)" : ""}</div>
-    <h2>Silos</h2>
-    <table><thead><tr><th>Silo</th><th>Produto</th><th class="n">Ocupação</th><th class="n">Estimado (t)</th><th>Temperatura (máx/méd)</th><th>Situação</th><th>Último expurgo</th></tr></thead><tbody>
-    ${M.silos.map(s => `<tr><td>${esc(s.code)}</td><td>${esc(s.prod || "—")}</td><td class="n">${s.ocup != null ? fmtN(s.ocup * 100, 0) + "%" : "–"}</td><td class="n">${s.t != null && !s.vazio ? fmtN(s.t, 0) : "–"}</td><td>${s.T && s.T.nMassa && !s.vazio ? fmtN(s.T.max.t, 0) + " / " + fmtN(s.T.avg) + " °C" : ""}</td><td>${esc(s.status.txt)}</td><td>${s.fito.ultExp ? fmtD(s.fito.ultExp) : "—"}</td></tr>`).join("")}
-    </tbody></table>
-    <h2>Estoque por armazém${M.est.ate ? " — posição de " + fmtD(M.est.ate) : ""}</h2>
-    <table><thead><tr><th>Armazém</th><th class="n">Saldo (t)</th><th class="n">Entradas (t)</th><th class="n">Saídas (t)</th><th>Principais produtos</th></tr></thead><tbody>
-    ${M.armazens.map(a => `<tr><td>${esc(a.code)}</td><td class="n">${fmtN(a.saldoT)}</td><td class="n">${fmtN(a.entT)}</td><td class="n">${fmtN(a.saiT)}</td><td>${esc(a.itens.filter(i => i.t > 0.0005).sort((x, y) => y.t - x.t).slice(0, 4).map(i => `${titulo(i.produto)} (${fmtN(i.t, 0)} t)`).join("; "))}</td></tr>`).join("")}
-    </tbody></table>
-    <h2>Pontos de atenção</h2>
-    ${alertList(al)}
-    <p class="note">Painel gerencial de apoio à decisão.</p>`);
-}
 
 /* ============================================================ mapa 3D da UA */
 const MAPA = {ok: false, falha: null, carregando: false, _m: null, dados: null, marcas: [], alvos: [], spr: [], sprM: [], icones: {}, sujo: false, fitKey: null,
   cam: {theta: -0.5, phi: 0.98, r: 300, tx: 0, tz: 0}};
-let mapaF = {tipos: {produto: true, praga: true, isca: true, outro: true}, dias: 0, sub: "", sensores: true, pilhas: true, rotulos: true};
+let mapaF = {tipos: {produto: true, praga: true, isca: true, outro: true, actellic: true, kobiol: true, protecphos: true, fumitoxin: true}, dias: 0, sub: "", sensores: true, pilhas: true, rotulos: true};
 let mapaSel = null, mapaPondo = null, _posMan = null;
-const PALETA = ["#4e79a7", "#f28e2b", "#59a14f", "#b07aa1", "#edc948", "#76b7b2", "#e15759", "#9c755f", "#ff9da7", "#86bc86", "#6b8fd6", "#c2a35a", "#5aa9a0", "#d37295", "#bab0ac", "#8cd17d"];
+const PALETA = ["#e8a33d", "#59a14f", "#b07aa1", "#d9c84a", "#76b7b2", "#e15759", "#9c755f", "#ff9da7", "#86bc86", "#c2a35a", "#5aa9a0", "#d37295", "#f28e2b", "#bab0ac", "#8cd17d", "#4e79a7"];
 const GRAO = {ok: "#c9a24a", warn: "#e08a00", crit: "#d64545", mut: "#b3a67c"};
 
 /* ---------- planta: do arquivo mapa_ua.json ou genérica ---------- */
@@ -1965,12 +2168,27 @@ function distRet(c, x, z) {
   const a = (c.rot || 0) * Math.PI / 180, dx = x - c.x, dz = z - c.z, lx = dx * Math.cos(a) - dz * Math.sin(a), lz = dx * Math.sin(a) + dz * Math.cos(a);
   return Math.hypot(Math.max(Math.abs(lx) - c.l / 2, 0), Math.max(Math.abs(lz) - c.p / 2, 0));
 }
+/* quadras: coordenadas internas em metros, do canto superior esquerdo interno do armazém (o arranjo fica centrado no prédio) */
+const internoDe = c => ({L: (c.interno || c).l, P: (c.interno || c).p});
+const qPontos = q => q.pontos || [[q.x, q.z], [q.x + q.l, q.z], [q.x + q.l, q.z + q.p], [q.x, q.z + q.p]];
+function pontoEmPol(px, pz, pts) { let d = false; for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) { const [xi, zi] = pts[i], [xj, zj] = pts[j]; if ((zi > pz) !== (zj > pz) && px < (xj - xi) * (pz - zi) / (zj - zi) + xi) d = !d; } return d; }
+function mundoParaInterno(c, x, z) { const a = (c.rot || 0) * Math.PI / 180, dx = x - c.x, dz = z - c.z, I = internoDe(c); return [dx * Math.cos(a) - dz * Math.sin(a) + I.L / 2, dx * Math.sin(a) + dz * Math.cos(a) + I.P / 2]; }
+function internoParaMundo(c, ix, iz) { const a = (c.rot || 0) * Math.PI / 180, I = internoDe(c), lx = ix - I.L / 2, lz = iz - I.P / 2; return [c.x + lx * Math.cos(a) + lz * Math.sin(a), c.z - lx * Math.sin(a) + lz * Math.cos(a)]; }
+function ocupDe(c) { if (!M || !M.quadras) return null; const nome = norm(c.estoque || c.nome), k = Object.keys(M.quadras).find(k => norm(k) === nome); return k ? M.quadras[k] : null; }
+const prodsQuadra = (c, q) => { const o = ocupDe(c); return (o && o.q[q.id]) || []; };
 function localEm(x, z) {
   const md = mapaDados(); let perto = null;
-  const ver = (nome, d) => { if (!perto || d < perto.d) perto = {nome, d}; };
+  const ver = (nome, d, c) => { if (!perto || d < perto.d) perto = {nome, d, c}; };
   md.silos.forEach(s => ver("Silo " + s.n, Math.max(0, Math.hypot(x - s.x, z - s.z) - s.d / 2)));
-  md.construcoes.forEach(c => ver(c.nome, distRet(c, x, z)));
+  md.construcoes.forEach(c => ver(c.nome, distRet(c, x, z), c));
   if (!perto) return null;
+  if (perto.d <= 0.5 && perto.c && (perto.c.quadras || []).length) {
+    const [ix, iz] = mundoParaInterno(perto.c, x, z), qs = perto.c.quadras;
+    const q = qs.find(q => pontoEmPol(ix, iz, qPontos(q)));
+    if (q) return `${perto.c.nome} · ${q.id}`;
+    const dq = qs.map(q => ({q, d: Math.hypot(Math.max(q.x - ix, 0, ix - q.x - q.l), Math.max(q.z - iz, 0, iz - q.z - q.p))})).sort((a, b) => a.d - b.d)[0];
+    if (dq && dq.d <= 2) return `${perto.c.nome} · junto à ${dq.q.id}`;
+  }
   return perto.d <= 0.5 ? perto.nome : perto.d <= 15 ? "próximo de " + perto.nome : "área externa";
 }
 function fotoLocal(f) { const p = fotoPos(f); return !p ? null : p.fora ? "fora da área do croqui" : localEm(p.x, p.z); }
@@ -1978,13 +2196,13 @@ function fotoLocal(f) { const p = fotoPos(f); return !p ? null : p.fora ? "fora 
 /* ---------- estrutura da aba ---------- */
 const mkSvg = tipo => {
   const t = FOTO_TIPOS[tipo], f = `fill="${t.cor}" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"`;
-  const s = t.forma === "circulo" ? `<circle cx="10" cy="10" r="8" ${f}/>` : t.forma === "triangulo" ? `<path d="M10 2 L18.5 17.5 L1.5 17.5 Z" ${f}/>` : t.forma === "losango" ? `<path d="M10 1.5 L18.5 10 L10 18.5 L1.5 10 Z" ${f}/>` : `<rect x="2.5" y="2.5" width="15" height="15" rx="2" ${f}/>`;
+  const s = t.forma === "circulo" ? `<circle cx="10" cy="10" r="8" ${f}/>` : t.forma === "hexagono" ? `<path d="M5.5 2.2 L14.5 2.2 L19 10 L14.5 17.8 L5.5 17.8 L1 10 Z" ${f}/>` : t.forma === "triangulo" ? `<path d="M10 2 L18.5 17.5 L1.5 17.5 Z" ${f}/>` : t.forma === "losango" ? `<path d="M10 1.5 L18.5 10 L10 18.5 L1.5 10 Z" ${f}/>` : `<rect x="2.5" y="2.5" width="15" height="15" rx="2" ${f}/>`;
   return `<svg class="mk" viewBox="0 0 20 20" aria-hidden="true">${s}</svg>`;
 };
 function renderMapa() {
   const el = $("#v-mapa"); if (!el || !M) return;
   if (!$("#mapaBox")) {
-    el.innerHTML = `<h2>Mapa da UA</h2><p class="sub" id="mapaSub"></p>
+    el.innerHTML = `<div class="toolbar" id="mapaCroquis"></div><p class="sub" id="mapaSub"></p>
       <div class="toolbar" id="mapaTb"></div>
       <div id="mapaBox"><canvas id="mapaCv" tabindex="0" aria-label="Mapa 3D da unidade. Arraste para girar, use a roda do mouse para aproximar."></canvas>
         <div id="mapaEstado">Abrindo o mapa…</div><div id="mapaMsg"></div><div id="mapaTip"></div>
@@ -2024,17 +2242,19 @@ function mapaBarra() {
   const subs = [...new Set(FOTOS.filter(f => f.tipo === "praga" && f.sub).map(f => f.sub))].sort();
   if (mapaF.sub && !subs.includes(mapaF.sub)) mapaF.sub = "";
   const temT = Object.keys(M.thermo).length > 0;
-  tb.innerHTML = `<div class="mtipos" role="group" aria-label="Fotos mostradas no mapa">${Object.entries(FOTO_TIPOS).filter(([k]) => n[k] || k !== "outro").map(([k, t]) => `<label title="${n[k] || 0} foto(s), ${np[k] || 0} com posição no mapa"><input type="checkbox" data-mt="${k}"${mapaF.tipos[k] ? " checked" : ""}>${mkSvg(k)} ${esc(t.curto)}s (${np[k] || 0})</label>`).join("")}</div>
+  tb.innerHTML = `<div class="mtipos" role="group" aria-label="Fotos mostradas no mapa">${Object.entries(FOTO_TIPOS).filter(([k, t]) => n[k] || !(k === "outro" || t.trat)).map(([k, t]) => `<label title="${n[k] || 0} foto(s), ${np[k] || 0} com posição no mapa"><input type="checkbox" data-mt="${k}"${mapaF.tipos[k] ? " checked" : ""}>${mkSvg(k)} ${esc(t.plural || t.curto)} (${np[k] || 0})</label>`).join("")}</div>
     <label>Período <select id="mpDias">${[[0, "Todas as datas"], [30, "Últimos 30 dias"], [90, "Últimos 90 dias"], [365, "Últimos 12 meses"]].map(([v, l]) => `<option value="${v}"${mapaF.dias === v ? " selected" : ""}>${l}</option>`).join("")}</select></label>
     ${subs.length ? `<label>Praga <select id="mpSub"><option value="">Todas</option>${subs.map(s => `<option${mapaF.sub === s ? " selected" : ""}>${esc(s)}</option>`).join("")}</select></label>` : ""}
     ${temT ? `<label><input type="checkbox" id="mpSens"${mapaF.sensores ? " checked" : ""}> Sensores de termometria</label>` : ""}
     <label><input type="checkbox" id="mpPil"${mapaF.pilhas ? " checked" : ""}> Produtos nos armazéns</label>
     <label><input type="checkbox" id="mpRot"${mapaF.rotulos ? " checked" : ""}> Nomes</label>`;
+  const cq = $("#mapaCroquis");
+  if (cq) { const arms = mapaDados().construcoes.filter(c => (c.quadras || []).length); cq.innerHTML = `<button class="btn pri" data-croqui="geral">🗺️ Croqui geral da UA</button>${arms.map(c => `<button class="btn" data-croqui="${esc(c.id)}">Croqui do ${esc(c.nome.replace(/\s*\(.*\)/, ""))}</button>`).join("")}`; }
 }
 function mapaLegenda() {
   const C = M.C, sw = (c, t, r) => `<span><i style="background:${c}${r ? ";border-radius:50%" : ""}"></i>${t}</span>`;
   $("#mapaLeg").innerHTML = `<span><b>Grão no silo:</b></span>${sw(GRAO.ok, "normal")}${sw(GRAO.warn, "atenção")}${sw(GRAO.crit, "crítico")}
-    ${Object.keys(M.thermo).length ? `<span><b>Sensores:</b></span>${sw(tempColor(16), "&lt; 18 °C", 1)}${sw(tempColor(C.tAtt), "≥ " + C.tAtt + " °C", 1)}${sw(tempColor(C.tCrit), "≥ " + C.tCrit + " °C", 1)}${sw("#9aa3a0", "no ar (acima do grão)", 1)}<span><i style="background:#d64545;height:3px;vertical-align:4px"></i>cabo sem leitura</span>` : ""}
+    ${Object.keys(M.thermo).length ? `<span><b>Sensores:</b></span>${sw(tempColor(16), "&lt; 18 °C", 1)}${sw(tempColor(C.tAtt), "≥ " + C.tAtt + " °C", 1)}${sw(tempColor(C.tCrit), "≥ " + C.tCrit + " °C", 1)}${Object.values(M.thermo).some(T => T.nFora) ? sw("#9aa3a0", "no ar (acima do nível informado)", 1) : ""}<span><i style="background:#d64545;height:3px;vertical-align:4px"></i>cabo sem leitura</span>` : ""}
     <span><b>Fotos:</b></span>${Object.entries(FOTO_TIPOS).map(([k, t]) => `<span>${mkSvg(k)} ${esc(t.curto.toLowerCase())}</span>`).join("")}`;
   const md = mapaDados();
   $("#mapaNotas").innerHTML = `<p class="note">O que é medido e o que é ilustrativo: a ocupação dos silos vem da planilha de ocupação; as quantidades dos armazéns vêm do Controle de Estoque. A posição das pilhas dentro dos armazéns, a posição dos cabos dentro dos silos e as alturas das construções são ilustrativas. ${md.geo ? "A posição das fotos vem da coordenada do celular, que erra cerca de 5 a 15 m (mais dentro de galpões): corrija pelo botão \"Ajustar posição\" quando preciso." : "Sem referência geográfica na planta: posicione as fotos manualmente."}${md.obs ? " " + esc(md.obs) : ""}</p>`;
@@ -2193,8 +2413,37 @@ function mapaConstruir() {
       const re = bordas(rg, cor, des ? 0.5 : null); re.position.y = c.h; grp.add(re);
       topo += rh;
     }
-    /* pilhas de produtos (disposição ilustrativa, proporcional ao saldo) */
-    if (A && mapaF.pilhas) {
+    /* quadras com o produto informado na planilha de ocupação dos armazéns */
+    if (mapaF.pilhas && (c.quadras || []).length) {
+      const I = internoDe(c), hq = Math.min(3, c.h - 1), L0 = -I.L / 2, P0 = -I.P / 2;
+      const vaziaMat = () => new T.MeshLambertMaterial({color: tm.desat, transparent: true, opacity: 0.28, depthWrite: false});
+      (c.blocos || []).forEach(b => {
+        const bg = new T.BoxGeometry(b.l, 1.2, b.p), bm = alvo(new T.Mesh(bg, vaziaMat()), {tipo: "bloco", ref: c, b});
+        bm.position.set(L0 + b.x + b.l / 2, 0.62, P0 + b.z + b.p / 2); grp.add(bm);
+        const be = bordas(bg, tm.desat); be.position.copy(bm.position); grp.add(be);
+      });
+      c.quadras.forEach(q => {
+        const prods = prodsQuadra(c, q), dados = {tipo: "quadra", ref: c, q, prods, arm: A};
+        if (q.pontos) {
+          const sh = new T.Shape(); q.pontos.forEach(([x, z], i) => i ? sh.lineTo(L0 + x, -(P0 + z)) : sh.moveTo(L0 + x, -(P0 + z)));
+          const eg = new T.ExtrudeGeometry(sh, {depth: hq, bevelEnabled: false}); eg.rotateX(-Math.PI / 2);
+          const em = alvo(new T.Mesh(eg, prods.length ? new T.MeshLambertMaterial({color: corProduto(prods[0])}) : vaziaMat()), dados); em.position.y = 0.02; grp.add(em);
+          const ee = bordas(eg, 0x000000, 0.4); ee.position.y = 0.02; grp.add(ee);
+        } else {
+          const n = Math.max(1, prods.length), longX = q.l >= q.p, passo = (longX ? q.l : q.p) / n;
+          for (let k = 0; k < n; k++) {
+            const w = longX ? passo : q.l, d = longX ? q.p : passo, bx = L0 + q.x + (longX ? passo * k : 0) + w / 2, bz = P0 + q.z + (longX ? 0 : passo * k) + d / 2;
+            const qg = new T.BoxGeometry(w - (n > 1 ? 0.05 : 0), hq, d - (n > 1 ? 0.05 : 0));
+            const qm = alvo(new T.Mesh(qg, prods.length ? new T.MeshLambertMaterial({color: corProduto(prods[k])}) : vaziaMat()), dados);
+            qm.position.set(bx, hq / 2 + 0.02, bz); grp.add(qm);
+            const qe = bordas(qg, 0x000000, 0.4); qe.position.copy(qm.position); grp.add(qe);
+          }
+        }
+        if (mapaF.rotulos) { const [wx, wz] = internoParaMundo(c, q.x + q.l / 2, q.z + q.p / 2); g.add(mapaRotulo(q.id, wx, hq + 0.4, wz, 12, tm, 0.5)); }
+      });
+    }
+    /* pilhas de produtos (disposição ilustrativa, proporcional ao saldo), só quando o armazém não tem quadras cadastradas */
+    else if (A && mapaF.pilhas) {
       const itens = A.itens.filter(i => i.t > 0.0005).sort((x, y) => y.t - x.t);
       if (itens.length) {
         const longX = c.l >= c.p, mg = 1.5, cor2 = Math.min(4, (longX ? c.p : c.l) * 0.2), L = (longX ? c.l : c.p) - 2 * mg, P = ((longX ? c.p : c.l) - 2 * mg - cor2) / 2;
@@ -2276,9 +2525,10 @@ function mapaIcone(tipo, n) {
   if (t.forma === "circulo") g.arc(56, 74, 44, 0, 7);
   else if (t.forma === "triangulo") { g.moveTo(56, 26); g.lineTo(104, 118); g.lineTo(8, 118); g.closePath(); }
   else if (t.forma === "losango") { g.moveTo(56, 24); g.lineTo(106, 74); g.lineTo(56, 124); g.lineTo(6, 74); g.closePath(); }
+  else if (t.forma === "hexagono") { [[31, 30], [81, 30], [106, 74], [81, 118], [31, 118], [6, 74]].forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.closePath(); }
   else g.rect(14, 32, 84, 84);
   g.shadowColor = "rgba(0,0,0,.45)"; g.shadowBlur = 6; g.stroke(); g.shadowBlur = 0; g.fill();
-  g.fillStyle = "#fff"; g.font = "700 52px system-ui,Arial,sans-serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(t.letra, 56, t.forma === "triangulo" ? 88 : 77);
+  g.fillStyle = "#fff"; g.font = `700 ${t.letra.length > 1 ? 40 : 52}px system-ui,Arial,sans-serif`; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(t.letra, 56, t.forma === "triangulo" ? 88 : 77);
   if (n > 1) { g.beginPath(); g.arc(98, 30, 28, 0, 7); g.fillStyle = "#fff"; g.fill(); g.lineWidth = 5; g.strokeStyle = t.cor; g.stroke(); g.fillStyle = "#111"; g.font = `700 ${rot.length > 2 ? 26 : 34}px system-ui,Arial,sans-serif`; g.fillText(rot, 98, 32); }
   const tex = new THREE.CanvasTexture(c); tex._fixo = true;
   return MAPA.icones[k] = tex;
@@ -2289,7 +2539,7 @@ function mapaFotosVisiveis() {
 }
 function mapaMarcas() {
   if (!MAPA.ok || !M) return;
-  const T = THREE, alt = {produto: 5, isca: 7.5, praga: 10, outro: 4};
+  const T = THREE, alt = {produto: 5, isca: 7.5, praga: 10, outro: 4, actellic: 12.5, kobiol: 12.5, protecphos: 12.5, fumitoxin: 12.5};
   mapaLimpar(MAPA.gMarcas); MAPA.marcas = []; MAPA.sprM = [];
   mapaFotosVisiveis().forEach(f => {
     const p = fotoPos(f); if (!p || p.fora) return;
@@ -2334,7 +2584,7 @@ function mapaMarcaEm(n) {
 function mapaObjetoEm(n) {
   MAPA.ray.setFromCamera({x: n.x, y: n.y}, MAPA.camera);
   const hits = MAPA.ray.intersectObjects(MAPA.alvos, false); if (!hits.length) return null;
-  const pref = hits.find(h => h.object.userData.tipo === "sensor") || hits.find(h => h.object.userData.tipo === "produto");
+  const pref = hits.find(h => h.object.userData.tipo === "sensor") || hits.find(h => /^(produto|quadra|bloco)$/.test(h.object.userData.tipo));
   return (pref || hits[0]).object.userData;
 }
 function mapaChao(n) { MAPA.ray.setFromCamera({x: n.x, y: n.y}, MAPA.camera); const p = new THREE.Vector3(); return MAPA.ray.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), p) ? p : null; }
@@ -2345,7 +2595,7 @@ function mapaDica(e) {
   else {
     const m = mapaMarcaEm(n);
     if (m) { const t = FOTO_TIPOS[m.tipo], subs = [...new Set(m.fotos.map(f => f.sub).filter(Boolean))]; txt = `${t.curto}${subs.length ? ": " + subs.slice(0, 3).join(", ") : ""}\n${m.fotos.length} foto(s) · mais recente em ${fmtD(m.fotos[0].data)}\nClique para abrir`; }
-    else { const o = mapaObjetoEm(n); if (o) txt = o.tipo === "sensor" ? `Silo ${o.ref.n} · cabo ${o.v.c} · sensor ${o.v.s}: ${fmtN(o.v.t, 0)} °C${o.v.fora ? " (ar, acima do grão)" : ""}` : o.tipo === "produto" ? `${titulo(o.item.produto)} · ${fmtT(o.item.t)}\n${o.arm.code}` : o.tipo === "silo" ? `Silo ${o.ref.n}${o.S && o.S.ocup != null ? " · " + fmtN(o.S.ocup * 100, 0) + "%" : ""}${o.S && o.S.T && o.S.T.nMassa && !o.S.vazio ? " · máx. " + fmtN(o.S.T.max.t, 0) + " °C" : ""}` : (o.ref.nome || ""); }
+    else { const o = mapaObjetoEm(n); if (o) txt = o.tipo === "sensor" ? `Silo ${o.ref.n} · cabo ${o.v.c} · sensor ${o.v.s}: ${fmtTp(o.v.t)} °C${o.v.fora ? " (ar, acima do grão)" : ""}` : o.tipo === "produto" ? `${titulo(o.item.produto)} · ${fmtT(o.item.t)}\n${o.arm.code}` : o.tipo === "quadra" ? `${o.ref.nome} · ${o.q.id}\n${o.prods.join(" / ") || "sem produto informado"}` : o.tipo === "bloco" ? o.b.nome : o.tipo === "silo" ? `Silo ${o.ref.n}${o.S && o.S.ocup != null ? " · " + fmtN(o.S.ocup * 100, 0) + "%" : ""}${o.S && o.S.monit ? " · máx. " + fmtN(o.S.T.max.t, 0) + " °C" : ""}` : (o.ref.nome || ""); }
   }
   if (!txt) { tip.style.display = "none"; return; }
   tip.textContent = txt; tip.style.display = "block";
@@ -2372,27 +2622,37 @@ function mapaInfo() {
   const fotosHtml = fs => { if (!fs.length) return ""; const n = {}; fs.forEach(f => n[f.tipo] = (n[f.tipo] || 0) + 1); return `<div class="note">Fotos neste local: ${Object.entries(n).map(([k, v]) => `${v} de ${FOTO_TIPOS[k].curto.toLowerCase()}`).join(", ")}.</div>`; };
   let h = "";
   if (o.tipo === "silo") {
-    const S = M.siloDe["Silo " + o.ref.n], Tm = S && S.T, com = Tm && Tm.nMassa && !S.vazio;
+    const S = M.siloDe["Silo " + o.ref.n], Tm = S && S.T, com = S.monit;
     const fs = perto(0, 0, p => Math.hypot(p.x - o.ref.x, p.z - o.ref.z) <= o.ref.d / 2 + 0.5);
     h = `<h3>Silo ${o.ref.n}</h3>${x}${S ? `<dl class="kv">
       <dt>Situação</dt><dd>${badge(S.status.sev, S.status.txt)}</dd>
       <dt>Ocupação</dt><dd>${S.ocup != null ? fmtN(S.ocup * 100, 0) + "%" : "não informada"}${S.t != null && !S.vazio ? " · ≈ " + fmtT(S.t, 0) : ""}</dd>
       <dt>Produto</dt><dd>${esc(S.prod || "—")}</dd>
-      <dt>Temperatura</dt><dd>${com ? `máx. ${fmtN(Tm.max.t, 0)} °C · méd. ${fmtN(Tm.avg)} °C` : "—"}</dd>
-      ${o.v ? `<dt>Sensor clicado</dt><dd>cabo ${o.v.c}, sensor ${o.v.s}: ${fmtN(o.v.t, 0)} °C${o.v.fora ? " (ar)" : ""}</dd>` : ""}
+      <dt>Temperatura</dt><dd>${com ? `máx. ${fmtTp(Tm.max.t)} °C · méd. ${fmtN(Tm.avg)} °C` : "—"}</dd>
+      ${o.v ? `<dt>Sensor clicado</dt><dd>cabo ${o.v.c}, sensor ${o.v.s}: ${fmtTp(o.v.t)} °C${o.v.fora ? " (ar)" : ""}</dd>` : ""}
       ${Tm && Tm.semLeitura.length ? `<dt>Cabos sem leitura</dt><dd style="color:var(--warn)">${Tm.semLeitura.join(", ")}</dd>` : ""}
       <dt>Último expurgo</dt><dd>${S.fito.ultExp ? fmtD(S.fito.ultExp) : S.fito.semExp ? "sem expurgo (DOF)" : "sem registro"}</dd>
       ${S.fito.carAte && NOW < S.fito.carAte ? `<dt>Carência</dt><dd>${badge("warn", "até " + fmtD(S.fito.carAte))}</dd>` : ""}
     </dl>${fotosHtml(fs)}<div style="margin-top:8px"><button class="btn sm" data-silo="${esc(S.code)}">Abrir termometria</button></div>` : `<p class="note">Sem dados para este silo.</p>`}`;
+  } else if (o.tipo === "quadra" || o.tipo === "bloco") {
+    const c = o.ref;
+    if (o.tipo === "bloco") h = `<h3>${esc(o.b.nome)}</h3>${x}<div class="note" style="margin-top:0">${esc(c.nome)} · ≈ ${fmtN(o.b.l, 1)} × ${fmtN(o.b.p, 1)} m (posição e tamanho estimados)</div>`;
+    else {
+      const q = o.q, fs = perto(0, 0, p => { const [ix, iz] = mundoParaInterno(c, p.x, p.z); return distRet(c, p.x, p.z) <= 0.5 && pontoEmPol(ix, iz, qPontos(q)); });
+      h = `<h3>${esc(c.nome)} · Quadra ${esc(q.id)}</h3>${x}<dl class="kv"><dt>Produto${o.prods.length > 1 ? "s" : ""}</dt><dd>${o.prods.length ? `<ul style="margin:0">${o.prods.map(p => `<li><i style="background:${corProduto(p)}"></i><span>${esc(p)}</span></li>`).join("")}</ul>` : "sem produto informado"}</dd>
+        <dt>Dimensões</dt><dd>${fmtN(q.l, 1)} × ${fmtN(q.p, 1)} m${q.recorte ? `<div class="note" style="margin:0">${esc(q.recorte)}</div>` : ""}</dd></dl>${fotosHtml(fs)}
+        <div style="margin-top:8px"><button class="btn sm" data-croqui="${esc(c.id)}">Croqui do ${esc(c.nome.replace(/\s*\(.*\)/, ""))}</button></div>`;
+    }
   } else if (o.tipo === "produto") {
     const i = o.item;
     h = `<h3>${esc(titulo(i.produto))}</h3>${x}<dl class="kv"><dt>Local</dt><dd>${esc(o.arm.code)}</dd><dt>Saldo</dt><dd>${fmtT(i.t, 3)}${i.saldo.vol ? " · " + fmtN(i.saldo.vol, 0) + " volumes" : ""}</dd><dt>Entrada no período</dt><dd>${i.ent.kg ? fmtT(i.ent.kg / 1000, 3) : "–"}</dd><dt>Saída no período</dt><dd>${i.sai.kg ? fmtT(i.sai.kg / 1000, 3) : "–"}</dd><dt>Valor fiscal</dt><dd>${fmtR(i.saldo.rs)}</dd></dl>
       <div class="note">Posição de ${fmtD(M.est.ate)} (SAAGRA). A posição da pilha dentro do armazém é ilustrativa.</div><div style="margin-top:8px"><button class="btn sm" data-go="estoque">Abrir estoque</button></div>`;
   } else {
     const c = o.ref, A = c.estoque ? M.armazens.find(a => norm(a.code) === norm(c.estoque)) : null, fs = perto(0, 0, p => distRet(c, p.x, p.z) <= 0.5);
-    const itens = A ? A.itens.filter(i => i.t > 0.0005).sort((a, b) => b.t - a.t) : [];
+    const itens = A ? A.itens.filter(i => i.t > 0.0005).sort((a, b) => b.t - a.t) : [], qs = c.quadras || [];
+    const qHtml = qs.length ? `<div style="margin-top:6px"><b>Quadras</b></div><ul>${qs.slice().sort((a, b) => +a.id.slice(1) - +b.id.slice(1)).map(q => { const ps = prodsQuadra(c, q); return `<li><i style="background:${ps.length ? corProduto(ps[0]) : "transparent"};border:1px solid var(--border)"></i><span><b>${esc(q.id)}</b> ${esc(ps.join(" / ") || "sem produto informado")}</span></li>`; }).join("")}</ul><div style="margin-top:8px"><button class="btn sm" data-croqui="${esc(c.id)}">Croqui deste armazém</button></div>` : "";
     h = `<h3>${esc(c.nome || "Construção")}</h3>${x}${c.projetado ? `<div>${badge("info", "A construir")}</div>` : c.desativado ? `<div>${badge("mut", "Desativado")}</div>` : ""}${c.descricao ? `<div class="note" style="margin-top:0">${esc(c.descricao)}</div>` : ""}
-      ${A ? `<div><b>${fmtT(A.saldoT, 0)}</b> em ${itens.length} produto(s) · posição de ${fmtD(M.est.ate)}</div><ul>${itens.map(i => `<li><i style="background:${corProduto(i.produto)}"></i><span>${esc(titulo(i.produto))}</span><b>${fmtN(i.t, i.t < 10 ? 1 : 0)} t</b></li>`).join("")}</ul><div style="margin-top:8px"><button class="btn sm" data-go="estoque">Abrir estoque</button></div>` : `<div class="note">${fmtN(c.l, 1)} × ${fmtN(c.p, 1)} m</div>`}${fotosHtml(fs)}`;
+      ${qHtml}${A ? `<div style="margin-top:6px"><b>SAAGRA:</b> ${fmtT(A.saldoT, 0)} em ${itens.length} produto(s) · posição de ${fmtD(M.est.ate)}</div>${qs.length ? "" : `<ul>${itens.map(i => `<li><i style="background:${corProduto(i.produto)}"></i><span>${esc(titulo(i.produto))}</span><b>${fmtN(i.t, i.t < 10 ? 1 : 0)} t</b></li>`).join("")}</ul>`}<div style="margin-top:8px"><button class="btn sm" data-go="estoque">Abrir estoque</button></div>` : qs.length ? "" : `<div class="note">${fmtN(c.l, 1)} × ${fmtN(c.p, 1)} m</div>`}${fotosHtml(fs)}`;
   }
   el.innerHTML = h; el.classList.add("on");
 }
@@ -2427,6 +2687,320 @@ function mapaControles(cv) {
   });
 }
 
+/* ============================================================ croquis (SVG em milímetros, folha A3 deitada) e visualizador de documentos */
+const INST = {cia: "Companhia Nacional de Abastecimento", sureg: "Superintendência Regional do Mato Grosso do Sul"};
+const instNome = () => { const P = (DATA && DATA.plan) || null, cfg = k => { const r = P && (P.config || []).find(r => norm(r.parametro) === k); return r && r.valor ? String(r.valor) : null; }; return {cia: cfg("nomedainstituicao") || INST.cia, sureg: cfg("nomedasuperintendencia") || INST.sureg}; };
+const fmtM = (v, inf) => (inf ? "≈" : "") + (Math.round(v * (inf ? 10 : 100)) / (inf ? 10 : 100)).toLocaleString("pt-BR", {maximumFractionDigits: 2});
+const tw = (t, f) => String(t).length * f * 0.54;
+function quebrar(t, f, w) {
+  const out = []; let cur = "";
+  String(t).split(/\s+/).forEach(p => { const c = cur ? cur + " " + p : p; if (tw(c, f) <= w || !cur) cur = c; else { out.push(cur); cur = p; } });
+  if (cur) out.push(cur);
+  return out;
+}
+const sT = (x, y, t, f, o = {}) => `<text x="${x.toFixed(2)}" y="${y.toFixed(2)}" font-size="${f}"${o.anchor ? ` text-anchor="${o.anchor}"` : ""}${o.bold ? ' font-weight="700"' : ""}${o.cor ? ` fill="${o.cor}"` : ""}${o.ital ? ' font-style="italic"' : ""}${o.rot ? ` transform="rotate(${o.rot} ${x.toFixed(2)} ${y.toFixed(2)})"` : ""}>${esc(t)}</text>`;
+const pol = (pts, o = {}) => `<polygon points="${pts.map(p => p[0].toFixed(2) + "," + p[1].toFixed(2)).join(" ")}" fill="${o.fill || "none"}" stroke="${o.stroke || "#222"}" stroke-width="${o.sw || 0.25}"${o.dash ? ` stroke-dasharray="${o.dash}"` : ""}${o.op != null ? ` fill-opacity="${o.op}"` : ""}/>`;
+const lin = (x1, y1, x2, y2, o = {}) => `<line x1="${x1.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="${o.cor || "#222"}" stroke-width="${o.sw || 0.2}"${o.dash ? ` stroke-dasharray="${o.dash}"` : ""}${o.seta ? ' marker-start="url(#seta)" marker-end="url(#seta)"' : ""}/>`;
+const corTexto = hex => { const n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255; return (0.299 * r + 0.587 * g + 0.114 * b) > 150 ? "#1b1b1b" : "#ffffff"; };
+
+/* cabeçalho institucional comum a croquis */
+function cabecalhoSVG(W, titulo, sub) {
+  const I = instNome(), lx = DATA && DATA.logo ? 34 : 10;
+  return `${DATA && DATA.logo ? `<image href="${DATA.logo}" x="10" y="8" width="20" height="20" preserveAspectRatio="xMidYMid meet"/>` : ""}
+    ${sT(lx, 15, I.cia, 4.6, {bold: true, cor: "#123f2b"})}${sT(lx, 21, I.sureg, 3.3, {cor: "#333"})}${sT(lx, 26.5, M.C.nome, 3, {cor: "#555"})}
+    ${sT(W - 10, 15, titulo, 5, {anchor: "end", bold: true, cor: "#123f2b"})}${sT(W - 10, 21, sub, 3, {anchor: "end", cor: "#444"})}${sT(W - 10, 26.5, "Emitido em " + fmtDH(new Date()), 2.6, {anchor: "end", cor: "#666"})}
+    ${lin(10, 30.5, W - 10, 30.5, {cor: "#123f2b", sw: 0.5})}`;
+}
+const defsSVG = `<defs><marker id="seta" viewBox="0 0 6 6" refX="3" refY="3" markerWidth="2.2" markerHeight="2.2" orient="auto-start-reverse"><path d="M0,0 L6,3 L0,6 z" fill="#c62828"/></marker>
+  <pattern id="hach" width="2" height="2" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="2" stroke="#9aa39a" stroke-width="0.4"/></pattern></defs>`;
+const folhaSVG = (W, H, corpo) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}mm" height="${H}mm" font-family="Inter, Segoe UI, Roboto, Arial, sans-serif">${defsSVG}<rect x="0" y="0" width="${W}" height="${H}" fill="#fff"/><rect x="5" y="5" width="${W - 10}" height="${H - 10}" fill="none" stroke="#123f2b" stroke-width="0.35"/>${corpo}</svg>`;
+
+/* legenda montada em linhas, com ajuste automático do tamanho da letra para caber */
+function legendaSVG(x, y, w, h, itens) {
+  for (let f = 2.9; f >= 1.7; f -= 0.1) {
+    let yy = y, out = "", ok = true, prim = true;
+    for (const it of itens) {
+      if (it.t === "h") { yy += prim ? f * 1.25 : f * 2.3; prim = false; out += sT(x, yy, it.txt, f * 1.12, {bold: true, cor: "#123f2b"}); yy += f * 0.5; continue; }
+      if (it.t === "esp") { yy += f * 0.6; continue; }
+      const ind = it.cor || it.forma ? f * 1.5 : 0, ls = quebrar(it.txt, it.peq ? f * 0.85 : f, w - ind);
+      ls.forEach((l, i) => {
+        yy += (it.peq ? f * 0.85 : f) * 1.3;
+        if (i === 0 && it.cor) out += `<rect x="${x.toFixed(2)}" y="${(yy - f * 0.85).toFixed(2)}" width="${(f * 1.05).toFixed(2)}" height="${(f * 0.95).toFixed(2)}" fill="${it.cor}" stroke="#333" stroke-width="0.15"/>`;
+        out += sT(x + ind, yy, l, it.peq ? f * 0.85 : f, {cor: it.peq ? "#555" : "#222", bold: it.b && i === 0, ital: it.ital});
+      });
+      if (yy > y + h) { ok = false; break; }
+    }
+    if (ok || f <= 1.75) return out;
+  }
+  return "";
+}
+
+/* elementos da planta em coordenadas do mundo (metros) */
+const cantos = c => { const a = (c.rot || 0) * Math.PI / 180; return [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(([sx, sz]) => { const lx = sx * c.l / 2, lz = sz * c.p / 2; return [c.x + lx * Math.cos(a) + lz * Math.sin(a), c.z - lx * Math.sin(a) + lz * Math.cos(a)]; }); };
+function faixasQuadra(q, prods) {      // retângulos (coord. internas) de cada produto, divididos ao longo do lado maior
+  const n = Math.max(1, prods.length); if (q.pontos || n === 1) return [{pts: qPontos(q), cor: prods.length ? corProduto(prods[0]) : null}];
+  const longX = q.l >= q.p, passo = (longX ? q.l : q.p) / n;
+  return prods.map((p, k) => { const x = q.x + (longX ? passo * k : 0), z = q.z + (longX ? 0 : passo * k), l = longX ? passo : q.l, pp = longX ? q.p : passo; return {pts: [[x, z], [x + l, z], [x + l, z + pp], [x, z + pp]], cor: corProduto(p)}; });
+}
+function listaQuadras(c, f) {           // linhas de legenda para as quadras de um armazém
+  const qs = (c.quadras || []).slice().sort((a, b) => +a.id.slice(1) - +b.id.slice(1)), por = {};
+  qs.forEach(q => { const k = prodsQuadra(c, q).join(" / ") || "sem produto informado"; (por[k] = por[k] || []).push(q.id); });
+  const faixa = ids => { const ns = ids.map(i => +i.slice(1)), out = []; let a = ns[0], b = ns[0]; for (let i = 1; i <= ns.length; i++) { if (ns[i] === b + 1) b = ns[i]; else { out.push(a === b ? "Q" + a : b === a + 1 ? `Q${a}, Q${b}` : `Q${a} a Q${b}`); a = b = ns[i]; } } return out.join(", "); };
+  if (qs.length <= 14) return qs.map(q => { const ps = prodsQuadra(c, q); return {t: "i", txt: `${q.id}: ${ps.join(" / ") || "sem produto informado"}${f ? ` · ${fmtM(q.l)} × ${fmtM(q.p)} m${q.recorte ? " (" + q.recorte + ")" : ""}` : ""}`, cor: ps.length ? corProduto(ps[0]) : "#e9ece8"}; });
+  return Object.entries(por).map(([k, ids]) => ({t: "i", txt: `${faixa(ids)}: ${k}${f ? ` · ${fmtM(qs[0].l)} × ${fmtM(qs[0].p)} m cada` : ""}`, cor: k === "sem produto informado" ? "#e9ece8" : corProduto(k.split(" / ")[0])}));
+}
+
+/* ---------- croqui geral da UA ---------- */
+function croquiGeralSVG() {
+  const md = mapaDados(), W = 420, H = 297, ax = 10, ay = 36, aw = 288, ah = 251, b = md.bbox;
+  const bw = b.x1 - b.x0, bh = b.z1 - b.z0, s = Math.min(aw / bw, ah / bh), ox = ax + (aw - bw * s) / 2 - b.x0 * s, oy = ay + (ah - bh * s) / 2 - b.z0 * s;
+  const P = ([x, z]) => [ox + x * s, oy + z * s];
+  let d = "";
+  if (md.terreno) d += pol(md.terreno.map(P), {fill: "#f3f5f1", stroke: "#8f988e", sw: 0.3});
+  md.areas.forEach(a => { if (a.pontos) d += pol(a.pontos.map(P), {fill: /gram|verde|bosque/i.test(a.tipo || a.nome || "") ? "#dcefd8" : "#eef0ec", stroke: "#9ab79a", sw: 0.2}); });
+  md.linhas.forEach(l => { if (l.pontos) { const ps = l.pontos.map(P); for (let i = 1; i < ps.length; i++) d += lin(ps[i - 1][0], ps[i - 1][1], ps[i][0], ps[i][1], {cor: "#777", sw: 0.35, dash: "2 1"}); } });
+  const numerados = [];
+  md.construcoes.forEach(c => {
+    const arm = c.tipo === "armazem" || !!c.estoque, des = c.desativado || c.projetado;
+    d += pol(cantos(c).map(P), {fill: arm ? "#ffffff" : des ? "#f7f7f7" : "#efe9de", stroke: arm ? "#123f2b" : "#5b5346", sw: arm ? 0.45 : 0.25, dash: des ? "1.2 0.8" : null});
+    (c.blocos || []).forEach(bl => { d += pol([[bl.x, bl.z], [bl.x + bl.l, bl.z], [bl.x + bl.l, bl.z + bl.p], [bl.x, bl.z + bl.p]].map(([x, z]) => P(internoParaMundo(c, x, z))), {fill: "url(#hach)", stroke: "#8f988e", sw: 0.15}); });
+    (c.quadras || []).forEach(q => {
+      const ps = prodsQuadra(c, q);
+      faixasQuadra(q, ps).forEach(fx => { d += pol(fx.pts.map(([x, z]) => P(internoParaMundo(c, x, z))), {fill: fx.cor || "#e9ece8", stroke: "#333", sw: 0.15}); });
+      const [cx, cz] = P(internoParaMundo(c, q.x + q.l / 2, q.z + q.p / 2)), f = Math.min(1.9, Math.min(q.l, q.p) * s * 0.42);
+      if (f >= 0.9) d += sT(cx, cz + f * 0.35, q.id, f, {anchor: "middle", bold: true, cor: ps.length ? corTexto(corProduto(ps[0])) : "#333"});
+    });
+    const [cx, cz] = P([c.x, c.z]), larg = Math.max(c.l, c.p) * s, nome = c.nome + (c.desativado && !c.projetado ? " (desativado)" : "");
+    if ((c.quadras || []).length) { const [tx, tz] = P([c.x, c.z - c.p / 2]); d += sT(tx, tz - 1.4, nome, 2.8, {anchor: "middle", bold: true, cor: "#123f2b"}); }
+    else if (c.rotulo !== false && tw(nome, 2) < larg * 0.95) d += sT(cx, cz + 0.8, nome, 2, {anchor: "middle", cor: "#333"});
+    else { numerados.push(c); const n = numerados.length; d += `<circle cx="${cx.toFixed(2)}" cy="${cz.toFixed(2)}" r="1.9" fill="#fff" stroke="#5b5346" stroke-width="0.2"/>` + sT(cx, cz + 0.75, n, 2, {anchor: "middle", bold: true}); }
+  });
+  md.silos.forEach(si => {
+    const S = M.siloDe["Silo " + si.n], [cx, cz] = P([si.x, si.z]), r = si.d / 2 * s, cheio = S && S.ocup > 0;
+    d += `<circle cx="${cx.toFixed(2)}" cy="${cz.toFixed(2)}" r="${r.toFixed(2)}" fill="${cheio ? "#f4e2b5" : "#ffffff"}" stroke="#5b5346" stroke-width="0.3"/>` + sT(cx, cz + 0.8, "Silo " + si.n, Math.min(2.2, r * 0.5), {anchor: "middle", bold: true});
+  });
+  /* escala e norte */
+  const passo = [5, 10, 20, 25, 50, 100].find(v => v * s >= aw * 0.12) || 100, ex = ax + 4, ey = ay + ah - 4;
+  d += lin(ex, ey, ex + passo * s, ey, {sw: 0.5}) + lin(ex, ey - 1.2, ex, ey + 1.2, {sw: 0.3}) + lin(ex + passo * s, ey - 1.2, ex + passo * s, ey + 1.2, {sw: 0.3}) + sT(ex + passo * s / 2, ey - 1.8, passo + " m", 2.2, {anchor: "middle"});
+  if (md.geo) { const a = md.geo.azimuteX * Math.PI / 180, nx = Math.cos(a), nz = -Math.sin(a), cx = ax + aw - 8, cy = ay + ah - 10; d += lin(cx - nx * 5, cy - nz * 5, cx + nx * 5, cy + nz * 5, {sw: 0.4}) + `<polygon points="${(cx + nx * 6.5).toFixed(2)},${(cy + nz * 6.5).toFixed(2)} ${(cx + nx * 4 - nz * 1.6).toFixed(2)},${(cy + nz * 4 + nx * 1.6).toFixed(2)} ${(cx + nx * 4 + nz * 1.6).toFixed(2)},${(cy + nz * 4 - nx * 1.6).toFixed(2)}" fill="#222"/>` + sT(cx + nx * 9, cy + nz * 9 + 1, "N", 3, {anchor: "middle", bold: true}); }
+  /* legenda */
+  const it = [], arms = md.construcoes.filter(c => (c.quadras || []).length);
+  it.push({t: "h", txt: "Armazéns e quadras"});
+  arms.forEach(c => { it.push({t: "i", txt: c.nome, b: true}); listaQuadras(c, false).forEach(x => it.push(x)); (c.blocos || []).forEach(bl => it.push({t: "i", txt: bl.nome + " (posição estimada)", cor: "#d9ddd6", peq: true})); it.push({t: "esp"}); });
+  const outrosArm = md.construcoes.filter(c => (c.tipo === "armazem" || c.estoque) && !(c.quadras || []).length);
+  outrosArm.forEach(c => it.push({t: "i", txt: `${c.nome}: quadras não cadastradas`, b: true}));
+  it.push({t: "h", txt: "Silos (" + (md.silos.length ? (M.armGranel ? M.armGranel.code : "granel") : "") + ")"});
+  md.silos.forEach(si => { const S = M.siloDe["Silo " + si.n]; it.push({t: "i", txt: `Silo ${si.n}: ${S && S.ocup > 0 ? (S.prod || "com produto") : S && S.ocup === 0 ? "sem produto (planilha de ocupação)" : "ocupação não informada"}`, cor: S && S.ocup > 0 ? "#f4e2b5" : "#ffffff"}); });
+  it.push({t: "h", txt: "Outras estruturas"});
+  md.construcoes.filter(c => !(c.tipo === "armazem" || c.estoque)).forEach(c => { const n = numerados.indexOf(c); it.push({t: "i", txt: `${n >= 0 ? n + 1 + " · " : ""}${c.nome}${c.desativado && !c.projetado ? " (desativado)" : ""}`}); });
+  const prods = [...new Set(arms.flatMap(c => (c.quadras || []).flatMap(q => prodsQuadra(c, q))))];
+  if (prods.length) { it.push({t: "h", txt: "Cores dos produtos"}); prods.forEach(p => it.push({t: "i", txt: p, cor: corProduto(p)})); }
+  const dts = arms.map(c => ocupDe(c)).filter(o => o && o.data).map(o => o.data).sort();
+  it.push({t: "esp"}, {t: "i", txt: `Croqui esquemático, sem valor de levantamento topográfico. Planta baseada no croqui da UA; quadras conforme as medidas informadas; produtos conforme a planilha de ocupação dos armazéns${dts.length ? " (" + fmtD(toDate(dts[dts.length - 1])) + ")" : ""}.`, peq: true, ital: true});
+  const corpo = cabecalhoSVG(W, "Croqui da Unidade Armazenadora", "Estrutura, silos, armazéns e quadras com os produtos armazenados") + d + lin(302, ay, 302, H - 10, {cor: "#ccd3cb", sw: 0.25}) + legendaSVG(306, ay, 104, H - 10 - ay - 2, it);
+  return folhaSVG(W, H, corpo);
+}
+
+/* ---------- croqui de um armazém, com medidas ---------- */
+function linhasDe(c) {                  // agrupa as quadras em fileiras (sobreposição no sentido da profundidade)
+  const qs = (c.quadras || []).slice().sort((a, b) => a.z - b.z), rows = [];
+  qs.forEach(q => { const r = rows.find(r => q.z < r.z1 - 0.01 && q.z + q.p > r.z0 + 0.01); if (r) { r.itens.push(q); r.z0 = Math.min(r.z0, q.z); r.z1 = Math.max(r.z1, q.z + q.p); } else rows.push({z0: q.z, z1: q.z + q.p, itens: [q]}); });
+  (c.blocos || []).forEach(b => rows.forEach(r => { if (b.z < r.z1 && b.z + b.p > r.z0) r.itens.push({...b, bloco: true}); }));
+  rows.forEach(r => r.itens.sort((a, b) => a.x - b.x));
+  return rows.sort((a, b) => a.z0 - b.z0);
+}
+function croquiArmazemSVG(c) {
+  const W = 420, H = 297, I = internoDe(c), L = I.L, Pp = I.P, ax = 10, ay = 36, aw = 288, ah = 251, inf = new Set(c.inferidas || []);
+  const rows = linhasDe(c), padH = 18, padV = rows.length > 1 ? 16 : 12;
+  const s = Math.min((aw - 2 * padH) / L, (ah - 2 * padV - 6) / Pp), ox = ax + (aw - L * s) / 2, oy = ay + (ah - Pp * s) / 2;
+  const X = x => ox + x * s, Y = z => oy + z * s;
+  let d = `<rect x="${X(0).toFixed(2)}" y="${Y(0).toFixed(2)}" width="${(L * s).toFixed(2)}" height="${(Pp * s).toFixed(2)}" fill="#fbfcfa" stroke="#123f2b" stroke-width="0.7"/>`;
+  (c.blocos || []).forEach(b => { d += `<rect x="${X(b.x).toFixed(2)}" y="${Y(b.z).toFixed(2)}" width="${(b.l * s).toFixed(2)}" height="${(b.p * s).toFixed(2)}" fill="url(#hach)" stroke="#8f988e" stroke-width="0.25"/>`; quebrar(b.nome, 2, b.l * s - 2).forEach((l, i) => { d += sT(X(b.x + b.l / 2), Y(b.z + b.p / 2) + i * 2.6, l, 2, {anchor: "middle", cor: "#555", ital: true}); }); });
+  (c.quadras || []).forEach(q => {
+    const ps = prodsQuadra(c, q), fx = faixasQuadra(q, ps);
+    fx.forEach(f => { d += pol(f.pts.map(([x, z]) => [X(x), Y(z)]), {fill: f.cor || "#eef0ec", stroke: "#222", sw: 0.3}); });
+    const qw = q.l * s, qh = q.p * s, cx = X(q.x + q.l / 2), corT = ps.length && fx.length === 1 ? corTexto(fx[0].cor) : "#1b1b1b";
+    const fId = Math.min(4.6, qw * 0.28, qh * 0.3), fP = Math.min(2.8, qw * 0.13), lin1 = ps.length ? quebrar(ps.join(" / "), fP, qw - 2) : ["sem produto"];
+    const dim = `${fmtM(q.l)} × ${fmtM(q.p)} m`, cabe = qh > fId + (lin1.length + 1) * fP * 1.25 + 2 && fP >= 1.3;
+    let yy = Y(q.z) + (qh - (cabe ? fId + (lin1.length + 1) * fP * 1.25 : fId)) / 2 + fId * 0.85;
+    const fundo = fx.length > 1 ? `<rect x="${(cx - Math.min(qw - 1, Math.max(...[q.id, ...lin1, dim].map(t => tw(t, fP)), tw(q.id, fId)) + 2) / 2).toFixed(2)}" y="${(yy - fId).toFixed(2)}" width="${Math.min(qw - 1, Math.max(...[q.id, ...lin1, dim].map(t => tw(t, fP)), tw(q.id, fId)) + 2).toFixed(2)}" height="${(cabe ? fId + (lin1.length + 1) * fP * 1.25 + 1.2 : fId + 1).toFixed(2)}" fill="#ffffff" fill-opacity="0.82" rx="0.6"/>` : "";
+    d += fundo + sT(cx, yy, q.id, fId, {anchor: "middle", bold: true, cor: fundo ? "#1b1b1b" : corT});
+    if (cabe) { lin1.forEach(l => { yy += fP * 1.25; d += sT(cx, yy, l, fP, {anchor: "middle", cor: fundo ? "#1b1b1b" : corT}); }); yy += fP * 1.25; d += sT(cx, yy, dim, fP * 0.9, {anchor: "middle", cor: fundo ? "#333" : corT, ital: true}); }
+  });
+  /* cotas: cadeia horizontal por fileira (acima da 1ª, abaixo da última) e cadeia vertical à esquerda */
+  const ext = (x, y1, y2) => lin(x, y1, x, y2, {cor: "#999", sw: 0.12});
+  const cota = (x1, x2, y, val, infer, lado) => {
+    const w = (x2 - x1), txt = fmtM(val, infer), f = 2.6, cor = infer ? "#8a5a00" : "#c62828";
+    let o = lin(x1, y, x2, y, {cor: "#c62828", sw: 0.18, seta: w > 2.2});
+    if (tw(txt, f) + 0.6 < w) o += sT((x1 + x2) / 2, y + (lado < 0 ? -0.9 : 2.8), txt, f, {anchor: "middle", cor, ital: infer});
+    else o += sT((x1 + x2) / 2 + 0.8, y + (lado < 0 ? -1 : 1), txt, f * 0.9, {anchor: lado < 0 ? "start" : "end", cor, ital: infer, rot: -90});
+    return o;
+  };
+  const cadeia = (r, y, lado) => {
+    const pts = [{x: 0, id: "parede"}]; let o = "";
+    r.itens.forEach(e => { pts.push({x: e.x, id: e.id, ini: true, e}); pts.push({x: e.x + e.l, id: e.id, e}); });
+    pts.push({x: L, id: "parede"});
+    for (let i = 0; i < pts.length - 1; i++) {
+      const a = pts[i], b = pts[i + 1], v = b.x - a.x; if (v < 0.05) continue;
+      const dentro = a.ini && b.e === a.e, chave = dentro ? null : `${a.id}|${b.id}`;
+      const infer = dentro ? !!(a.e.estimado) : (inf.has(chave) || !!(a.e && a.e.posEstimada) || !!(b.e && b.e.posEstimada) || !!(a.e && a.e.estimado) || !!(b.e && b.e.estimado));
+      o += cota(X(a.x), X(b.x), y, v, infer, lado);
+    }
+    r.itens.forEach(e => { const yy = lado < 0 ? Y(e.z) : Y(e.z + e.p); o += ext(X(e.x), y, yy) + ext(X(e.x + e.l), y, yy); });
+    return o;
+  };
+  if (rows.length) d += cadeia(rows[0], Y(0) - 6, -1);
+  if (rows.length > 1) d += cadeia(rows[rows.length - 1], Y(Pp) + 6, 1);
+  /* vertical à esquerda: parede, fileiras e corredores */
+  const vx = X(0) - 7, vpts = [0]; rows.forEach(r => { const qq = r.itens.filter(e => !e.bloco); vpts.push(Math.min(...qq.map(e => e.z)), Math.max(...qq.map(e => e.z + e.p))); }); vpts.push(Pp);
+  const vcota = (x, z1, z2, infer) => { const v = z2 - z1; if (v < 0.05) return ""; const txt = fmtM(v, infer), cor = infer ? "#8a5a00" : "#c62828"; return lin(x, Y(z1), x, Y(z2), {cor: "#c62828", sw: 0.18, seta: v * s > 2.2}) + sT(x - 1, (Y(z1) + Y(z2)) / 2, txt, 2.6, {anchor: "middle", cor, ital: infer, rot: -90}); };
+  for (let i = 0; i < vpts.length - 1; i++) d += vcota(vx, vpts[i], vpts[i + 1], false);
+  rows.forEach(r => { const qq = r.itens.filter(e => !e.bloco); const e0 = qq.reduce((a, b) => a.x <= b.x ? a : b); d += lin(vx, Y(Math.min(...qq.map(e => e.z))), X(e0.x), Y(Math.min(...qq.map(e => e.z))), {cor: "#999", sw: 0.12}) + lin(vx, Y(Math.max(...qq.map(e => e.z + e.p))), X(e0.x), Y(Math.max(...qq.map(e => e.z + e.p))), {cor: "#999", sw: 0.12}); });
+  /* quadras com profundidade ou posição diferente da fileira: cotas verticais à direita */
+  const vx2 = X(L) + 7;
+  rows.forEach(r => r.itens.filter(e => !e.bloco && (Math.abs(e.z - r.z0) > 0.05 || Math.abs(e.z + e.p - r.z1) > 0.05)).forEach(e => {
+    const est = !!e.posEstimada; d += vcota(vx2, 0, e.z, est) + vcota(vx2, e.z, e.z + e.p, false) + vcota(vx2, e.z + e.p, Pp, est) + lin(X(e.x + e.l), Y(e.z), vx2, Y(e.z), {cor: "#999", sw: 0.12}) + lin(X(e.x + e.l), Y(e.z + e.p), vx2, Y(e.z + e.p), {cor: "#999", sw: 0.12});
+  }));
+  /* recortes (quadra em L) */
+  (c.quadras || []).filter(q => q.recorte && q.pontos).forEach(q => { const m = String(q.recorte).match(/([\d,]+)\s*×\s*([\d,]+)/); if (!m) return; const xs = q.pontos.map(p => p[0]), zs = q.pontos.map(p => p[1]), rx1 = Math.max(...xs), rz0 = Math.min(...zs), w = num(m[1]), h = num(m[2]); d += cota(X(rx1 - w), X(rx1), Y(rz0) + 3, w, false, 1) + vcota(X(rx1) + 2.5, rz0, rz0 + h, false); });
+  const escala = Math.round(1000 / s / 50) * 50;
+  d += sT(ax + aw / 2, Y(Pp) + (rows.length > 1 ? 15 : 10), `Dimensões internas: ${fmtM(L)} × ${fmtM(Pp)} m · escala aproximada 1:${fmtN(escala, 0)} na folha A3`, 2.4, {anchor: "middle", cor: "#444"});
+  /* legenda */
+  const it = [{t: "h", txt: "Quadras e produtos"}, ...listaQuadras(c, true)];
+  (c.blocos || []).forEach(b => it.push({t: "i", txt: `${b.nome}: ≈ ${fmtM(b.l)} × ${fmtM(b.p)} m (estimado)`, cor: "#d9ddd6"}));
+  const prods = [...new Set((c.quadras || []).flatMap(q => prodsQuadra(c, q)))];
+  if (prods.length) { it.push({t: "h", txt: "Cores dos produtos"}); prods.forEach(p => it.push({t: "i", txt: p, cor: corProduto(p)})); }
+  it.push({t: "h", txt: "Como ler as medidas"}, {t: "i", txt: "Medidas em metros. Em vermelho: valores informados no desenho de medidas das quadras."}, {t: "i", txt: "Em marrom, com ≈: valores calculados ou estimados para fechar as dimensões; conferir no local.", ital: true});
+  if (c.notaMedidas) it.push({t: "i", txt: c.notaMedidas, peq: true});
+  if (Math.abs(c.l - L) > 1 || Math.abs(c.p - Pp) > 1) it.push({t: "i", txt: `No croqui da UA o prédio mede ${fmtM(c.l)} × ${fmtM(c.p)} m (medida externa); a soma das medidas internas dá ${fmtM(L)} × ${fmtM(Pp)} m.`, peq: true});
+  const oc = ocupDe(c); if (oc && oc.data) it.push({t: "i", txt: `Produtos conforme a planilha de ocupação dos armazéns de ${fmtD(toDate(oc.data))}.`, peq: true});
+  const nome = c.nome.replace(/\s*\(.*\)/, ""), sub = c.nome !== nome ? c.nome.slice(nome.length).replace(/[()]/g, "").trim() : "";
+  const corpo = cabecalhoSVG(W, `Croqui do ${nome}`, (sub ? sub[0].toUpperCase() + sub.slice(1) + " · " : "") + "quadras, distâncias às paredes e corredores") + d + lin(302, ay, 302, H - 10, {cor: "#ccd3cb", sw: 0.25}) + legendaSVG(306, ay, 104, H - 10 - ay - 2, it);
+  return folhaSVG(W, H, corpo);
+}
+
+/* ---------- visualizador de documentos (croquis e relatórios) ---------- */
+function abrirDoc({titulo, html, svg, paisagem, nomeArq}) {
+  let v = $("#docv");
+  if (!v) { v = document.createElement("div"); v.id = "docv"; v.setAttribute("role", "dialog"); v.setAttribute("aria-modal", "true"); document.body.appendChild(v); }
+  v.innerHTML = `<div class="docbar"><b>${esc(titulo)}</b><span class="sp"></span>${svg ? `<button class="btn" id="docSvg">Baixar SVG</button>` : ""}<button class="btn pri" id="docPrint">🖨️ Imprimir ou salvar em PDF</button><button class="btn" id="docClose">Fechar</button></div>
+    <div class="docpages${paisagem ? " a3" : ""}">${svg ? `<div class="folha a3">${svg}</div>` : html}</div>`;
+  v.classList.add("on"); document.body.classList.add("comdoc");
+  $("#docClose").onclick = fecharDoc;
+  $("#docPrint").onclick = () => {
+    let st = $("#pgsz"); if (!st) { st = document.createElement("style"); st.id = "pgsz"; document.head.appendChild(st); }
+    st.textContent = paisagem ? "@page{size:A3 landscape;margin:0}" : "@page{size:A4;margin:12mm 12mm 14mm}";
+    document.body.classList.add("imprimindo"); setTimeout(() => { window.print(); setTimeout(() => document.body.classList.remove("imprimindo"), 300); }, 50);
+  };
+  if (svg) $("#docSvg").onclick = () => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([svg], {type: "image/svg+xml"})); a.download = (nomeArq || "croqui") + ".svg"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); };
+}
+function fecharDoc() { const v = $("#docv"); if (v) { v.classList.remove("on"); v.innerHTML = ""; } document.body.classList.remove("comdoc"); }
+function abrirCroqui(id) {
+  if (!M) return;
+  if (id === "geral") { abrirDoc({titulo: "Croqui geral da UA", svg: croquiGeralSVG(), paisagem: true, nomeArq: "croqui_geral_UA"}); return; }
+  const c = mapaDados().construcoes.find(c => c.id === id); if (!c) return;
+  if (!(c.quadras || []).length) { toast("Este armazém ainda não tem quadras cadastradas no mapa_ua.json."); return; }
+  abrirDoc({titulo: "Croqui do " + c.nome, svg: croquiArmazemSVG(c), paisagem: true, nomeArq: "croqui_" + norm(c.nome.replace(/\s*\(.*\)/, ""))});
+}
+
+/* ============================================================ relatório de cada aba: cabeçalho institucional, resumo e conteúdo */
+const ABA_NOME = () => Object.fromEntries(TABS);
+const lst = (arr, max = 99) => arr.slice(0, max).join("; ") + (arr.length > max ? ` e mais ${arr.length - max}` : "");
+function alertasDaAba(tab) { return [...M.alerts, ...fotoAlertas()].filter(a => tab === "geral" || modTab[a.mod] === tab || (tab === "silos" && a.ref && a.ref.startsWith("silo:"))).sort((a, b) => SEV[b.sev] - SEV[a.sev]); }
+function resumoDe(tab) {
+  const R = [], C = M.C;
+  if (tab === "geral") {
+    const al = alertasDaAba("geral"), nc = al.filter(a => a.sev === "crit").length, nw = al.filter(a => a.sev === "warn").length;
+    R.push(`Situação em ${fmtD(NOW)}: ${nc} ponto(s) crítico(s) e ${nw} de atenção.`);
+    if (M.est.rep) R.push(`Estoque total de ${fmtT(M.est.totalT, 0)} na posição de ${fmtD(M.est.ate)}: ${M.armazens.map(a => `${a.code} ${fmtT(a.saldoT, 0)}`).join(", ")}.`);
+    const ter = M.silos.filter(s => s.monit && (s.T.sev === "crit" || s.T.sev === "warn"));
+    if (M.silos.length) R.push(`Silos com alerta térmico: ${ter.length ? ter.map(s => `${s.code} (máx. ${fmtTp(s.T.max.t)} °C)`).join(", ") : "nenhum"}.`);
+    const Ts = Object.values(M.thermo), off = Ts.reduce((a, T) => a + T.semLeitura.length, 0), tot = Ts.reduce((a, T) => a + T.cabos.length, 0);
+    if (tot) R.push(`Termometria: ${tot - off} de ${tot} cabos com leitura na última leitura.`);
+    const exp = M.fito.alvos.filter(a => a.sev === "crit" || a.sev === "warn"); if (exp.length) R.push(`Expurgos: ${exp.map(a => `${a.alvo} — ${a.st.toLowerCase()}`).join("; ")}.`);
+    al.filter(a => a.sev === "crit").slice(0, 6).forEach(a => R.push("Crítico: " + a.title + "."));
+  } else if (tab === "silos") {
+    const T0 = Object.values(M.thermo)[0];
+    if (T0) R.push(`Última leitura de termometria: ${T0.repD[T0.lastDk] ? fmtDH(T0.lastD) + " (" + T0.repD[T0.lastDk].file + ")" : fmtD(T0.lastD)}.`);
+    M.silos.forEach(s => { const T = s.T; R.push(`${s.code}: ${s.status.txt.toLowerCase()}${T && T.nRaw ? ` · máx. ${fmtTp(T.maxRaw)} °C · méd. ${fmtN(T.avgRaw)} °C` : ""}${s.ocup != null ? ` · ocupação ≈ ${fmtN(s.ocup * 100, 0)}%` : ""}${T && T.semLeitura.length ? ` · cabo(s) ${T.semLeitura.join(", ")} sem leitura` : ""}.`); });
+    R.push(`Limites usados: atenção a partir de ${C.tAtt} °C e crítico a partir de ${C.tCrit} °C (Norma CONAB 30.101, Cap. III-VI, 4.1 c).`);
+  } else if (tab === "confiab") {
+    const Ts = Object.values(M.thermo), off = Ts.reduce((a, T) => a + T.semLeitura.length, 0), tot = Ts.reduce((a, T) => a + T.cabos.length, 0);
+    const susp = Ts.flatMap(T => T.suspeitos.map(x => `${T.silo}, cabo ${x.c}, sensor ${x.s}: ${x.tipo.toLowerCase()}`));
+    R.push(`Cabos com leitura na última leitura: ${tot - off} de ${tot}.`);
+    Ts.filter(T => T.semLeitura.length).forEach(T => R.push(`${T.silo}: cabo(s) ${T.semLeitura.map(c => c + (c === C.caboCentral ? " (central)" : "")).join(", ")} sem leitura.`));
+    R.push(`Sensores com leitura suspeita: ${susp.length ? lst(susp, 8) : "nenhum"}.`);
+    R.push(`Ocorrências de manutenção abertas: ${M.ocorr.filter(o => o.aberta).length}.`);
+    R.push(`Relatórios de termometria conferidos no período: ${M.termRel.length}${M.termRel.some(t => t.check && t.check.prob.length) ? " (com divergência em " + M.termRel.filter(t => t.check && t.check.prob.length).length + ")" : ", todos com leitura completa"}.`);
+  } else if (tab === "estoque") {
+    if (!M.est.rep) R.push("Nenhum Controle de Estoque carregado.");
+    else {
+      R.push(`Posição de ${fmtD(M.est.ate)} (SAAGRA, período de ${fmtD(M.est.de)} a ${fmtD(M.est.ate)}): ${fmtT(M.est.totalT, 0)}, valor fiscal de ${fmtR(M.est.valor)}.`);
+      R.push(`Entradas de ${fmtT(M.est.entT, 0)} e saídas de ${fmtT(M.est.saiT, 0)} no período.`);
+      M.armazens.forEach(a => R.push(`${a.code}: ${fmtT(a.saldoT, 0)} — ${a.itens.filter(i => i.t > 0.0005).sort((x, y) => y.t - x.t).slice(0, 4).map(i => `${titulo(i.produto)} (${fmtN(i.t, 0)} t)`).join(", ")}.`));
+    }
+    Object.entries(M.quadras || {}).forEach(([k, o]) => { const por = {}; Object.entries(o.q).forEach(([q, ps]) => { const t = ps.join(" / ") || "sem produto"; (por[t] = por[t] || []).push(q); }); R.push(`${k}, quadras: ${Object.entries(por).map(([t, qs]) => `${t} (${qs.join(", ")})`).join("; ")}.`); });
+  } else if (tab === "fito") {
+    const F = M.fito;
+    F.alvos.forEach(a => R.push(`Expurgo de ${a.alvo}: último ${a.ult ? fmtD(a.ult) : (a.ultTxt || "sem registro")}; próximo ${a.prox ? mesLabel(a.prox) : (a.proxTxt || "sem previsão")} — ${a.st.toLowerCase()}.`));
+    if (F.aplic.length) R.push(`Aplicações no DOF ${mesLabel(F.mesDof)}: ${F.aplic.map(a => `${a.nome} (${a.forma.toLowerCase()}, ${a.quant})`).join("; ")}.`);
+    const car = M.silos.filter(s => s.fito.carAte && NOW < s.fito.carAte); if (car.length) R.push(`Em carência: ${car.map(s => `${s.code} até ${fmtD(s.fito.carAte)}`).join(", ")}.`);
+    F.inset.filter(i => i.sev !== "ok").forEach(i => R.push(`${i.nome}: ${i.st.toLowerCase()} (saldo ${fmtN(i.saldo)} ${i.un}).`));
+    if (F.detector) R.push(`Detector de fosfina (DEPQ, item 32): ${F.detector.sim ? "Sim" : "Não"}${F.detector.obs ? " — " + F.detector.obs : ""}. Liberação da área com PH3 abaixo de ${fmtN(F.ph3, 2)} ppm (${F.ph3Fonte}).`);
+  } else if (tab === "qualidade") {
+    if (!M.certs.length) R.push("Nenhum certificado de classificação carregado.");
+    M.certs.forEach(c => R.push(`Lote ${c.lote || "?"} (${titulo(c.produto || "")}, laudo ${c.laudo || "?"}): ${c.tipo || "tipo não informado"} no laudo${c.enq ? `, ${c.enq.tipo} pelos resultados` : ""}; umidade ${fmtN(c.umidade, 1)}%, avariados ${fmtN(c.avariados, 2)}%.`));
+  } else if (tab === "fotos") {
+    const r = fotoResumo();
+    R.push(`${r.total} foto(s): ${Object.entries(r.porTipo).map(([k, n]) => `${n} de ${FOTO_TIPOS[k].curto.toLowerCase()}`).join(", ") || "nenhuma"}.`);
+    const sub = Object.entries(r.subs).filter(([, s]) => s.n30); R.push(`Registros de pragas nos últimos 30 dias: ${sub.length ? sub.map(([k, s]) => `${k} (${s.n30})`).join(", ") : "nenhum"}.`);
+    const loc = {}; FOTOS.filter(f => f.tipo === "praga" || f.tipo === "isca").forEach(f => { const l = fotoLocal(f) || "sem posição"; loc[l] = (loc[l] || 0) + 1; });
+    if (Object.keys(loc).length) R.push(`Pragas e iscas por local: ${Object.entries(loc).sort((a, b) => b[1] - a[1]).map(([l, n]) => `${l} (${n})`).join(", ")}.`);
+    if (r.semPos) R.push(`${r.semPos} foto(s) sem posição no mapa.`);
+  } else if (tab === "pessoal") {
+    R.push(`Aptos para entrada em silo com trabalho em altura (NR-33 e NR-35 válidas): ${M.aptos.ambos.join(", ") || "ninguém"}.`);
+    M.equipe.forEach(e => { const v = [["NR-33", e.nr33v], ["NR-35", e.nr35v], ["ASO", e.asov]].filter(([, x]) => x.sev !== "ok").map(([n, x]) => `${n} ${x.st.toLowerCase()}`); if (v.length) R.push(`${e.nome}: ${v.join("; ")}.`); });
+    const ep = M.epis.filter(e => e.sev === "crit"); if (ep.length) R.push(`EPIs com CA vencido: ${ep.map(e => e.nome).join(", ")}.`);
+    const dv = M.docs.filter(d => d.sev === "crit" || d.sev === "warn"); if (dv.length) R.push(`Documentos vencidos ou a vencer: ${dv.map(d => `${d.doc} (${d.st.toLowerCase()})`).join("; ")}.`);
+  } else if (tab === "manut") {
+    const at = M.mans.filter(m => m.sev === "crit"); R.push(`Manutenções atrasadas: ${at.length ? at.map(m => `${m.eq} — ${m.serv}`).join("; ") : "nenhuma"}.`);
+    const ab = M.pends.filter(p => p.aberta); R.push(`Pendências abertas: ${ab.length} (${ab.filter(p => /alto/i.test(p.risco)).length} de risco alto, ${ab.filter(p => p.atraso > 0).length} com prazo vencido).`);
+  }
+  return R;
+}
+function conteudoDe(tab) {
+  if (tab === "silos") {
+    const linhas = M.silos.map(s => `<tr><td><b>${esc(s.code)}</b></td><td>${badge(s.status.sev, s.status.txt)}</td><td class="n">${s.ocup != null ? "≈ " + fmtN(s.ocup * 100, 0) + "%" : "–"}</td><td>${esc(s.prod || "—")}</td><td class="n">${s.T && s.T.nRaw ? fmtTp(s.T.maxRaw) : "–"}</td><td class="n">${s.T && s.T.nRaw ? fmtN(s.T.avgRaw) : "–"}</td><td>${s.T && s.T.semLeitura.length ? s.T.semLeitura.join(", ") : "—"}</td><td>${s.fito.ultExp ? fmtD(s.fito.ultExp) : "—"}</td></tr>`).join("");
+    const silos = M.silos.filter(s => s.T).map(s => `<div class="rel-bloco"><h3>${esc(s.code)} — ${esc(s.status.txt)}</h3>${heatHTML(s.T, s.T.lastDk)}${s.T.notes.filter(n => n.sev !== "ok").length ? `<ul class="obs" style="margin-top:8px">${s.T.notes.map(n => `<li>${SEV_ICON[n.sev] || ""} <b>${esc(n.title)}</b><br><span class="note">${esc(n.rec)}</span></li>`).join("")}</ul>` : ""}</div>`).join("");
+    return `<h2>Situação dos silos</h2><div class="tbl-wrap"><table><thead><tr><th>Silo</th><th>Situação</th><th class="n">Ocupação</th><th>Produto</th><th class="n">Máx. (°C)</th><th class="n">Méd. (°C)</th><th>Cabos sem leitura</th><th>Último expurgo</th></tr></thead><tbody>${linhas}</tbody></table></div><h2>Mapa de temperaturas por silo</h2>${silos}`;
+  }
+  const v = $("#v-" + tab); if (!v) return "";
+  const cl = v.cloneNode(true);
+  /* gráficos viram imagem; controles de tela saem do relatório */
+  const orig = [...v.querySelectorAll("canvas")], cop = [...cl.querySelectorAll("canvas")];
+  cop.forEach((c, i) => { try { const img = document.createElement("img"); img.src = orig[i].toDataURL("image/png"); img.style.cssText = "width:100%;max-width:640px;display:block"; c.replaceWith(img); } catch (e) { c.remove(); } });
+  cl.querySelectorAll("select,input,button.btn,.toolbar label,#fgMais").forEach(e => e.remove());
+  cl.querySelectorAll(".toolbar").forEach(t => { if (!t.textContent.trim()) t.remove(); });
+  cl.querySelectorAll("button").forEach(b => { const d = document.createElement("div"); d.className = b.className; d.innerHTML = b.innerHTML; b.replaceWith(d); });
+  cl.querySelectorAll("a[data-go]").forEach(a => a.replaceWith(document.createTextNode(a.textContent)));
+  return cl.innerHTML;
+}
+function relatorio(tab) {
+  if (!M) { toast("Carregue os dados primeiro."); return; }
+  const nome = ABA_NOME()[tab] || tab, I = instNome(), al = alertasDaAba(tab).filter(a => a.sev === "crit" || a.sev === "warn");
+  const html = `<div class="folha rel">
+    <header class="rel-cab">${DATA.logo ? `<img src="${DATA.logo}" alt="Logo" class="rel-logo">` : ""}
+      <div class="rel-inst"><div class="rel-cia">${esc(I.cia)}</div><div>${esc(I.sureg)}</div><div class="rel-ua">${esc(M.C.nome)}</div></div>
+      <div class="rel-tit"><div class="rel-h">Relatório — ${esc(nome)}</div><div>Emitido em ${fmtDH(new Date())}</div><div class="rel-fonte">Dados: ${esc(META ? META.nome : "")}${META && META.demo ? " (exemplo fictício)" : ""}</div></div></header>
+    <section class="rel-resumo"><h2>Resumo</h2><ul>${resumoDe(tab).map(t => `<li>${esc(t)}</li>`).join("")}</ul>
+      ${al.length && tab !== "geral" ? `<h3>Pontos de atenção</h3><ul>${al.slice(0, 12).map(a => `<li>${SEV_ICON[a.sev]} <b>${esc(a.title)}</b> — ${esc(a.rec)}</li>`).join("")}</ul>` : ""}</section>
+    <section class="rel-corpo">${conteudoDe(tab)}</section>
+    <footer class="rel-ass"><div>______________________________________<br>Responsável Técnico</div><div>______________________________________<br>Gerência da Unidade</div></footer>
+    <p class="note">Relatório gerado pelo Painel da UA, ferramenta gerencial de apoio à decisão. Não substitui os registros oficiais da CONAB, as bulas, o receituário agronômico nem as normas internas.</p>
+  </div>`;
+  abrirDoc({titulo: "Relatório — " + nome, html, paisagem: false});
+}
+
 /* ============================================================ dados de exemplo (fictícios, gerados na hora) */
 function demoDados() {
   const hoje = startOfDay(new Date()), dia = n => new Date(hoje.getTime() - n * DAY), iso = d => isoDia(d);
@@ -2451,8 +3025,11 @@ function demoDados() {
         }
       }
     }
-    D.term.push({file: `exemplo_termometria_${iso(d)}.pdf`, date: d.toISOString(), amb, readings, unidades: [1, 2, 3, 4, 5, 6], cabos});
+    D.term.push({file: `exemplo_termometria_${iso(d)}.pdf`, date: d.toISOString(), amb, readings, unidades: [1, 2, 3, 4, 5, 6], cabos, nCols: 7, check: {tokens: readings.length, lidos: readings.length, prob: []}});
   }
+  const qA1 = ["Arroz Beneficiado", "Arroz Beneficiado", "Feijão Carioca", "Feijão Carioca/Açúcar Cristal", "Leite em Pó", "Farinha de Mandioca", "Cesta de Alimentos", "Cesta de Alimentos", "", "Arroz Beneficiado", "Feijão Carioca", "Farinha de Mandioca"];
+  D.ocupArm.push({file: "exemplo_ocupacao_armazens.ods", armazens: {"Armazém 1": {data: iso(dia(2)), quadras: Object.fromEntries(qA1.map((p, i) => ["Q" + (i + 1), p]))},
+    "Armazém 2": {data: iso(dia(2)), quadras: {Q1: "Milho em Grãos Ensacado", Q2: "Milho em Grãos Ensacado", Q3: "Farinha de Trigo/Fubá de Milho", Q4: "Macarrão"}}}});
   D.ocup.push({file: "exemplo_ocupacao.ods", linhas: [{data: iso(dia(25)), silos: ocup}]});
 
   /* estoque: dois meses fechados */
@@ -2522,8 +3099,10 @@ function demoDados() {
   D.mapa = {tipo: "mapa_ua", nome: "UA Exemplo (planta fictícia)", geo, armazemDosSilos: "Armazém 3",
     terreno: [[0, 0], [220, 0], [220, 140], [0, 140]],
     areas: [{nome: "Gramado", tipo: "grama", pontos: [[150, 100], [212, 100], [212, 132], [150, 132]]}],
-    construcoes: [{id: "a1", nome: "Armazém 1", tipo: "armazem", estoque: "Armazém 1", x: 58, z: 28, l: 84, p: 26, h: 8},
-      {id: "a2", nome: "Armazém 2", tipo: "armazem", estoque: "Armazém 2", x: 158, z: 28, l: 84, p: 26, h: 8},
+    construcoes: [{id: "a1", nome: "Armazém 1", tipo: "armazem", estoque: "Armazém 1", x: 58, z: 28, l: 84, p: 26, h: 8, interno: {l: 75, p: 24.4},
+        quadras: [0, 1, 2, 3, 4, 5].flatMap(i => [{id: "Q" + (6 - i), x: 1.5 + i * 12.2, z: 1.2, l: 11, p: 9.5}, {id: "Q" + (7 + i), x: 1.5 + i * 12.2, z: 13.7, l: 11, p: 9.5}]), inferidas: ["Q5|Q4"]},
+      {id: "a2", nome: "Armazém 2", tipo: "armazem", estoque: "Armazém 2", x: 158, z: 28, l: 84, p: 26, h: 8, interno: {l: 73, p: 24},
+        quadras: [0, 1, 2, 3].map(i => ({id: "Q" + (i + 1), x: 1.5 + i * 18, z: 3, l: 16, p: 18}))},
       {id: "mo", nome: "Moega", tipo: "edificio", x: 128, z: 88, l: 16, p: 14, h: 9}, {id: "es", nome: "Escritório", tipo: "edificio", x: 30, z: 118, l: 16, p: 10, h: 4}],
     silos: [1, 2, 3, 4, 5, 6].map((n, i) => ({n, x: 100 - Math.floor(i / 2) * 19, z: 79 + (i % 2) * 19, d: 15, h: 24}))};
 
@@ -2539,14 +3118,14 @@ function demoDados() {
   const fotos = [
     ["produto", "", 40, 24, 12, "Arroz beneficiado", "Armazém 1"], ["produto", "", 150, 30, 12, "Milho ensacado", "Armazém 2"], ["produto", "", 128, 98, 20, "Moega", "Recebimento"],
     ["isca", "Armazem 1", 20, 16, 6, "Isca 01", "Armazém 1"], ["isca", "Armazem 1", 60, 40, 6, "Isca 02", "Armazém 1"], ["isca", "Armazem 1", 96, 16, 6, "Isca 03", "Armazém 1"], ["isca", "Armazem 2", 122, 40, 6, "Isca 04", "Armazém 2"], ["isca", "Armazem 2", 196, 16, 6, "Isca 05", "Armazém 2"],
-    ["praga", "Roedores", 61, 41, 5, "Fezes de roedor", "junto à isca 02"], ["praga", "Roedores", 62, 39, 2, "Isca consumida", "isca 02"], ["praga", "Pombos", 100, 80, 9, "Pombos na cobertura", "Silo 1"], ["praga", "Pombos", 128, 86, 3, "Ninho", "Moega"], ["praga", "Carunchos", 160, 24, 14, "Caruncho em sacaria", "Armazém 2"],
-  ].map(([tipo, sub, x, z, dias, l1, l2], i) => ({key: "demo" + i, name: `exemplo_${i + 1}.jpg`, path: `${tipo === "praga" ? "Pragas_Fotos/" + sub : tipo === "isca" ? "MIP_UA_Fotos/" + sub : "Foto_UA"}/exemplo_${i + 1}.jpg`, tipo, sub, url: img(FOTO_TIPOS[tipo].cor, l1, l2), ...ll(x, z), data: dia(dias), dataFonte: "exif", src: "exif", feito: true}));
+    ["praga", "Roedores", 61, 41, 5, "Fezes de roedor", "junto à isca 02"], ["praga", "Roedores", 62, 39, 2, "Isca consumida", "isca 02"], ["praga", "Pombos", 100, 80, 9, "Pombos na cobertura", "Silo 1"], ["praga", "Pombos", 128, 86, 3, "Ninho", "Moega"], ["praga", "Carunchos", 160, 24, 14, "Caruncho em sacaria", "Armazém 2"], ["kobiol", "", 70, 28, 25, "Pulverização", "Armazém 1"], ["protecphos", "", 172, 30, 40, "Expurgo sob lona", "Armazém 2"],
+  ].map(([tipo, sub, x, z, dias, l1, l2], i) => ({key: "demo" + i, name: `exemplo_${i + 1}.jpg`, path: `${tipo === "praga" ? "Fotos_Pragas/" + sub : tipo === "isca" ? "Fotos_Iscas/" + sub : tipo === "kobiol" ? "Fotos_K-obiol" : tipo === "protecphos" ? "Fotos_Protecphos" : "Fotos_Produtos"}/exemplo_${i + 1}.jpg`, tipo, sub, url: img(FOTO_TIPOS[tipo].cor, l1, l2), ...ll(x, z), data: dia(dias), dataFonte: "exif", src: "exif", feito: true}));
   return {data: D, fotos};
 }
 
 /* ============================================================ entrada de dados: pasta vinculada, arquivos avulsos, exemplo */
 const FS_OK = "showDirectoryPicker" in window;
-const CACHE_V = "2.0";            // mudar quando os leitores de documentos mudarem
+const CACHE_V = "2.2";            // mudar quando os leitores de documentos mudarem
 let DIR = null, lastSig = "", syncing = false;
 const docCache = new Map();       // "caminho|tamanho|data" → {tipo, dado}
 const relevante = n => isPdf(n) || isSheet(n) || isJson(n) || isImg(n) || isHeic(n);
@@ -2586,6 +3165,7 @@ function juntar(D, r, e) {
   else if (r.tipo === "depq") sub(D.depq, x => mesKey(x.mes) === mesKey(d.mes));
   else if (r.tipo === "cert") sub(D.certs, x => (x.laudo && x.laudo === d.laudo && x.lote === d.lote) || x.file === d.file);
   else if (r.tipo === "ocup") sub(D.ocup, x => x.file === d.file);
+  else if (r.tipo === "ocuparm") sub(D.ocupArm, x => x.file === d.file);
   else if (r.tipo === "plan") { if (!D.plan || e.file.lastModified >= (D._planMod || 0)) { D.plan = d; D._planMod = e.file.lastModified; } }
   else if (r.tipo === "mapa") D.mapa = d;
   else if (r.tipo === "pos") D.pos = d;
@@ -2608,7 +3188,10 @@ async function ingerir(ent, opt) {
     juntar(D, r, e); cont[r.tipo] = (cont[r.tipo] || 0) + 1;
   }
   D.term.sort((a, b) => String(a.date).localeCompare(String(b.date)));
-  const imgs = ent.filter(e => isImg(e.path) || isHeic(e.path));
+  const lg = ent.filter(e => isImg(e.path) && (/logo/i.test(e.file.name) || /identidade/i.test(e.path)) && e.file.size < 3e6).sort((a, b) => b.file.lastModified - a.file.lastModified)[0];
+  if (lg) { try { D.logo = await new Promise((ok, er) => { const r = new FileReader(); r.onload = () => ok(r.result); r.onerror = er; r.readAsDataURL(lg.file); }); } catch (e) { /* sem logo */ } }
+  else if (subst) D.logo = null;
+  const imgs = ent.filter(e => (isImg(e.path) || isHeic(e.path)) && e !== lg);
   if (subst) { if (META && META.demo) liberarFotos(); FOTO_ENT = imgs; }
   else { const tem = new Set(FOTO_ENT.map(e => e.path + "|" + e.file.size)); imgs.forEach(e => { if (!tem.has(e.path + "|" + e.file.size)) FOTO_ENT.push(e); }); }
   DATA = D;
@@ -2656,7 +3239,7 @@ async function sincronizar(manual) {
   finally { syncing = false; if (META && !META.demo) { META.verificado = new Date().toLocaleTimeString("pt-BR", {hour: "2-digit", minute: "2-digit"}); srcInfo(); } }
 }
 function resumoLeitura(cont, ent) {
-  const nomes = {term: "termometria", estoque: "controle de estoque", dof: "DOF", depq: "DEPQ", cert: "certificado(s)", ocup: "ocupação dos silos", plan: "cadastros", mapa: "croqui", pos: "posições de fotos"};
+  const nomes = {term: "termometria", estoque: "controle de estoque", dof: "DOF", depq: "DEPQ", cert: "certificado(s)", ocup: "ocupação dos silos", ocuparm: "ocupação dos armazéns", plan: "cadastros", mapa: "croqui", pos: "posições de fotos"};
   const p = Object.entries(cont).map(([k, n]) => `${n} ${nomes[k] || k}`), nf = ent.filter(e => isImg(e.path)).length;
   if (nf) p.push(`${nf} foto(s)`);
   return p.length ? "Lido: " + p.join(" · ") : "Nenhum documento reconhecido.";
@@ -2723,6 +3306,8 @@ function loadDemo() {
 
 /* ============================================================ eventos */
 document.addEventListener("click", e => {
+  const rl = e.target.closest("[data-rel]"); if (rl) { e.preventDefault(); relatorio(rl.dataset.rel); return; }
+  const cq = e.target.closest("[data-croqui]"); if (cq) { e.preventDefault(); abrirCroqui(cq.dataset.croqui); return; }
   const ac = e.target.closest("[data-acao]"); if (ac) { e.preventDefault(); if (ac.dataset.acao === "trocar") { if (FS_OK) linkFolder(); else $("#dirIn").click(); } return; }
   const go = e.target.closest("[data-go]"); if (go) { e.preventDefault(); goRef(go.dataset.go); return; }
   const tab = e.target.closest("[data-tab]"); if (tab) { showTab(tab.dataset.tab); return; }
@@ -2735,7 +3320,6 @@ $("#btnDemo").onclick = loadDemo;
 $("#file").onchange = e => { if (e.target.files.length) { const r = entradasDeInput(e.target.files); handleFiles(r.ent, null); } e.target.value = ""; };
 $("#dirIn").onchange = e => { if (e.target.files.length) { const r = entradasDeInput(e.target.files); handleFiles(r.ent, r.pasta || "selecionada"); } e.target.value = ""; };
 $("#btnMural").onclick = toggleMural;
-$("#btnBoletim").onclick = boletim;
 $("#btnTheme").onclick = () => {
   document.documentElement.dataset.theme = temaEscuro() ? "light" : "dark";
   lsSet("painelUA.v2.tema", document.documentElement.dataset.theme);
@@ -2757,6 +3341,7 @@ $("#lbPos").onclick = () => { const f = LB.lista[LB.i]; fecharFoto(); if (f) { s
 $("#lightbox").addEventListener("click", e => { if (e.target.id === "lightbox") fecharFoto(); });
 document.addEventListener("keydown", e => {
   const lb = $("#lightbox").classList.contains("on");
+  if (e.key === "Escape" && document.body.classList.contains("comdoc")) { fecharDoc(); return; }
   if (e.key === "Escape") { if (lb) fecharFoto(); else if (mapaPondo) mapaPosicionar(null); else if (document.body.classList.contains("mural")) toggleMural(); }
   else if (lb && e.key === "ArrowLeft" && LB.lista.length > 1) $("#lbPrev").click();
   else if (lb && e.key === "ArrowRight" && LB.lista.length > 1) $("#lbNext").click();
