@@ -350,6 +350,70 @@ footer{border-top:1px solid var(--border);padding:14px 0 26px}
   .wrap{padding:0 16px}
 }
 
+/* ===== visual mais limpo (todas as abas exceto o Mapa) ===== */
+:root{--shadow:none;--radius:12px}
+.view h2{font-size:15.5px;font-weight:650;margin:34px 0 10px;gap:8px;color:var(--text)}
+.view h2::before{display:none}
+.view h2:first-child{margin-top:6px}
+.h2n{font-size:12px;font-weight:600;color:var(--muted);background:var(--surface-2);border-radius:999px;padding:1px 8px}
+.view .sub{font-size:13px;color:var(--muted);margin:-4px 0 12px}
+.view .card{box-shadow:none;border-color:var(--border)}
+.view h3{font-size:14px;font-weight:650}
+/* indicadores: sem barras coloridas, só um ponto de status */
+.view .g-kpi{grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.view .kpi{padding:14px 16px;border-left:1px solid var(--border)!important}
+.view .kpi:hover{transform:none;border-color:var(--brand-2)!important}
+.view .kpi .lbl{text-transform:none;letter-spacing:0;font-size:13px;font-weight:500;color:var(--text-2);display:flex;align-items:center;gap:7px}
+.view .kpi .lbl::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ok);flex:0 0 auto}
+.view .kpi.warn .lbl::before{background:var(--warn)} .view .kpi.crit .lbl::before{background:var(--crit)}
+.view .kpi .val{font-size:26px;font-weight:700;margin-top:4px}
+.view .kpi .det{font-size:12px}
+.view .kpi.ok .lbl::before{display:none}
+/* selos: ponto + texto; fundo só para atenção e crítico */
+.b{gap:6px;font-weight:600;padding:1px 9px 1px 8px}
+.b::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;flex:0 0 auto}
+.b.ok,.b.info,.b.mut{background:none;padding-left:0}
+.b.mut{color:var(--muted)}
+/* tabelas leves */
+.view .tbl-wrap{border-radius:10px}
+.view th{background:var(--surface);color:var(--muted);font-weight:600;font-size:12px;border-bottom:1px solid var(--border)}
+.view td{border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);padding:8px 10px}
+.view tbody tr:last-child td{border-bottom:none}
+.view tbody tr:hover td{background:color-mix(in srgb,var(--surface-2) 60%,transparent)}
+/* pontos de atenção: lista compacta, providência ao clicar */
+.view details.alerts{gap:0;border:1px solid var(--border);border-radius:10px;background:var(--surface);overflow:hidden}
+.view details.al{display:block;border:none!important;border-radius:0;padding:0;background:none;border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent)!important}
+.view details.al:last-child{border-bottom:none!important}
+.view details.al summary{list-style:none;display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer}
+.view details.al summary::-webkit-details-marker{display:none}
+.view details.al summary:hover{background:var(--surface-2)}
+.view details.al .dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto;background:var(--info)}
+.view details.al.crit .dot{background:var(--crit)} .view details.al.warn .dot{background:var(--warn)}
+.view details.al .t{font-weight:500;font-size:14px;flex:1;min-width:0}
+.view details.al .m{font-size:12px;color:var(--muted);white-space:nowrap}
+.view details.al summary::after{content:"";width:7px;height:7px;border-right:1.5px solid var(--muted);border-bottom:1.5px solid var(--muted);transform:rotate(45deg);margin:-3px 2px 0 4px;transition:transform .15s;flex:0 0 auto}
+.view details.al[open] summary::after{transform:rotate(225deg);margin-top:3px}
+.view details.al .r{padding:0 14px 12px 32px;font-size:13.5px;color:var(--text-2)}
+.view details.al .r a{white-space:nowrap;margin-left:4px}
+.view div.al{box-shadow:none;border-left-width:3px!important;background:var(--surface)}
+.view div.al>div:first-child{display:none}
+.view div.al{grid-template-columns:1fr}
+.view div.al .r{grid-column:1}
+/* blocos recolhíveis */
+details.mais,details.secao,details.nt{margin-top:10px}
+details.mais>summary,details.secao>summary,details.nt>summary{cursor:pointer;color:var(--text-2);font-size:13px;font-weight:600;width:max-content;max-width:100%;padding:4px 0}
+details.mais>summary:hover,details.secao>summary:hover,details.nt>summary:hover{color:var(--brand-2)}
+details.mais .alerts{margin-top:8px}
+details.secao{margin-top:34px}
+details.secao>summary{font-size:15.5px;color:var(--text);font-weight:650}
+details.secao[open]>summary{margin-bottom:10px}
+details.nt>summary{font-weight:500;color:var(--muted);font-size:12.5px}
+details.nt[open]{background:var(--surface-2);border-radius:10px;padding:4px 14px 10px}
+details.nt .note{margin-top:6px}
+/* cartões de silo e armazém mais limpos */
+.view .card.silo{box-shadow:none}
+.view .silo .tt{font-size:12px}
+@media print{details>summary{display:none}}
 </style>
 </head>
 <body>
@@ -440,7 +504,7 @@ const addMonths = (d, n) => { const r = new Date(d.getFullYear(), d.getMonth() +
 const SEV = {crit: 3, warn: 2, info: 1, ok: 0, mut: -1};
 const SEV_LBL = {crit: "Crítico", warn: "Atenção", info: "Informação", ok: "Normal"};
 const SEV_ICON = {crit: "⛔", warn: "⚠️", info: "ℹ️", ok: "✅"};
-const badge = (sev, txt) => `<span class="b ${sev}">${SEV_ICON[sev] || ""} ${esc(txt ?? SEV_LBL[sev])}</span>`;
+const badge = (sev, txt) => `<span class="b ${sev}">${esc(txt ?? SEV_LBL[sev])}</span>`;
 const MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
 const MESES_ABR = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
 
@@ -1578,13 +1642,12 @@ function goRef(ref) {
   window.scrollTo({top: 0, behavior: "smooth"});
 }
 function alertList(list, max) {
-  if (!list.length) return `<div class="empty">✅ Nenhum ponto de atenção.</div>`;
-  const shown = max ? list.slice(0, max) : list;
-  return `<div class="alerts">${shown.map(a => `
-    <div class="al ${a.sev}"><div>${SEV_ICON[a.sev]}</div>
-      <div><div class="t">${esc(a.title)}</div><div class="m">${esc(a.mod)} · ${SEV_LBL[a.sev]}${a.ref ? ` · <a href="#" data-go="${esc(a.ref)}">abrir</a>` : ""}</div></div>
-      <div class="r">${esc(a.rec)}</div></div>`).join("")}</div>
-    ${max && list.length > max ? `<div class="note">+ ${list.length - max} item(ns). Veja cada seção para a lista completa.</div>` : ""}`;
+  if (!list.length) return `<div class="empty">Nenhum ponto de atenção.</div>`;
+  const item = a => `<details class="al ${a.sev}"><summary><span class="dot"></span><span class="t">${esc(a.title)}</span><span class="m">${esc(a.mod)}</span></summary>
+      <div class="r">${esc(a.rec)}${a.ref ? ` <a href="#" data-go="${esc(a.ref)}">Abrir seção →</a>` : ""}</div></details>`;
+  const shown = max ? list.slice(0, max) : list, resto = max ? list.slice(max) : [];
+  return `<div class="alerts">${shown.map(item).join("")}</div>
+    ${resto.length ? `<details class="mais"><summary>Ver mais ${resto.length} ponto(s) de atenção</summary><div class="alerts">${resto.map(item).join("")}</div></details>` : ""}`;
 }
 function siloCard(S) {
   const T = S.T, pct = S.ocup != null ? S.ocup : null;
@@ -1675,13 +1738,13 @@ function renderGeral() {
     <div class="grid g-2">${armazensResumo().map(r => `<button class="card silo" data-go="estoque"><div class="hd"><span class="nm">${esc(r.nome)}</span>${r.a ? badge("ok", fmtN(r.a.saldoT, 0) + " t") : badge("mut", "sem saldo no SAAGRA")}</div>
       ${r.a ? `<div class="tt">${r.top.length} produto(s) com saldo · ${fmtR(r.a.valor)}</div><div class="pr">${esc(r.top.slice(0, 4).map(i => `${titulo(i.produto)} (${fmtN(i.t, 0)} t)`).join(" · ") || "—")}${r.top.length > 4 ? ` · + ${r.top.length - 4}` : ""}</div>` : ""}
       ${r.qs ? `<div class="tt"><b>${r.qs.n} quadra(s):</b> ${esc(r.qs.txt)}</div>` : ""}</button>`).join("") || '<div class="empty">Sem Controle de Estoque carregado.</div>'}</div>
-    <h2>Pontos de atenção</h2>
-    <p class="sub">Ordenados por gravidade. Cada item traz a providência recomendada.</p>
-    ${alertList(al, 16)}
-    <h2>Documentos lidos</h2>
+    <h2>Pontos de atenção <span class="h2n">${al.length}</span></h2>
+    <p class="sub">Do mais grave para o menos grave. Clique no item para ver a providência.</p>
+    ${alertList(al, 8)}
+    <details class="secao"><summary>Documentos lidos <span class="h2n">${fontes.filter(f => f[1]).length} de ${fontes.length}</span></summary>
     <div class="tbl-wrap"><table><thead><tr><th>Fonte</th><th class="n">Arquivos</th><th>Referência</th><th>Situação</th></tr></thead><tbody>
       ${fontes.map(([n, q, ref, tab]) => `<tr><td><a href="#" data-go="${tab}">${n}</a></td><td class="n">${q}</td><td>${esc(ref || "—")}</td><td>${q ? badge("ok", "Lido") : badge("mut", "Não encontrado")}</td></tr>`).join("")}
-    </tbody></table></div>
+    </tbody></table></div></details>
     ${typeof dicaPasta === "function" ? dicaPasta() : ""}
     ${DATA.ignorados && DATA.ignorados.length ? `<details class="dq"><summary>${DATA.ignorados.length} arquivo(s) da pasta não foram reconhecidos</summary><ul>${DATA.ignorados.slice(0, 60).map(x => `<li>${esc(x)}</li>`).join("")}</ul></details>` : ""}
     ${FOTOS_HEIC ? `<p class="note">${FOTOS_HEIC} foto(s) em formato HEIC não foram lidas: o navegador não exibe esse formato. Exporte as fotos como JPG.</p>` : ""}
@@ -1841,7 +1904,7 @@ function confiabHTML(print) {
     const ns = T.suspeitos.filter(x => x.c === c).length; let sev, txt;
     if (h.run) { sev = "crit"; txt = h.nunca ? `sem leitura<br><small>todo o período</small>` : `sem leitura<br><small>desde ${fmtD(h.desde)}</small>`; }
     else if (h.avail < 0.9) { sev = "warn"; txt = `${fmtN(h.avail * 100, 0)}%<br><small>falhas no período</small>`; } else { sev = "ok"; txt = `${fmtN(h.avail * 100, 0)}%`; }
-    return `<td style="text-align:center;background:var(--${sev}-bg);color:var(--${sev});font-weight:600">${txt}${ns ? `<br><small style="color:var(--warn)">${ns} sensor(es) suspeito(s)</small>` : ""}${h.run && !h.ocorr ? `<br><small style="color:var(--text-2);font-weight:400">sem ocorrência aberta</small>` : ""}</td>`;
+    return `<td style="text-align:center;${sev === "ok" ? "color:var(--text-2);font-weight:500" : `background:var(--${sev}-bg);color:var(--${sev});font-weight:600`}">${txt}${ns ? `<br><small style="color:var(--warn)">${ns} sensor(es) suspeito(s)</small>` : ""}${h.run && !h.ocorr ? `<br><small style="color:var(--text-2);font-weight:400">sem ocorrência aberta</small>` : ""}</td>`;
   };
   const fortes = susp.filter(x => !x.tipo.startsWith("Possível")).length, fracos = susp.length - fortes;
   return `
@@ -1856,7 +1919,7 @@ function confiabHTML(print) {
       ${kpi("ok", "Tempo médio de reparo", tmr != null ? fmtN(tmr, 0) + " dias" : "–", `${conc.length} ocorrência(s) concluída(s)`)}
     </div>
     <h2>Disponibilidade por silo e cabo</h2>
-    <p class="sub">Percentual de leituras com dado no período. Vermelho = cabo sem leitura na última leitura. Vale também para silos vazios: o cabo precisa estar funcionando quando o silo for carregado.</p>
+    <p class="sub">Percentual de leituras com dado no período. Em destaque, só os cabos com falha.</p>
     <div class="tbl-wrap"><table><thead><tr><th>Silo</th>${colsC.map(c => `<th style="text-align:center">Cabo ${c}${c === M.C.caboCentral ? " (central)" : ""}</th>`).join("")}</tr></thead><tbody>
       ${Ts.map(T => `<tr><td><b>${esc(T.silo)}</b>${T.vazio ? '<br><small style="color:var(--muted)">vazio</small>' : ""}</td>${colsC.map(c => cell(T, c)).join("")}</tr>`).join("") || vazioTxt(1, "Sem leituras de termometria.")}
     </tbody></table></div>
@@ -1971,11 +2034,11 @@ function renderFito() {
     ${M.trats.length ? `<h2>Tratamentos registrados na planilha (datas exatas)</h2><div class="tbl-wrap"><table><thead><tr><th>Data/hora</th><th>Tipo</th><th>Local/Lote</th><th>Produto</th><th>Reentrada</th><th>Fim da carência</th><th>Situação</th><th>Verificações</th></tr></thead><tbody>
       ${M.trats.map(t => `<tr><td>${fmtDH(t.start)}</td><td>${esc(t.tipo)}</td><td>${esc(t.local)} ${esc(t.lote)}</td><td>${esc(t.pkey)}</td><td>${esc(t.reentTxt)}</td><td>${fmtD(t.fimCar)}</td><td>${badge(t.sev, t.sev === "ok" ? "Liberado" : t.sev === "crit" ? "Interditado" : "Em carência")}</td><td>${t.issues.map(([s, m]) => `<div>${SEV_ICON[s]} ${esc(m)}</div>`).join("") || "—"}</td></tr>`).join("")}
     </tbody></table></div>` : ""}
-    <h2>Referência de bulas usada nas conferências</h2>
+    <details class="secao"><summary>Referência de bulas usada nas conferências</summary>
     <div class="tbl-wrap"><table><thead><tr><th>Produto</th><th class="n">Carência em grãos (d)</th><th class="n">Carência em superfícies (d)</th><th>Dose</th><th>Exposição mínima</th><th>Liberação da área</th><th>Fonte</th></tr></thead><tbody>
       ${FITO_PADRAO.filter(f => f.nome !== "Fosfeto de alumínio").map(f => `<tr><td><b>${esc(f.nome)}</b>${f.reg ? `<div class="note" style="margin:0">${esc(f.reg)}</div>` : ""}</td><td class="n">${f.carGraos ?? "–"}</td><td class="n">${f.carSup ?? "–"}</td><td>${f.doseGraos ? f.doseGraos.join(" a ") + " mL/t de grãos" : f.doseGm3 ? fmtN(f.doseGm3, 0) + " g/m³ de fosfeto" : "–"}</td><td>${f.expoSacaria ? `${f.expoSacaria} h em sacaria; ${f.expoGranel} h em silos e graneleiros (acima de 25 °C)` : "–"}</td><td>${f.gas ? `PH3 abaixo de ${fmtN(f.ph3, 2)} ppm medido com detector${f.aeracaoDias ? `; aeração mínima de ${f.aeracaoDias.join(" a ")} dias` : ""}` : f.reent ? `${f.reent} h` : "após secagem da calda"}</td><td>${esc(f.fonte)}</td></tr>`).join("")}
     </tbody></table></div>
-    <p class="note">Confira sempre a bula da embalagem em uso e o receituário agronômico. Protecphos 56: o quadro de dosagem da bula indica 96 h de exposição, mas o item "Tempo de exposição" exige no mínimo 120 h em sacaria e 240 h em silos e graneleiros acima de 25 °C (entre 15 e 25 °C, prolongar 20%; abaixo de 15 °C, não fumigar). O painel usa o valor mais restritivo.</p>`;
+    <p class="note">Confira sempre a bula da embalagem em uso e o receituário agronômico. Protecphos 56: o quadro de dosagem da bula indica 96 h de exposição, mas o item "Tempo de exposição" exige no mínimo 120 h em sacaria e 240 h em silos e graneleiros acima de 25 °C (entre 15 e 25 °C, prolongar 20%; abaixo de 15 °C, não fumigar). O painel usa o valor mais restritivo.</p></details>`;
 }
 
 /* ---------- qualidade ---------- */
@@ -3010,6 +3073,7 @@ function conteudoDe(tab) {
   }
   const v = $("#v-" + tab); if (!v) return "";
   const cl = v.cloneNode(true);
+  cl.querySelectorAll("details").forEach(d => d.setAttribute("open", ""));
   /* gráficos viram imagem; controles de tela saem do relatório */
   const orig = [...v.querySelectorAll("canvas")], cop = [...cl.querySelectorAll("canvas")];
   cop.forEach((c, i) => { try { const img = document.createElement("img"); img.src = orig[i].toDataURL("image/png"); img.style.cssText = "width:100%;max-width:640px;display:block"; c.replaceWith(img); } catch (e) { c.remove(); } });
@@ -3414,6 +3478,18 @@ document.addEventListener("visibilitychange", () => { if (DIR && document.visibi
   } catch (e) { /* sem suporte */ }
 })();
 
+/* ---------- visual mais limpo: notas longas ficam recolhidas em "Observações" ---------- */
+function arrumarVista(v) {
+  if (!v || v.id === "v-mapa") return;
+  const notas = [...v.querySelectorAll("p.note, div.note")].filter(n => !n.closest("details, .rel, .card.silo, .kpi, td, .legend") && n.textContent.trim().length > 110);
+  const grupos = [];
+  notas.forEach(n => { const g = grupos[grupos.length - 1]; if (g && g[g.length - 1].nextElementSibling === n) g.push(n); else grupos.push([n]); });
+  grupos.forEach(g => { const d = document.createElement("details"); d.className = "nt"; d.innerHTML = `<summary>Observações</summary>`; g[0].before(d); g.forEach(n => d.appendChild(n)); });
+}
+["renderGeral", "renderSilos", "renderConfiab", "renderEstoque", "renderFito", "renderQualidade", "renderFotos", "renderPessoal", "renderManut"].forEach(nm => {
+  const f = window[nm]; if (typeof f !== "function") return;
+  window[nm] = function () { const r = f.apply(this, arguments); try { arrumarVista(document.getElementById("v-" + nm.slice(6).toLowerCase().replace("confiab", "confiab"))); } catch (e) { /* visual apenas */ } return r; };
+});
 </script>
 </body>
 </html>
